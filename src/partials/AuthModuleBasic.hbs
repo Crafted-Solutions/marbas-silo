@@ -1,0 +1,37 @@
+<div id="silo-auth" class="col-12 silo-noauth">
+	<form  class="needs-validation" action="#" onsubmit="return false;" novalidate>
+		<h2>Connection</h2>
+		<div class="row row-cols-4 my-2">
+			<label class="col-form-label col-sm-1 text-end" for="silo-auth-txt-user">User</label>
+			<div class="col-sm-5">
+				<input id="silo-auth-txt-user" type="text" class="form-control" aria-describedby="silo-auth-txt-user-fb" placeholder="Login user name" required>
+				<div id="silo-auth-txt-user-fb" class="invalid-feedback">
+					Please provide a valid user name
+				</div>
+			</div>
+			<label class="col-form-label col-sm-1 text-end" for="silo-auth-txt-pwd">Password</label>
+			<div class="col-sm-5">
+				<input id="silo-auth-txt-pwd" type="password" class="form-control" aria-describedby="silo-auth-txt-pwd-fb" placeholder="Login password" required>
+				<div id="silo-auth-txt-pwd-fb" class="invalid-feedback">
+					Please provide a valid password
+				</div>
+			</div>
+		</div>
+		<div class="row row-cols-2 my-2">
+			<label class="col-form-label col-sm-1 text-end" for="silo-auth-txt-url">Broker URL</label>
+			<div class="col-sm-11">
+				<input id="silo-auth-txt-url" type="text" class="form-control" value="{{htmlWebpackPlugin.options.templateParameters.apiBaseUrl}}" aria-describedby="silo-auth-txt-url-fb" required>
+				<div id="silo-auth-txt-url-fb" class="invalid-feedback">
+					Please provide data broker URL
+				</div>
+			</div>
+		</div>
+		<div class="my-2">
+			<input id="silo-auth-btn-login" type="submit" class="btn btn-primary" value="Login">
+			<input type="hidden" id="silo-auth-validation" class="form-control" aria-describedby="silo-auth-validation-fb">
+			<div id="silo-auth-validation-fb" class="invalid-feedback">
+				Invalid user or password
+			</div>
+		</div>
+	</form>
+</div>

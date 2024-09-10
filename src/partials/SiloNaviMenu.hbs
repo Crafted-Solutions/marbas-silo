@@ -1,0 +1,26 @@
+<div class="dropdown" style="position:absolute;" id="silo-nav-contextdd">
+	<button class="btn btn-secondary dropdown-toggle d-none" type="button" id="silo-nav-contextdd-trigger"
+		data-bs-auto-close="*" data-bs-toggle="dropdown" aria-expanded="false">Navi Menu</button>
+	<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="silo-nav-contextdd-trigger">
+		<li><button id="cmdReload" class="dropdown-item" type="button"><span class="bi-arrow-clockwise"></span> Reload</button></li>
+		<li class="dropdown dropend">
+			<button class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="silo-nav-insertdd-trigger">
+				Create
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="silo-nav-insertdd-trigger">
+				<li><button id="cmdNew" class="dropdown-item" type="button"><span class="mb-cmd-new-icon bi-file">*</span> New</button></li>
+				<li><button id="cmdNewContainer" class="dropdown-item" type="button"><span class="mb-cmd-new-icon bi-folder2">*</span> New Container</button></li>
+				<li><button id="cmdNewFile" class="dropdown-item" type="button"><span class="mb-cmd-new-icon bi-file-earmark-binary">*</span> New File</button></li>
+				<li><button id="cmdNewType" class="dropdown-item" type="button"><span class="mb-cmd-new-icon bi-boxes">*</span> New Type</button></li>
+			</ul>
+		</li>
+		<li><hr class="dropdown-divider"></li>
+		<li><button id="cmdCut" class="dropdown-item" type="button"><span class="bi-scissors"></span> Cut</button></li>
+		<li><button id="cmdCopy" class="dropdown-item" type="button"><span class="bi-copy"></span> Copy</button></li>
+		<li><button id="cmdPaste" class="dropdown-item" type="button"><span class="bi-clipboard"></span> Paste</button></li>
+		<li><button id="cmdClearCbrd" class="dropdown-item" type="button"><span class="bi-clipboard-minus"></span> Clear Clipboard</button></li>
+		<li><button id="cmdRename" class="dropdown-item" type="button"><span class="bi-pencil-square"></span> Rename</button></li>
+		<li><hr class="dropdown-divider"></li>
+		<li><button id="cmdDelete" class="dropdown-item" type="button"><span class="text-danger bi-trash-fill"></span> Delete</button></li>
+	</ul>
+</div>

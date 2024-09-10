@@ -1,0 +1,39 @@
+@import "~bootstrap/scss/bootstrap";
+$bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
+@import "~bootstrap-icons/font/bootstrap-icons.scss";
+.bi-blank {
+    visibility: hidden;
+}
+.sr-only[for="root-property-selector"] {
+	display: none;
+}
+.node-silo-nav {
+	white-space: nowrap;
+}
+.node-silo-nav.node-selected .expand-icon {
+	color: var(--bs-white) !important;
+}
+.node-silo-nav .node-icon {
+	font-size: 1.2rem;
+}
+.mb-grain-icon {
+	font-size: 2rem !important;
+}
+.mb-cmd-new-icon {
+	--bs-text-opacity: 1;
+	color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity));
+}
+.dropdown-item:disabled .mb-cmd-new-icon {
+	color: var(--bs-dropdown-link-disabled-color);
+	background-color: transparent;
+}
+.mb-grain-file {
+	margin-right: 0.25rem !important;
+	vertical-align: top;
+}
+.mb-session-link {
+	vertical-align: top;
+}
+[data-schematype="array"] .btn-group:last-of-type {
+	margin-top: 0.25rem !important;
+}

@@ -1,0 +1,26 @@
+<div class="modal fade" id="input-dlg" tabindex="-1" aria-labelledby="input-dlg-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="input-dlg-title">
+					<span>Input Request</span>
+					<div class="fs-6" id="input-dlg-subtitle"></div>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+				<div class="mb-3">
+					<label for="input-dlg-txt" class="form-label">Input</label>
+					<input type="text" class="form-control" id="input-dlg-txt" placeholder="Your value" value="" aria-describedby="input-dlg-txt-fb" required>
+					<div id="input-dlg-txt-fb" class="invalid-feedback">
+						Value is required
+					</div>
+				</div>
+			</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="input-dlg-btn-ok">Ok</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cacnel</button>
+			</div>
+		</div>
+	</div>
+</div>

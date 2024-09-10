@@ -1,0 +1,31 @@
+<div class="modal fade" id="file-new" tabindex="-1" aria-labelledby="file-new-title" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="file-new-title">
+					<span>New File</span>
+					<div class="fs-6" id="file-new-path"></div>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form class="modal-body needs-validation" action="#" onsubmit="return false;" enctype="multipart/form-data" novalidate>
+				<input type="hidden" id="file-new-parent-id" name="ParentId">
+				<div class="mb-3">
+					<label for="file-new-txt-name" class="form-label">Name</label>
+					<input type="text" class="form-control" id="file-new-txt-name" name="Name" placeholder="(Optional) name for the new file" value="">
+				</div>
+				<div class="mb-3">
+					<label for="file-new-file" class="form-label">File</label>
+					<input class="form-control" name="File" type="file" id="file-new-file" aria-describedby="file-new-file-fb" required>
+					<div id="file-new-file-fb" class="invalid-feedback">
+						Please provide a file
+					</div>
+				</div>
+			</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="file-new-btn-ok">Ok</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cacnel</button>
+			</div>
+		</div>
+	</div>
+</div>

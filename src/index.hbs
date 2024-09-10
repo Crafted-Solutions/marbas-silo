@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{{htmlWebpackPlugin.options.title}}</title>
+		<script type="text/javascript">
+			const EnvConfig = {
+				apiBaseUrl: "{{htmlWebpackPlugin.options.templateParameters.apiBaseUrl}}",
+				panelClasses: '{{htmlWebpackPlugin.options.templateParameters.panelClasses}}'
+			};
+		</script>
+	</head>
+	<body>
+		<article id="main" class="container-fluid py-4 px-3">
+			<h1>{{htmlWebpackPlugin.options.title}}</h1>
+
+			<section id="top" class="{{htmlWebpackPlugin.options.templateParameters.panelClasses}}">
+				<div class="row row-cols-2">
+					<div class="silo-auth col-3 d-none">
+						<label class="d-none" for="silo-lang">Language</label>
+						<select id="silo-lang" class="form-select" title="Language">
+							<option value="en">English</option>
+						</select>
+					</div>
+					{{> partials/AuthModule}}
+					<div class="silo-auth text-end col-9 d-none">
+						Connected to <span id="silo-auth-info-system"></span> as <span id="silo-auth-info-user"></span>
+						<button id="silo-auth-btn-logout" type="button" class="btn btn-outline-primary">Logout</button>
+					</div>
+				</div>
+			</section>
+
+			<section class="row row-cols-2 silo-auth">
+				<div class="col-3" style="min-width: 20em">
+					<nav id="silo-nav" class="silo-auth d-none"></nav>
+				</div>
+				<div class="col-9" style="min-width: 30em;">
+					<div id="grain-edit" class="silo-auth d-none"></div>
+				</div>
+			</section>
+		</article>
+		{{> partials/GrainNewDialog}}
+		{{> partials/FileNewDialog}}
+		{{> partials/GrainPicker}}
+		{{> partials/SiloNaviMenu}}
+		{{> partials/InputDialog}}
+		{{> partials/MsgBox}}
+		<!-- {{#each @root.htmlWebpackPlugin.options}}####{{@key}}####,{{/each}} -->
+	</body>
+</html>
