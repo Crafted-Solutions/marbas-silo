@@ -2,7 +2,7 @@ import { SiloTree } from "./SiloTree";
 import { MarBasDefaults } from "../conf/marbas.conf";
 import { IconMaps } from "../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
-import { MbDomUtils } from "./MbDOMUTils";
+import { MbDomUtils } from "./MbDomUtils";
 
 export class GrainNewDialog extends _NewDialog {
 	#mode = 'generic';

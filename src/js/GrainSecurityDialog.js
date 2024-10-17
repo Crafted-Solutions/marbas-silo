@@ -2,7 +2,7 @@ import startCase from "lodash.startcase";
 import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "../conf/marbas.conf";
 import { MbUtils } from "./MbUtils";
 import { _Dialog } from "./_Dialog";
-import { MbDomUtils } from "./MbDOMUTils";
+import { MbDomUtils } from "./MbDomUtils";
 
 const uuidRegExp = /[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}/g;
 const accessFlagMax = 'Full';

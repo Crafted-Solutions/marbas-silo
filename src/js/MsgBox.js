@@ -1,5 +1,5 @@
 import { Modal } from "bootstrap";
-import { MbDomUtils } from "./MbDOMUTils";
+import { MbDomUtils } from "./MbDomUtils";
 
 export class MsgBox {
 	static #inst;

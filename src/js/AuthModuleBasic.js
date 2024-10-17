@@ -1,5 +1,5 @@
 import { MarBasDefaults } from "../conf/marbas.conf";
-import { MbDomUtils } from "./MbDOMUTils";
+import { MbDomUtils } from "./MbDomUtils";
 
 const SESSIONKEY_TOKEN = 'mbSiloToken';
 const SESSIONKEY_URL = 'mbSiloBrokeUrl';

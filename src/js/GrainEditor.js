@@ -7,7 +7,7 @@ import { MarBasDefaults, MarBasGrainAccessFlag } from "../conf/marbas.conf";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
-import { MbDomUtils } from "./MbDOMUTils";
+import { MbDomUtils } from "./MbDomUtils";
 
 JSONEditor.defaults.options.theme = 'bootstrap5';
 JSONEditor.defaults.options.iconlib = 'bootstrap';
