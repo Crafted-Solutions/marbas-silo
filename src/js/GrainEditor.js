@@ -7,6 +7,7 @@ import { MarBasDefaults, MarBasGrainAccessFlag } from "../conf/marbas.conf";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
+import { MbDomUtils } from "./MbDomUtils";
 
 JSONEditor.defaults.options.theme = 'bootstrap5';
 JSONEditor.defaults.options.iconlib = 'bootstrap';
@@ -777,18 +778,7 @@ export class GrainEditor {
 	}
 
 	#updateSessionLinks() {
-		const sessionLinks = this.editor.element.querySelectorAll('.mb-session-link');
-		sessionLinks.forEach((link) => {
-			link.classList.remove('mb-session-link');
-			link.onclick = () => {
-				const params = new URL(link.href).searchParams;
-				if (params.get('grain')) {
-					const evt = new CustomEvent('mb-silo:navigate', {detail: params.get('grain')});
-					document.dispatchEvent(evt);
-				}
-				return false;
-			};
-		});
+		MbDomUtils.updateSessionLinks(this.editor.element);
 	}
 
 	#resolveSchemaLabels(schema) {

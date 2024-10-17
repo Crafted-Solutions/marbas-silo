@@ -7,6 +7,16 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 .sr-only[for="root-property-selector"] {
 	display: none;
 }
+.th-rotate {
+	height: 5em;
+}
+.th-rotate .th-content {
+	transform: rotate(190deg);
+	font-size: smaller;
+	white-space: nowrap;
+	text-align: left;
+	writing-mode: vertical-lr;
+}
 .node-silo-nav {
 	white-space: nowrap;
 }
@@ -19,12 +29,8 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 .mb-grain-icon {
 	font-size: 2rem !important;
 }
-.mb-cmd-new-icon {
-	--bs-text-opacity: 1;
-	color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity));
-}
-.dropdown-item:disabled .mb-cmd-new-icon {
-	color: var(--bs-dropdown-link-disabled-color);
+.dropdown-item:disabled * {
+	color: var(--bs-dropdown-link-disabled-color) !important;
 	background-color: transparent;
 }
 .mb-grain-file {
@@ -36,4 +42,7 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 }
 [data-schematype="array"] .btn-group:last-of-type {
 	margin-top: 0.25rem !important;
+}
+.grain-security-role:nth-child(1) {
+	white-space: nowrap;
 }

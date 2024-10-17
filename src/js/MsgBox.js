@@ -1,4 +1,5 @@
 import { Modal } from "bootstrap";
+import { MbDomUtils } from "./MbDomUtils";
 
 export class MsgBox {
 	static #inst;
@@ -79,12 +80,12 @@ export class MsgBox {
 					break;			
 			}
 		}
-		icoElm.classList.toggle('d-none', !options.icon);
+		MbDomUtils.hideNode(icoElm, !options.icon);
 
 		const buttons = options.buttons || { 'cancel': true, 'ok': true };
 		this.#element.querySelectorAll('.btn-msgbox').forEach(button => {
 			const id = button.getAttribute('data-btn-id');
-			button.classList.toggle('d-none', !buttons[id]);
+			MbDomUtils.hideNode(button, !buttons[id]);
 			if (buttons[id] && (button.classList.contains('btn-primary') || button.classList.contains('btn-success'))) {
 				this.#defaultAction = id;
 			}
