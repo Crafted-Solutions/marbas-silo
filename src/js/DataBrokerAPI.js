@@ -1,5 +1,6 @@
 import merge from "lodash.merge";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults, MarBasRoleEntitlement } from "../conf/marbas.conf";
+import { MbUtils } from "./MbUtils";
 
 const ExtenderAPI = {
 	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
@@ -22,6 +23,9 @@ export class DataBrokerAPI {
 		[MarBasDefaults.ID_TYPE_TYPEDEF]: {}
 	};
 	#rejects = [];
+	#currentRoles = {
+		entitlement: -2
+	};
 
 	constructor(authModule, lang = null) {
 		this.#authModule = authModule;
@@ -44,9 +48,62 @@ export class DataBrokerAPI {
 		return this.#fetchGet(`${this.#baseUrl}/Language/List`);
 	}
 
+	getCurrentRoles() {
+		if (this.#currentRoles.roles) {
+			return new Promise((resolve) => {
+				resolve(this.#currentRoles.roles);
+			});
+		}
+		const result = this.#fetchGet(`${this.#baseUrl}/Role/Current`);
+		result.then((roles) => {
+			this.#currentRoles.roles = roles;
+		});
+		return result;
+	}
+
+	getCurrentRoleEntitlement(intent) {
+		return new Promise((resolve, reject) => {
+			const resolver = () => {
+				resolve(intent = (intent & this.#currentRoles.entitlement));
+			};
+			if (-2 < this.#currentRoles.entitlement) {
+				resolver();
+			}
+			else {
+				this.getCurrentRoles()
+				.then(roles => {
+					this.#currentRoles.entitlement = MarBasRoleEntitlement.None;
+					roles.forEach(role => {
+						this.#currentRoles.entitlement = MbUtils.string2BitField(role.entitlement, MarBasRoleEntitlement, MarBasRoleEntitlement.None, 'Full');
+					});
+					resolver();
+				})
+				.catch(reject);						
+			}
+		});
+	}
+
+	invalidateCurrentRoles() {
+		this.#currentRoles = {
+			entitlement: -2
+		};
+	}
+
+	listRoles() {
+		return this.#fetchGet(`${this.#baseUrl}/Role/List`);
+	}
+
+	getRole(roleId) {
+		return this.#fetchGet(`${this.#baseUrl}/Role/${roleId}`);
+	}
+
 	getLabel(grainOrId) {
 		return new Promise((resolve) => {
-			this.getGrain(grainOrId.id || grainOrId).then(grain => resolve(grain.label));
+			if (grainOrId.label) {
+				resolve(grainOrId.label);
+			} else {
+				this.getGrain(grainOrId.id || grainOrId).then(grain => resolve(grain.label));
+			}
 		});
 	}
 
@@ -360,13 +417,49 @@ export class DataBrokerAPI {
 
 	getGrainPermission(grainOrId, desiredAccess) {
 		return new Promise((resolve, reject) => {
+			const resolver = (grain) => {
+				resolve(desiredAccess == (grain.permissions & desiredAccess)); 
+			};
 			if (grainOrId.id) {
-				resolve(desiredAccess == (grainOrId.permissions & desiredAccess));
+				resolver(grainOrId);
 			} else {
 				this.getGrain(grainOrId).then(grain => {
-					resolve(desiredAccess == (grain.permissions & desiredAccess));
+					resolver(grain);
 				}).catch(reject);
 			}
+		});
+	}
+
+	getGrainAcl(grainOrId) {
+		return this.#fetchGet(`${this.#baseUrl}/Grain/${grainOrId.id || grainOrId}/Acl`);
+	}
+
+	storeAclEntry(entry) {
+		this.invalidateGrain(entry.grainId, true);
+		return this.#fetchSendJson(`${this.#baseUrl}/Acl`, entry);
+	}
+
+	createAclEntry(entry) {
+		this.invalidateGrain(entry.grainId, true);
+		return this.#fetchSendJson(`${this.#baseUrl}/Acl`, entry, true, 'PUT');
+	}
+
+	deleteAclEntry(grainId, roleId) {
+		const inv = this.invalidateGrain(grainId, true);
+		return new Promise((resolve, reject) => {
+			fetch(`${this.#baseUrl}/Acl/${roleId}/${grainId}`, this.#applyStdFetchOptions({method: 'DELETE'}))
+			.then(res => {
+				if (res.ok) {
+					return res.json();
+				}
+				reject(`Request failed (${res.status} ${res.statusText})`);
+			})
+			.then(json => {
+				inv.then(() => {
+					resolve(json.success);
+				});
+			})
+			.catch(reject);
 		});
 	}
 
@@ -403,6 +496,22 @@ export class DataBrokerAPI {
 		});
 	}
 
+	isGrainDescendantOf(grainOrId, ancestorOrId) {
+		return new Promise((resolve) => {
+			if (grainOrId.path && ancestorOrId.path) {
+				resolve(grainOrId.path.startsWith(`${ancestorOrId.path}/`));
+				return;
+			}
+			this.getGrainPath(grainOrId)
+				.then(path => {
+					return path.some(item => {
+						return item == ancestorOrId;
+					});
+				})
+				.catch(resolve(false));
+		});
+	}
+
 	getOrCreateTypeDefDefaults(typeDefOrId) {
 		const id = (typeDefOrId.id || typeDefOrId);
 		return new Promise((resolve, reject) => {
@@ -421,8 +530,8 @@ export class DataBrokerAPI {
 		});
 	}
 
-	invalidateGrain(grain, recursive = false) {
-		const id = grain.id || grain;
+	invalidateGrain(grainOrId, recursive = false) {
+		const id = grainOrId.id || grainOrId;
 		this.#unregisterSubtypes(id);
 		if (this.#grains[id]) {
 			if (recursive && MarBasDefaults.ID_ROOT == id) {
@@ -436,7 +545,7 @@ export class DataBrokerAPI {
 				return Promise.resolve(id);
 			}
 			return new Promise((resolve) => {
-				const typeId = grain.typeDefId || this.#grains[id].typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
+				const typeId = grainOrId.typeDefId || this.#grains[id].typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
 				if (typeId && this.#resolvers[typeId] && this.#resolvers[typeId][id]) {
 					delete this.#resolvers[typeId][id];
 				}

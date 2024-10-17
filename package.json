@@ -1,6 +1,6 @@
 {
   "name": "marbas-silo",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Manages grain silo via marbas-databroker",
   "private": true,
   "scripts": {
@@ -19,7 +19,8 @@
     "bootstrap-icons": "^1.11.3",
     "dompurify": "^3.0.11",
     "jodit": "^4.2.25",
-    "lodash.merge": "^4.6.2"
+    "lodash.merge": "^4.6.2",
+    "lodash.startcase": "^4.4.0"
   },
   "devDependencies": {
     "@types/json-editor": "^0.0.10",

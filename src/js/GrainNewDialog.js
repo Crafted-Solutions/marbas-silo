@@ -2,6 +2,7 @@ import { SiloTree } from "./SiloTree";
 import { MarBasDefaults } from "../conf/marbas.conf";
 import { IconMaps } from "../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
+import { MbDomUtils } from "./MbDOMUTils";
 
 export class GrainNewDialog extends _NewDialog {
 	#mode = 'generic';
@@ -34,7 +35,7 @@ export class GrainNewDialog extends _NewDialog {
 	show(parentGrainId, mode = 'generic') {
 		this.#mode = mode;
 		this._element.querySelectorAll(`.${this._scope}-mode`).forEach((elm) => {
-			elm.classList.toggle('d-none', !elm.classList.contains(`${this._scope}-mode-${mode}`));
+			MbDomUtils.hideNode(elm, !elm.classList.contains(`${this._scope}-mode-${mode}`));
 		});
 		super.show(parentGrainId);
 	}
@@ -56,7 +57,7 @@ export class GrainNewDialog extends _NewDialog {
 			}], () => {
 				this.typeSelector.tree.expandAll();
 			}, {
-				disableGrains: [MarBasDefaults.ID_TYPE_FILE],
+				disableGrains: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TRASH_SCHEMA],
 				selectableTypes: [MarBasDefaults.ID_TYPE_TYPEDEF],
 				typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER]
 			});

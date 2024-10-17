@@ -48,4 +48,8 @@ export class _Dialog {
 		this.modal.hide();
 	}
 
+	_getTemplate(name, subElement = null) {
+		const cont = this._element.querySelector(`#${this._scope}-tpl-${name}`).content;
+		return subElement && cont ? cont.querySelector(subElement) : cont;
+	}
 }

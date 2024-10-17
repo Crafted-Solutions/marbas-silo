@@ -62,6 +62,7 @@ authModule.addEventListener('silo-auth:login', () => {
 	processParameters();
 });
 authModule.addEventListener('silo-auth:logout', () => {
+	apiSvc.invalidateCurrentRoles();
 	editorMgr.unloadEditor();
 	naviMgr.reset();
 });
