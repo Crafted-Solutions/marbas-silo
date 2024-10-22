@@ -8,6 +8,8 @@ import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/modu
 import {BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED} from "@jbtronics/bs-treeview";
 
 import { GrainXAttrs } from "./GrainXAttrs";
+import { Task } from "./Task";
+import { MarBasDefaults } from "../conf/marbas.conf";
 
 export class SiloTree {
 	_element;
@@ -102,7 +104,7 @@ export class SiloTree {
 		if (node) {
 			this._getNodeProperties(grain, node).then(() => {
 				this.tree.updateNode(node, node);
-			});
+			}).catch(console.warn);
 		}
 	}
 
@@ -136,21 +138,24 @@ export class SiloTree {
 	}
 
 	async _loadNodeChildren(node, renderer) {
-		let grainId = (node.dataAttr || {}).grain;
-		const grain = await this._apiSvc.getGrain(grainId);
-		await this._getNodeProperties(grain, node);
-		let children = 0 < grain.childCount ? await this._apiSvc.listGrainChildren(grain, false, this._options.typeFilter) : [];
-		if (children.length) {
-			renderer(await Promise.all(children.map(async x => BSTreeViewNode.fromData(await this._getNodeProperties(x), this.tree))));
-		} else {
-			node.lazyLoad = false;
-			if (node.isRootNode()) {
-				renderer([], this.tree);
+		const grainId = (node.dataAttr || {}).grain;
+		const flags = MarBasDefaults.ID_ROOT == grainId ? Task.Flag.DEFAULT | Task.Flag.REPORT_START : Task.Flag.REPORT_START;
+		await Task.nowAsync("Loading grains", async () => {
+			const grain = await this._apiSvc.getGrain(grainId);
+			await this._getNodeProperties(grain, node);
+			let children = 0 < grain.childCount ? await this._apiSvc.listGrainChildren(grain, false, this._options.typeFilter) : [];
+			if (children.length) {
+				renderer(await Promise.all(children.map(async x => BSTreeViewNode.fromData(await this._getNodeProperties(x), this.tree))));
 			} else {
-				this.tree.updateNode(node, node);
+				node.lazyLoad = false;
+				if (node.isRootNode()) {
+					renderer([], this.tree);
+				} else {
+					this.tree.updateNode(node, node);
+				}
 			}
-		}
-		this._restoreFocus();
+			this._restoreFocus();	
+		}, flags);
 	}
 
 	async _getNodeProperties(grain, node) {

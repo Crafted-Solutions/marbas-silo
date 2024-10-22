@@ -3,9 +3,10 @@ import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "..
 import { MbUtils } from "./MbUtils";
 import { _Dialog } from "./_Dialog";
 import { MbDomUtils } from "./MbDomUtils";
+import { Task } from "./Task";
 
-const uuidRegExp = /[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}/g;
-const accessFlagMax = 'Full';
+const UuidRegExp = /[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}/g;
+const AccessFlagMax = 'Full';
 
 export class GrainSecurityDialog extends _Dialog {
 	#grain;
@@ -48,23 +49,26 @@ export class GrainSecurityDialog extends _Dialog {
 		this.#deleted = {};
 		this.#updateModifiedMark();
 
-		super.show();
 		this._load(grainId);
+		super.show();
 	}
 
 	async _load(grainId) {
-		if (grainId) {
-			this.#grain = await this.#apiSvs.getGrain(grainId);
-		}
-		this._element.querySelector(`#${this._scope}-subtitle`).textContent = `${this.#grain ? this.#grain.path : grainId}`;
-
-
-		this.#grainAcl = await this.#apiSvs.getGrainAcl(grainId);
-		this.#canWrite = await this.#apiSvs.getGrainPermission(this.#grain, MarBasGrainAccessFlag.ModifyAcl);
-		this.#canWrite = this.#canWrite && await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.WriteAcl);
-		this.#canDelete = this.#canWrite && (await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.DeleteAcl));
-		await this.#loadRoles();
-		this.#buildAclTable();
+		Task.nowAsync("Reading grain security", async () => {
+			if (grainId) {
+				this.#grain = await this.#apiSvs.getGrain(grainId);
+			}
+	
+	
+			this.#grainAcl = await this.#apiSvs.getGrainAcl(grainId);
+			this.#canWrite = await this.#apiSvs.getGrainPermission(this.#grain, MarBasGrainAccessFlag.ModifyAcl);
+			this.#canWrite = this.#canWrite && await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.WriteAcl);
+			this.#canDelete = this.#canWrite && (await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.DeleteAcl));
+			await this.#loadRoles();
+			this.#buildAclTable();
+			
+			this._element.querySelector(`#${this._scope}-subtitle`).textContent = `${this.#grain ? this.#grain.path : grainId}`;
+		});
 	}
 
 	#updateModifiedMark() {
@@ -78,8 +82,8 @@ export class GrainSecurityDialog extends _Dialog {
 		const entry = {
 			grainId: key[0],
 			roleId: key[1],
-			permissionMask: existing ? MbUtils.string2BitField(existing.permissionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, accessFlagMax) : MarBasGrainAccessFlag.None,
-			restrictionMask: existing ? MbUtils.string2BitField(existing.restrictionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, accessFlagMax) : MarBasGrainAccessFlag.None,
+			permissionMask: existing ? MbUtils.string2BitField(existing.permissionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax) : MarBasGrainAccessFlag.None,
+			restrictionMask: existing ? MbUtils.string2BitField(existing.restrictionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax) : MarBasGrainAccessFlag.None,
 			inherit: this.#aclBodyElm.querySelector(`#${this._scope}-chk-${key[1]}-inherit`).checked
 		};
 		const idPfx = `${this._scope}-chk-${entry.roleId}`;
@@ -175,7 +179,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 	#getAclEntryKey(idOrElm) {
 		const id = 'string' == typeof(idOrElm) ? idOrElm : idOrElm.id;
-		return id.match(uuidRegExp);
+		return id.match(UuidRegExp);
 	}
 
 	#buildAclTable() {
@@ -202,8 +206,8 @@ export class GrainSecurityDialog extends _Dialog {
 
 				tr.querySelector(`.${this._scope}-role .mb-val`).textContent = this.#roles[entry.roleId] || entry.roleId;
 
-				const permissions = MbUtils.string2BitField(entry.permissionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, accessFlagMax);
-				const restrictions = MbUtils.string2BitField(entry.restrictionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, accessFlagMax);
+				const permissions = MbUtils.string2BitField(entry.permissionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax);
+				const restrictions = MbUtils.string2BitField(entry.restrictionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax);
 
 				
 				const inheritedAcl = entry.sourceGrainId != this.#grain.id;
@@ -299,7 +303,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 	#updateEntryAddDropdown() {
 		const mnu = this._element.querySelector(`#${this._scope}-add`);
-		MbDomUtils.hideNode(mnu, mnu.querySelectorAll('.dropdown-item[aria-hidden="true"]').length >= Object.keys(this.#roles).length);
+		MbDomUtils.hideNode(mnu, !this.#canWrite || mnu.querySelectorAll('.dropdown-item[aria-hidden="true"]').length >= Object.keys(this.#roles).length);
 	}
 
 	#resolveGrains(ids) {
@@ -352,6 +356,6 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	static #isRelevantAccessFlag(flag) {
-		return 'None' != flag && accessFlagMax != flag;
+		return 'None' != flag && AccessFlagMax != flag;
 	}
 }

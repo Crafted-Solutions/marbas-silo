@@ -26,17 +26,16 @@ export const MbDomUtils = {
 	},
 	
 	updateSessionLink: function(link, grainId = undefined) {
-		link.classList.remove('mb-session-link');
+		const gid = () => grainId || (new URL(link.href).searchParams).get('grain');
 		link.onclick = () => {
-			if (!grainId) {
-				grainId = (new URL(link.href).searchParams).get('grain');
-			}
-			if (grainId) {
-				const evt = new CustomEvent('mb-silo:navigate', {detail: grainId});
+			const g = gid();
+			if (g) {
+				const evt = new CustomEvent('mb-silo:navigate', {detail: g});
 				document.dispatchEvent(evt);
 			}
 			return false;
 		};
+		MbDomUtils.hideNode(link, !gid());
 		return link;
 	}
 };

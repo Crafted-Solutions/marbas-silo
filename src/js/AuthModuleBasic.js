@@ -50,7 +50,6 @@ export class AuthModule {
 		this.#element.querySelector('#silo-auth-txt-user').value = '';
 		this.#element.querySelector('#silo-auth-txt-pwd').value = '';
 
-		MbDomUtils.hideNode(x)
 		document.querySelectorAll('.silo-auth').forEach(x => MbDomUtils.hideNode(x));
 		document.querySelectorAll('.silo-noauth').forEach(x => MbDomUtils.hideNode(x, false));
 		this.#triggerEvent('silo-auth:logout');

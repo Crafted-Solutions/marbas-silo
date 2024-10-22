@@ -4,10 +4,15 @@ import { _Dialog } from "./_Dialog";
 export class _NewDialog extends _Dialog {
 	_apiSvc;
 	_parentGrain;
+	_nameInput;
 
 	constructor(scope, apiSvc) {
 		super(scope);
 		this._apiSvc = apiSvc;
+		this._nameInput = this._element.querySelector(`#${this._scope}-txt-name`);
+		this._element.addEventListener('shown.bs.modal', () => {
+			this._nameInput.focus();
+		});
 	}
 
 	get parentGrain() {
@@ -19,7 +24,7 @@ export class _NewDialog extends _Dialog {
 	}
 
 	get grainName() {
-		return this._element.querySelector(`#${this._scope}-txt-name`).value;
+		return this._nameInput.value;
 	}
 
 	show(parentGrainId) {

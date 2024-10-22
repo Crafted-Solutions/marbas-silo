@@ -8,6 +8,22 @@ import { SiloNavi } from "./SiloNavi";
 import { DataBrokerAPI } from "./DataBrokerAPI";
 import { IconMaps } from "../conf/icons.conf";
 import { LangSelector } from "./LangSelector";
+import { Task, TaskLayer } from "./Task";
+import { MsgBox } from "./MsgBox";
+
+global.NoOp = () => {};
+
+const taskLayer = new TaskLayer((evt) => {
+	if (!evt.defaultPrevented) {
+		MsgBox.invokeErr(`Unexpected error occured in task "${evt.detail.task.name}": ${evt.detail.payload}`);
+	}
+});
+
+document.addEventListener(Task.Event.ERROR, (evt) => {
+	if (!evt.defaultPrevented) {
+		MsgBox.invokeErr(`Unexpected error occured in task "${evt.detail.task.name}": ${evt.detail.payload}`);
+	}
+});
 
 const processParameters = () => {
 	if (window.location.search) {
@@ -18,6 +34,14 @@ const processParameters = () => {
 			document.dispatchEvent(evt);
 		}
 	}
+};
+
+const loadLoggedInState = () => {
+	Task.now("Initializing", (done) => {
+		naviMgr.tree.expandAll();
+		processParameters();
+		done();	
+	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 };
 
 const authModule = new AuthModule('silo-auth');
@@ -44,22 +68,29 @@ const editorMgr = new GrainEditor('grain-edit', apiSvc);
 
 naviMgr.addEventListener(EVENT_INITIALIZED, () => {
 	if (authModule.isLoggedIn) {
-		naviMgr.tree.expandAll();
-		processParameters();
+		loadLoggedInState();
 	}
 });
-naviMgr.addEventListener(EVENT_NODE_SELECTED, async (event) => {
+naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
 	const node = event.detail.node || event.detail.data;
-	editorMgr.buildEditor(await apiSvc.getGrain((node.dataAttr || {}).grain));
+	Task.now("Loading grain editor", (done, error) => {
+		apiSvc.getGrain((node.dataAttr || {}).grain)
+		.then((grain) => {
+			editorMgr.buildEditor(grain)
+			.then(done)
+			.catch(error);
+		})
+		.catch(error);
+	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 });
+
 editorMgr.addChangeListener((grain) => {
 	naviMgr.updateNode(grain);
 });
 
 authModule.addEventListener('silo-auth:login', () => {
 	langSelector.populate();
-	naviMgr.tree.expandAll();
-	processParameters();
+	loadLoggedInState();
 });
 authModule.addEventListener('silo-auth:logout', () => {
 	apiSvc.invalidateCurrentRoles();
@@ -70,8 +101,12 @@ authModule.addEventListener('silo-auth:beforelogout', (evt) => {
 	if (editorMgr.dirty) {
 		evt.preventDefault();
 		evt.returnValue = false;
-		editorMgr.unloadEditor().then(() => {
+		const doLogout = () => {
 			authModule.logout();
+		};
+		editorMgr.unloadEditor().then(doLogout).catch(reason => {
+			console.warn(reason);
+			doLogout();
 		});
 	}
 });
