@@ -123,6 +123,10 @@ export class MsgBox {
 		});
 	}
 
+	static invokeErr(text) {
+		return MsgBox.invoke(text, { icon: 'danger', buttons: { ok: true } });
+	}
+
 	#onAction(id) {
 		this.#result = id;
 		this.modal.hide();
