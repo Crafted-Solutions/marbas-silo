@@ -19,12 +19,6 @@ const taskLayer = new TaskLayer((evt) => {
 	}
 });
 
-document.addEventListener(Task.Event.ERROR, (evt) => {
-	if (!evt.defaultPrevented) {
-		MsgBox.invokeErr(`Unexpected error occured in task "${evt.detail.task.name}": ${evt.detail.payload}`);
-	}
-});
-
 const processParameters = () => {
 	if (window.location.search) {
 		const params = new URLSearchParams(window.location.search);

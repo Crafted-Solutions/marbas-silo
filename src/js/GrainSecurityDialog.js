@@ -7,6 +7,7 @@ import { Task } from "./Task";
 
 const UuidRegExp = /[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}/g;
 const AccessFlagMax = 'Full';
+const LoadTaskName = "Reading grain security";
 
 export class GrainSecurityDialog extends _Dialog {
 	#grain;
@@ -26,6 +27,11 @@ export class GrainSecurityDialog extends _Dialog {
 		this.#apiSvs = apiSvc;
 		this.#aclHeadElm = this._element.querySelector(`#${this._scope}-aclhead`);
 		this.#aclBodyElm = this._element.querySelector(`#${this._scope}-acl tbody`);
+		document.addEventListener(Task.Event.ERROR, (evt) => {
+			if (LoadTaskName == evt.detail.task.name) {
+				this.modal.hide();
+			}
+		});
 	}
 
 	get modifiedEntries() {
@@ -54,7 +60,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	async _load(grainId) {
-		Task.nowAsync("Reading grain security", async () => {
+		Task.nowAsync(LoadTaskName, async () => {
 			if (grainId) {
 				this.#grain = await this.#apiSvs.getGrain(grainId);
 			}
