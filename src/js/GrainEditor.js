@@ -7,6 +7,7 @@ import { MarBasDefaults, MarBasGrainAccessFlag } from "../conf/marbas.conf";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
+import { MbDomUtils } from "./MbDomUtils";
 
 JSONEditor.defaults.options.theme = 'bootstrap5';
 JSONEditor.defaults.options.iconlib = 'bootstrap';
@@ -377,40 +378,46 @@ export class GrainEditor {
 	}
 
 	onEditorReady() {
-		this.#dateFields.forEach((key) => {
-			const sub = this.editor.getEditor(key);
-			if (sub && sub.getValue()) {
-				sub.setValueToInputField(new Date(sub.getValue()).toLocaleString());
-			}
-		});
-		this.#createActions();
-
-		Object.keys(this.editor.editors).forEach(key => {
-			const sub = this.editor.getEditor(key);
-			if (!sub) {
-				return;
-			}
-			const pathLen = (key.match(/\./g) || []).length;
-			if (2 > pathLen && sub.schema.readonly) {
-				// WA for JE bug ignoring readonly on objects
-				sub.disable();
-			} else if (2 == pathLen && !key.startsWith('root._sys')) {
-				this.#addEditorListener(key);
-			}
-		});
-
-		this.editor.on('change', this.#changeCb);
-		this.editor.on('addRow', this.#addRowCb);
-
-		this.updateIcon();
-
-		this.#createFieldActions();
-		this.#resolveSchemaLabels(this.editor.schema);
-		this.#checkEmbeddedMedia();
-		this.#resolveGlobalLabels();
-		this.#renderFieldComments();
-
-		this.#updateSessionLinks();
+		try {
+			this.#dateFields.forEach((key) => {
+				const sub = this.editor.getEditor(key);
+				if (sub && sub.getValue()) {
+					sub.setValueToInputField(new Date(sub.getValue()).toLocaleString());
+				}
+			});
+			this.#createActions();
+	
+			Object.keys(this.editor.editors).forEach(key => {
+				const sub = this.editor.getEditor(key);
+				if (!sub) {
+					return;
+				}
+				const pathLen = (key.match(/\./g) || []).length;
+				if (2 > pathLen && sub.schema.readonly) {
+					// WA for JE bug ignoring readonly on objects
+					sub.disable();
+				} else if (2 == pathLen && !key.startsWith('root._sys')) {
+					this.#addEditorListener(key);
+				}
+			});
+	
+			this.editor.on('change', this.#changeCb);
+			this.editor.on('addRow', this.#addRowCb);
+	
+			this.updateIcon();
+	
+			this.#createFieldActions();
+			this.#resolveSchemaLabels(this.editor.schema);
+			this.#checkEmbeddedMedia();
+			this.#resolveGlobalLabels();
+			this.#renderFieldComments();
+	
+			this.#updateSessionLinks();
+	
+		} catch (e) {
+			console.error(e);
+			MsgBox.invokeErr(`Error setting up editor: ${e.message}`);
+		}
 	}
 
 	updateIcon() {
@@ -554,6 +561,7 @@ export class GrainEditor {
 							this.#setDirty();
 							this.#markTraitChange(schemaPath);
 						}
+						MbDomUtils.updateSessionLinks(sub.element);
 						this.#resolveEditorLabel(sub);
 					};
 					lbl.insertBefore(btn, lbl.firstChild);
@@ -573,6 +581,7 @@ export class GrainEditor {
 								this.#setDirty();
 								this.#markTraitChange(schemaPath);
 							}
+							MbDomUtils.updateSessionLinks(sub.element);
 							this.#resolveEditorLabel(sub);
 							this.#checkEmbeddedMedia(sub);
 						}
@@ -629,7 +638,7 @@ export class GrainEditor {
 						elm.src = objUrl;	
 					}
 				})
-				.catch(error => { console.warn(error) });
+				.catch(console.warn);
 			}
 		});
 	}
@@ -734,16 +743,24 @@ export class GrainEditor {
 			}
 
 			sections[secKey].properties[prop.id] = propSchema;
-			this.#apiSvc.getGrainPermission(prop, MarBasGrainAccessFlag.WriteTraits).then(res => {
-				if (!res) {
-					propSchema.readonly = true;
-					propSchema._fieldReadonly = true;
-					const sub = this.editor.getEditor(`root.${secKey}.${prop.id}`);
-					if (sub) {
-						sub.disable();
-					}
+			const disableProp = () => {
+				propSchema.readonly = true;
+				propSchema._fieldReadonly = true;
+				const sub = this.editor.getEditor(`root.${secKey}.${prop.id}`);
+				if (sub) {
+					sub.disable();
 				}
-			});
+			};
+			this.#apiSvc.getGrainPermission(prop, MarBasGrainAccessFlag.WriteTraits)
+				.then(res => {
+					if (!res) {
+						disableProp();
+					}
+				})
+				.catch((reason) => {
+					console.warn(reason);
+					disableProp();
+				});
 		});
 		// console.log('sections', sections);
 		result.properties = merge({}, result.properties, sections);
@@ -777,35 +794,31 @@ export class GrainEditor {
 	}
 
 	#updateSessionLinks() {
-		const sessionLinks = this.editor.element.querySelectorAll('.mb-session-link');
-		sessionLinks.forEach((link) => {
-			link.classList.remove('mb-session-link');
-			link.onclick = () => {
-				const params = new URL(link.href).searchParams;
-				if (params.get('grain')) {
-					const evt = new CustomEvent('mb-silo:navigate', {detail: params.get('grain')});
-					document.dispatchEvent(evt);
-				}
-				return false;
-			};
-		});
+		MbDomUtils.updateSessionLinks(this.editor.element);
 	}
 
 	#resolveSchemaLabels(schema) {
 		for (const r in this.#labelResolvers) {
-			this.#labelResolvers[r].then(label => {
-				const text = schema._useTitle ? `${schema._useTitle} (${label})` : label;
-				schema.properties[r].title = text;
-				if (this.editor.ready) {
-					const sub = this.editor.getEditor(`root.${r}`);
-					if (sub) {
-						//sub.schema.title = label;
-						sub.header_text = text;
-						sub.updateHeaderText();
-						delete this.#labelResolvers[r];
+			this.#labelResolvers[r]
+				.then(label => {
+					let text = label;
+					if (schema._useTitle) {
+						text = text ? `${schema._useTitle} (${text})` : schema._useTitle;
 					}
-				}
-			});
+					if (text) {
+						schema.properties[r].title = text;
+						if (this.editor.ready) {
+							const sub = this.editor.getEditor(`root.${r}`);
+							if (sub) {
+								//sub.schema.title = label;
+								sub.header_text = text;
+								sub.updateHeaderText();
+								delete this.#labelResolvers[r];
+							}
+						}	
+					}
+				})
+				.catch(console.warn);
 		}
 	}
 
@@ -824,7 +837,7 @@ export class GrainEditor {
 					// editor.schema.title = label;
 					editor.header_text = editor.schema._useTitle ? `${editor.schema._useTitle} (${label})` : label;
 					editor.updateHeaderText();
-				});	
+				}).catch(console.warn);	
 			} else {
 				editor.header_text = editor.schema._useTitle || editor.schema.title;
 				editor.updateHeaderText();

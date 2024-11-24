@@ -1,4 +1,5 @@
 import { MarBasDefaults } from "../conf/marbas.conf";
+import { MbDomUtils } from "./MbDomUtils";
 
 const SESSIONKEY_TOKEN = 'mbSiloToken';
 const SESSIONKEY_URL = 'mbSiloBrokeUrl';
@@ -49,8 +50,8 @@ export class AuthModule {
 		this.#element.querySelector('#silo-auth-txt-user').value = '';
 		this.#element.querySelector('#silo-auth-txt-pwd').value = '';
 
-		document.querySelectorAll('.silo-auth').forEach(x => x.classList.toggle('d-none', true));
-		document.querySelectorAll('.silo-noauth').forEach(x => x.classList.toggle('d-none', false));
+		document.querySelectorAll('.silo-auth').forEach(x => MbDomUtils.hideNode(x));
+		document.querySelectorAll('.silo-noauth').forEach(x => MbDomUtils.hideNode(x, false));
 		this.#triggerEvent('silo-auth:logout');
 	}
 
@@ -141,8 +142,8 @@ export class AuthModule {
 		document.getElementById('silo-auth-info-system').textContent = `${info.brokerName} ${info.brokerVersion}`;
 		document.getElementById('silo-auth-info-user').textContent = info.user;
 
-		document.querySelectorAll('.silo-auth').forEach(x => x.classList.toggle('d-none', false));
-		document.querySelectorAll('.silo-noauth').forEach(x => x.classList.toggle('d-none', true));
+		document.querySelectorAll('.silo-auth').forEach(x => MbDomUtils.hideNode(x, false));
+		document.querySelectorAll('.silo-noauth').forEach(x => MbDomUtils.hideNode(x));
 	}
 
 	#triggerEvent(evtType, cancelable = false) {

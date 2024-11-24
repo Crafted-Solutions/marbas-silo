@@ -17,8 +17,9 @@ module.exports = (env) => {
 		devServer: {
 			static: './dist',
 			port: 5500,
-			watchFiles: ['src/**/*.hbs']
+			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css']
 		},
+		devtool: "eval-cheap-source-map",
 		resolve: {
 			alias: {
 				AuthModule: path.resolve(__dirname, `src/js/${authModule}.js`)

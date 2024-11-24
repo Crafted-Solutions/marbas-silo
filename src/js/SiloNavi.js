@@ -1,17 +1,19 @@
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
-import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag } from "../conf/marbas.conf";
+import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "../conf/marbas.conf";
 import { GrainNewDialog } from "./GrainNewDialog";
 import { SiloTree } from "./SiloTree";
 import { BsContextDropdown } from "./BsContextDropdown";
 import { FileNewDialog } from "./FileNewDialog";
 import { InputDialog } from "./InputDialog";
 import { MsgBox } from "./MsgBox";
+import { GrainSecurityDialog } from "./GrainSecurityDialog";
 
 export class SiloNavi extends SiloTree {
 
 	#grainNewDlg;
 	#fileNewDlg;
+	#securityDlg;
 	#clipboard = {};
 
 	constructor(elementId, apiSvc, rootNodes, initCallback = null) {
@@ -89,6 +91,48 @@ export class SiloNavi extends SiloTree {
 		}
 	}
 
+	async editNodeSecurity(grainOrId) {
+		if (!this.#securityDlg) {
+			this.#securityDlg = new GrainSecurityDialog(this._apiSvc);
+			this.#securityDlg.addEventListener('hidden.bs.modal', async () => {
+				if (this.#securityDlg.accepted) {
+					let mod = false;
+					for (const k in this.#securityDlg.addedEntries) {
+						const entry = this.#securityDlg.addedEntries[k];
+						try {
+							await this._apiSvc.createAclEntry(entry);
+							mod = true;
+						} catch (e) {
+							console.error(e);
+						}
+					}
+					for (const k in this.#securityDlg.deletedEntries) {
+						const entry = this.#securityDlg.deletedEntries[k];
+						try {
+							await this._apiSvc.deleteAclEntry(entry.grainId, entry.roleId);
+							mod = true;
+						} catch (e) {
+							console.error(e);
+						}
+					}
+					for (const k in this.#securityDlg.modifiedEntries) {
+						const entry = this.#securityDlg.modifiedEntries[k];
+						try {
+							await this._apiSvc.storeAclEntry(entry);
+							mod = true;
+						} catch (e) {
+							console.error(e);
+						}
+					}
+					if (mod) {
+						await this.reloadNode(grainOrId);
+					}
+				}
+			});
+		}
+		this.#securityDlg.show(grainOrId);
+	}
+
 	async addNodeToClipboard(grainOrId, operation = 'copy') {
 		const id = grainOrId.id || grainOrId;
 		await this.clearClipboard();
@@ -138,9 +182,8 @@ export class SiloNavi extends SiloTree {
 		let parent = this._getNodeByGrain(grain.parentId);
 
 		const result = new Promise((resolve) => {
-			const expandListener = (evt) => {
+			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
 				if (evt.detail.node == parent) {
-					this._element.removeEventListener(EVENT_NODE_EXPANDED, expandListener);
 					if (!node) {
 						node = this._getNodeByGrain(grain);
 					}
@@ -150,20 +193,24 @@ export class SiloNavi extends SiloTree {
 					}
 					resolve(node);
 				}
-			};
-			this._element.addEventListener(EVENT_NODE_EXPANDED, expandListener);	
+			}, { once: true });	
 
 			if (node) {
 				this.tree.revealNode(node);
 				node.setSelected(true);
 				resolve(node);
 			} else {
-				this.reloadNode(grain.parentId, false).then(n => {
-					parent = n;
-					this.tree.expandNode(parent);
-				});
+				this.reloadNode(grain.parentId, false)
+					.then(n => {
+						parent = n;
+						this.tree.expandNode(parent);
+					})
+					.catch(reason => {
+						console.error(reason);
+						MsgBox.invokeErr(`Failed to reload ${grain.parentId} due to: ${reason}`);
+					});
 			}
-			});
+		});
 
 		return await result;
 	}
@@ -231,13 +278,11 @@ export class SiloNavi extends SiloTree {
 				resolve(node);
 				return;
 			}
-			const expandListener = (evt) => {
+			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
 				if (evt.detail.node == node) {
-					this._element.removeEventListener(EVENT_NODE_EXPANDED, expandListener);
 					resolve(evt.detail.node);
 				}
-			};
-			this._element.addEventListener(EVENT_NODE_EXPANDED, expandListener);	
+			}, { once: true });	
 		});
 		this.tree.expandNode(node);
 		return await result;
@@ -309,37 +354,64 @@ export class SiloNavi extends SiloTree {
 				this.deleteNode(grainId);
 			}
 		});
+		this.ctxMnu.addCmdListener('cmdSecurity', (evt) => {
+			const grainId = this._getGrainIdFor(evt);
+			if (grainId) {
+				this.editNodeSecurity(grainId);
+			}
+		});
 	}
 
 	async #onContextMenu(evt) {
 		const grainId = this._getGrainIdFor(evt.menuEvent);
 		if (grainId) {
-			const grain = await this._apiSvc.getGrain(grainId);
-			const isContainer = await this._apiSvc.isGrainInstanceOf(grain, MarBasDefaults.ID_TYPE_CONTAINER);
-			['cmdDelete', 'cmdNew', 'cmdNewContainer', 'cmdNewFile', 'cmdNewType', 'cmdCut', 'cmdCopy', 'cmdPaste', 'cmdRename'].forEach(async x => {
-				let enable = 'cmdNewContainer' == x || MarBasDefaults.ID_ROOT != grainId;
-				if (enable && 'cmdPaste' == x) {
-					enable = this.hasClipboardContent();
-				}
-				if (enable && ('cmdNewType' == x)) {
-					enable = grain.path.startsWith('marbas/Schema') && isContainer;
-				}
-				if (enable && 'cmdNewFile' == x) {
-					enable = grain.path.startsWith('marbas/Files') && isContainer;
-				}
-				if (enable && ('cmdPaste' == x || x.startsWith('cmdNew'))) {
-					enable = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
-				}
-				if (enable && 'cmdRename' == x) {
-					enable = '__defaults__' != grain.name && MarBasDefaults.ID_SCHEMA != grain.id && MarBasDefaults.ID_FILES != grain.id && MarBasDefaults.ID_CONTENT != grain.id
-						&& await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Write); 
-				}
-				if (enable && ('cmdDelete' == x || 'cmdCut' == x)) {
-					enable = -1 == MarBasBuiltIns.indexOf(grainId) && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Delete);
-				}
-				this.ctxMnu.enableCmd(x, enable);
-			});
-			this.ctxMnu.enableCmd('cmdClearCbrd', this.hasClipboardContent());
+			const opCmds = ['cmdDelete', 'cmdNew', 'cmdNewContainer', 'cmdNewFile', 'cmdNewType', 'cmdCut', 'cmdCopy', 'cmdPaste', 'cmdRename'];
+			try {
+				const grain = await this._apiSvc.getGrain(grainId);
+				const isRoot = MarBasDefaults.ID_ROOT == grainId;
+				const isContainer = isRoot || await this._apiSvc.isGrainInstanceOf(grain, MarBasDefaults.ID_TYPE_CONTAINER);
+				const isInSchema = !isRoot && (grain.id == MarBasDefaults.ID_SCHEMA || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_SCHEMA));
+				const isInFiles = !isRoot && !isInSchema && (grain.id == MarBasDefaults.ID_FILES || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_FILES));
+				const isInTrash = !isRoot && (grain.id == MarBasDefaults.ID_TRASH_CONTENT || grain.id == MarBasDefaults.ID_TRASH_SCHEMA
+					|| await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_TRASH_CONTENT) || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_TRASH_SCHEMA));
+				opCmds.forEach(async x => {
+					let enable = 'cmdNewContainer' == x || !isRoot;
+					try {
+						if (enable && 'cmdPaste' == x) {
+							enable = this.hasClipboardContent();
+						}
+						if (enable && ('cmdNewType' == x)) {
+							enable = isContainer && isInSchema;
+						}
+						if (enable && 'cmdNewFile' == x) {
+							enable = isContainer && isInFiles;
+						}
+						if (enable && x.startsWith('cmdNew') && 'cmdNewContainer' != x) {
+							enable = !isInTrash;
+						}
+						if (enable && ('cmdPaste' == x || x.startsWith('cmdNew'))) {
+							enable = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
+						}
+						if (enable && 'cmdRename' == x) {
+							enable = '__defaults__' != grain.name && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Write); 
+						}
+						if (enable && ('cmdDelete' == x || 'cmdCut' == x)) {
+							enable = -1 == MarBasBuiltIns.indexOf(grainId) && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Delete);
+						}	
+					} catch (e) {
+						console.warn(`Error initiazing menu item`, x, e);
+						enable = false;	
+					}
+					this.ctxMnu.enableCmd(x, enable);
+				});
+
+				this.ctxMnu.enableCmd('cmdClearCbrd', this.hasClipboardContent());
+				this.ctxMnu.enableCmd('cmdSecurity', await this._apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadAcl));
+		
+			} catch (e) {
+				console.warn(`Error initiazing menu`, e);
+				opCmds.forEach(x => x.enableCmd(x , false));
+			}
 		}
 	}
 }

@@ -2,6 +2,7 @@ export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.13',
 	MinAPIVersion: '0.1.15.1',
 	LANG: 'en',
+	ID_DEFAULT: '00000000-0000-1000-a000-000000000000',
 	ID_ROOT: '00000000-0000-1000-a000-000000000001',
 	ID_CONTENT: '00000000-0000-1000-a000-000000000006',
 	ID_SCHEMA: '00000000-0000-1000-a000-000000000002',
@@ -33,3 +34,19 @@ export const MarBasGrainAccessFlag = {
 	TransferOwnership: 0x400,
 	Full: 0xffffffff
 };
+
+export const MarBasRoleEntitlement = {
+	None: 0x0,
+	ReadAcl: 0x001,
+	WriteAcl: 0x002,
+	DeleteAcl: 0x004,
+	ReadRoles: 0x010,
+	WriteRoles: 0x020,
+	DeleteRoles: 0x040,
+	ExportSchema: 0x100,
+	ImportSchema: 0x200,
+	ModifySystemSettings: 0x1000,
+	SkipPermissionCheck: 0x2000,
+	DeleteBuiltInElements: 0x3000,
+	Full: 0xffffffff
+}
