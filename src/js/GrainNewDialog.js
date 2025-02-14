@@ -1,5 +1,5 @@
 import { SiloTree } from "./SiloTree";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 import { IconMaps } from "../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
 import { MbDomUtils } from "./MbDomUtils";
@@ -43,7 +43,7 @@ export class GrainNewDialog extends _NewDialog {
 	async _load(parentGrainId) {
 		await super._load(parentGrainId);
 		if (!this.typeSelector) {
-			this.typeSelector = new SiloTree(`${this._scope}-sel-type`, this._apiSvc,  [{
+			this.typeSelector = new SiloTree(`${this._scope}-sel-type`, this._apiSvc, [{
 				text: "Schema",
 				lazyLoad: true,
 				icon: IconMaps.ById[MarBasDefaults.ID_SCHEMA],
@@ -53,7 +53,7 @@ export class GrainNewDialog extends _NewDialog {
 				},
 				state: {
 					expanded: false
-				}				
+				}
 			}], () => {
 				this.typeSelector.tree.expandAll();
 			}, {

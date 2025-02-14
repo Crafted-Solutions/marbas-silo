@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "./marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 
 export const EditorSchemaConfig = {
 	BASIC: {
@@ -180,7 +180,7 @@ export const EditorSchemaConfig = {
 			rel: "Open (new window)",
 			download: true,
 			'class': 'mb-grain-file'
-		}, 	{
+		}, {
 			rel: "Go to file",
 			href: "?grain={{self}}",
 			'class': 'mb-session-link'

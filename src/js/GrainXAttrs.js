@@ -1,9 +1,9 @@
 import merge from "lodash.merge";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 import { IconMaps } from "../conf/icons.conf";
 
 export const GrainXAttrs = {
-	getAttr: function(grain, attrName) {
+	getAttr: function (grain, attrName) {
 		if (!grain._siloAttrs) {
 			grain._siloAttrs = {};
 			if (grain.typeXAttrs) {
@@ -15,7 +15,7 @@ export const GrainXAttrs = {
 		}
 		return grain._siloAttrs[attrName];
 	},
-	setAttr: function(grain, attrName, attrVal) {
+	setAttr: function (grain, attrName, attrVal) {
 		if (!grain._siloAttrs) {
 			grain._siloAttrs = {};
 		}
@@ -27,9 +27,9 @@ export const GrainXAttrs = {
 		}
 		return attrVal;
 	},
-	getGrainIcon: function(grain) {
+	getGrainIcon: function (grain) {
 		const icon = this.getAttr(grain, 'icon') || IconMaps.ById[grain.id] || IconMaps.ByType[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
-		grain.icon = icon || 'bi-file';	
+		grain.icon = icon || 'bi-file';
 		return grain.icon;
 	},
 	setGrainIcon(grain, icon) {

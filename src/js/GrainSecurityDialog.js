@@ -1,6 +1,5 @@
 import startCase from "lodash.startcase";
-import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "../conf/marbas.conf";
-import { MbUtils } from "./MbUtils";
+import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement, MbUtils } from "@crafted-solutions/marbas-core";
 import { _Dialog } from "./_Dialog";
 import { MbDomUtils } from "./MbDomUtils";
 import { Task } from "./Task";
@@ -64,15 +63,15 @@ export class GrainSecurityDialog extends _Dialog {
 			if (grainId) {
 				this.#grain = await this.#apiSvs.getGrain(grainId);
 			}
-	
-	
+
+
 			this.#grainAcl = await this.#apiSvs.getGrainAcl(grainId);
 			this.#canWrite = await this.#apiSvs.getGrainPermission(this.#grain, MarBasGrainAccessFlag.ModifyAcl);
 			this.#canWrite = this.#canWrite && await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.WriteAcl);
 			this.#canDelete = this.#canWrite && (await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.DeleteAcl));
 			await this.#loadRoles();
 			this.#buildAclTable();
-			
+
 			this._element.querySelector(`#${this._scope}-subtitle`).textContent = `${this.#grain ? this.#grain.path : grainId}`;
 		});
 	}
@@ -142,7 +141,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 		const rowtpl = this._getTemplate('aclentry', 'tr');
 		const flagRwTpl = this._getTemplate('aclflag-rw', 'td');
-		
+
 		const tr = rowtpl.cloneNode(true);
 		tr.id = `a-${entry.grainId}-${entry.roleId}`;
 
@@ -184,7 +183,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	#getAclEntryKey(idOrElm) {
-		const id = 'string' == typeof(idOrElm) ? idOrElm : idOrElm.id;
+		const id = 'string' == typeof (idOrElm) ? idOrElm : idOrElm.id;
 		return id.match(UuidRegExp);
 	}
 
@@ -215,7 +214,7 @@ export class GrainSecurityDialog extends _Dialog {
 				const permissions = MbUtils.string2BitField(entry.permissionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax);
 				const restrictions = MbUtils.string2BitField(entry.restrictionMask, MarBasGrainAccessFlag, MarBasGrainAccessFlag.None, AccessFlagMax);
 
-				
+
 				const inheritedAcl = entry.sourceGrainId != this.#grain.id;
 				const readonly = inheritedAcl || !this.#canWrite;
 				const inheritTd = tr.querySelector(`.${this._scope}-inherit`);
@@ -229,7 +228,7 @@ export class GrainSecurityDialog extends _Dialog {
 						}
 					}
 				}
-				
+
 				for (const f in MarBasGrainAccessFlag) {
 					if (!GrainSecurityDialog.#isRelevantAccessFlag(f)) {
 						continue;
@@ -252,7 +251,7 @@ export class GrainSecurityDialog extends _Dialog {
 							flagCnt.classList.add('bi-hand-thumbs-down');
 							flagCnt.title = "Restricted";
 							flagCnt.querySelector('.mb-val').textContent = flagCnt.title;
-						}	
+						}
 					} else {
 						this.#setupAclCheck(td, entry.roleId, 'perm', f, permitted);
 						this.#setupAclCheck(td, entry.roleId, 'restr', f, restricted);
@@ -325,7 +324,7 @@ export class GrainSecurityDialog extends _Dialog {
 						link.textContent = grain.label;
 						MbDomUtils.updateSessionLink(link);
 
-						td.appendChild(link);	
+						td.appendChild(link);
 					});
 				})
 				.catch((reason) => {
@@ -354,7 +353,7 @@ export class GrainSecurityDialog extends _Dialog {
 						this.#onAclEntryAdd(role.id);
 					};
 					actionCnt.appendChild(action);
-					hasRoles = true;	
+					hasRoles = true;
 				}
 			});
 		}
