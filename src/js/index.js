@@ -2,16 +2,15 @@ import "../scss/index.scss";
 import { EVENT_INITIALIZED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { AuthModule } from "AuthModule";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults, DataBrokerAPI } from "@crafted-solutions/marbas-core";
 import { GrainEditor } from "./GrainEditor";
 import { SiloNavi } from "./SiloNavi";
-import { DataBrokerAPI } from "./DataBrokerAPI";
 import { IconMaps } from "../conf/icons.conf";
 import { LangSelector } from "./LangSelector";
 import { Task, TaskLayer } from "./Task";
 import { MsgBox } from "./MsgBox";
 
-global.NoOp = () => {};
+global.NoOp = () => { };
 
 const taskLayer = new TaskLayer((evt) => {
 	if (!evt.defaultPrevented) {
@@ -24,7 +23,7 @@ const processParameters = () => {
 		const params = new URLSearchParams(window.location.search);
 		if (params.get('grain')) {
 			window.history.replaceState({}, document.title, "/");
-			const evt = new CustomEvent('mb-silo:navigate', {detail: params.get('grain')});
+			const evt = new CustomEvent('mb-silo:navigate', { detail: params.get('grain') });
 			document.dispatchEvent(evt);
 		}
 	}
@@ -34,7 +33,7 @@ const loadLoggedInState = () => {
 	Task.now("Initializing", (done) => {
 		naviMgr.tree.expandAll();
 		processParameters();
-		done();	
+		done();
 	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 };
 
@@ -56,7 +55,7 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 	},
 	state: {
 		expanded: false
-	}				
+	}
 }]);
 const editorMgr = new GrainEditor('grain-edit', apiSvc);
 
@@ -69,12 +68,12 @@ naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
 	const node = event.detail.node || event.detail.data;
 	Task.now("Loading grain editor", (done, error) => {
 		apiSvc.getGrain((node.dataAttr || {}).grain)
-		.then((grain) => {
-			editorMgr.buildEditor(grain)
-			.then(done)
+			.then((grain) => {
+				editorMgr.buildEditor(grain)
+					.then(done)
+					.catch(error);
+			})
 			.catch(error);
-		})
-		.catch(error);
 	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 });
 

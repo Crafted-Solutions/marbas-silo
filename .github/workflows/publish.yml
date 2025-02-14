@@ -1,0 +1,65 @@
+
+name: Publish Main Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+
+jobs:
+
+  release:
+    name: Release
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+        packages: write
+        contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+        registry-url: https://npm.pkg.github.com/
+        cache: 'npm'
+
+    # - name: Verify commit exists in origin/main
+    #   run: |
+    #     git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+    #     git branch --remote --contains | grep origin/main
+
+    - name: Set VERSION variable from tag
+      shell: bash
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+
+    - name: NPM publish
+      run: npm publish --workspaces
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+    - name: Build drop-in
+      shell: bash
+      run: |
+        npm run build --workspaces --if-present
+        npm run build --if-present
+
+        tar czvf "marbas-silo-drop-in-${VERSION}.tar.gz" -C "./dist/" .
+
+    - name: Publish drop-in to GitHub
+      uses: softprops/action-gh-release@v2
+      with:
+        files: "marbas-silo-drop-in-*"
+      env:
+        GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}

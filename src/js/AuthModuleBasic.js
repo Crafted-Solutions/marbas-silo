@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 import { MbDomUtils } from "./MbDomUtils";
 
 const SESSIONKEY_TOKEN = 'mbSiloToken';
@@ -18,7 +18,7 @@ export class AuthModule {
 		};
 		if (this.isLoggedIn) {
 			this.#updateUI();
-			this.#triggerEvent('silo-auth:login');	
+			this.#triggerEvent('silo-auth:login');
 		}
 	}
 
@@ -83,35 +83,35 @@ export class AuthModule {
 				Authorization: `${this.authType} ${token}`
 			}
 		})
-		.then(res => {
-			if (res.ok) {
-				return res.json();
-			}
-			this.#reportError("Invalid user or password", `Request failed (${res.status} ${res.statusText})`);
-			this.#triggerEvent('silo-auth:failure');
-			return null;
-		})
-		.then(json => {
-			if (json) {
-				if (0 < MarBasDefaults.MinSchemaVersion.localeCompare(json.schemaVersion, undefined, {numeric: true, sensitivity: 'base'})) {
-					this.#reportError(`Incompatible schema version: ${json.schemaVersion} (${MarBasDefaults.MinSchemaVersion} is expected)`);
-					return;
+			.then(res => {
+				if (res.ok) {
+					return res.json();
 				}
-				if (0 < MarBasDefaults.MinAPIVersion.localeCompare(json.version, undefined, {numeric: true, sensitivity: 'base'})) {
-					this.#reportError(`Incompatible API version: ${json.version} (${MarBasDefaults.MinAPIVersion} is expected)`);
-					return;
-				}
-				this.#writeStorage(token, url, user.value, json);
-				this.#updateUI();
+				this.#reportError("Invalid user or password", `Request failed (${res.status} ${res.statusText})`);
+				this.#triggerEvent('silo-auth:failure');
+				return null;
+			})
+			.then(json => {
+				if (json) {
+					if (0 < MarBasDefaults.MinSchemaVersion.localeCompare(json.schemaVersion, undefined, { numeric: true, sensitivity: 'base' })) {
+						this.#reportError(`Incompatible schema version: ${json.schemaVersion} (${MarBasDefaults.MinSchemaVersion} is expected)`);
+						return;
+					}
+					if (0 < MarBasDefaults.MinAPIVersion.localeCompare(json.version, undefined, { numeric: true, sensitivity: 'base' })) {
+						this.#reportError(`Incompatible API version: ${json.version} (${MarBasDefaults.MinAPIVersion} is expected)`);
+						return;
+					}
+					this.#writeStorage(token, url, user.value, json);
+					this.#updateUI();
 
-				user.value = '';
-				pw.value = '';
-				this.#triggerEvent('silo-auth:login');	
-			}
-		})
-		.catch(error => {
-			this.#reportError("Error occured", error);
-		});
+					user.value = '';
+					pw.value = '';
+					this.#triggerEvent('silo-auth:login');
+				}
+			})
+			.catch(error => {
+				this.#reportError("Error occured", error);
+			});
 
 		return true;
 	}
@@ -119,7 +119,7 @@ export class AuthModule {
 	#writeStorage(token, url, user, sysinfo) {
 		sessionStorage.setItem(SESSIONKEY_TOKEN, token);
 		sessionStorage.setItem(SESSIONKEY_URL, url);
-		sessionStorage.setItem(SESSIONKEY_INFO, JSON.stringify({user: user, brokerName: sysinfo.name, brokerVersion: sysinfo.version}));
+		sessionStorage.setItem(SESSIONKEY_INFO, JSON.stringify({ user: user, brokerName: sysinfo.name, brokerVersion: sysinfo.version }));
 	}
 
 	#clearStorage() {

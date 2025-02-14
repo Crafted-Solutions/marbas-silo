@@ -1,15 +1,15 @@
 
 import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/module/lib/BSTreeViewTemplate"
-(function() {
+(function () {
 	const origNode = BSTreeViewTemplate.node;
 	origNode.setAttribute('tabindex', '0');
 	BSTreeViewTemplate.node = origNode;
 })();
-import {BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED} from "@jbtronics/bs-treeview";
+import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED } from "@jbtronics/bs-treeview";
 
 import { GrainXAttrs } from "./GrainXAttrs";
 import { Task } from "./Task";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 
 export class SiloTree {
 	_element;
@@ -59,7 +59,7 @@ export class SiloTree {
 		});
 		this._element.addEventListener('focusin', (evt) => {
 			if (evt.target && evt.target.classList.contains(`node-${this._element.id}`)) {
-				this._focusedNode = evt.target;				
+				this._focusedNode = evt.target;
 			}
 		});
 		this._element.addEventListener('focusout', (evt) => {
@@ -117,7 +117,7 @@ export class SiloTree {
 		const node = this._getNodeByGrain(id);
 		if (node) {
 			await this._apiSvc.invalidateGrain(grainOrId, true);
-			
+
 			const wasSelected = restoreSelection && node.state && node.state.selected;
 			const grain = await this._apiSvc.getGrain(id, true);
 			const data = await this._getNodeProperties(grain);
@@ -134,7 +134,7 @@ export class SiloTree {
 				this.tree.selectNode(updated);
 			}
 			return updated;
-		}	
+		}
 	}
 
 	async _loadNodeChildren(node, renderer) {
@@ -154,7 +154,7 @@ export class SiloTree {
 					this.tree.updateNode(node, node);
 				}
 			}
-			this._restoreFocus();	
+			this._restoreFocus();
 		}, flags);
 	}
 
@@ -233,7 +233,7 @@ export class SiloTree {
 	_expandActiveNode() {
 		const active = this._getActiveNodes();
 		if (active.length) {
-			this.tree.expandNode(active, {levels: 1});
+			this.tree.expandNode(active, { levels: 1 });
 		}
 	}
 
@@ -263,7 +263,7 @@ export class SiloTree {
 	}
 
 	_moveNodeFocus(direction) {
-		const candidates = {orig: null, focus: null};
+		const candidates = { orig: null, focus: null };
 		const elms = this._element.querySelectorAll(`.node-${this._element.id}`);
 		elms.forEach((elm) => {
 			if (elm == this._focusedNode || (!this._focusedNode && elm.classList.contains('node-selected'))) {

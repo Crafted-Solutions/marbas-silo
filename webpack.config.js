@@ -7,7 +7,7 @@ module.exports = (env) => {
 	const mode = env.WEBPACK_SERVE ? 'development' : 'production';
 	// TODO configure something different for production
 	const authModule = 'AuthModuleBasic';
-	
+
 	return {
 		mode: mode,
 		entry: {
@@ -19,7 +19,7 @@ module.exports = (env) => {
 			port: 5500,
 			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css']
 		},
-		devtool: "eval-cheap-source-map",
+		devtool: 'production' == mode ? false : "eval-cheap-source-map",
 		resolve: {
 			alias: {
 				AuthModule: path.resolve(__dirname, `src/js/${authModule}.js`)
@@ -91,16 +91,16 @@ module.exports = (env) => {
 		},
 		optimization: {
 			minimizer: [
-			  // For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
+				// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
 				`...`,
 				new CssMinimizerPlugin({
 					parallel: true,
 					minimizerOptions: {
 						preset: [
-						  "default",
-						  {
-							discardComments: { removeAll: true }
-						  }
+							"default",
+							{
+								discardComments: { removeAll: true }
+							}
 						]
 					}
 				})

@@ -1,10 +1,8 @@
 import merge from "lodash.merge";
-import { MarBasDefaults, MarBasRoleEntitlement } from "../conf/marbas.conf";
-import { MbUtils } from "./MbUtils";
+import { MarBasDefaults, MarBasRoleEntitlement } from "../conf/marbas.conf.js";
+import { MbUtils } from "./MbUtils.js";
 
-if (!global.NoOp) {
-	global.NoOp = () => {};
-}
+const NoOp = () => { };
 
 const ExtenderAPI = {
 	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
@@ -75,14 +73,14 @@ export class DataBrokerAPI {
 			}
 			else {
 				this.getCurrentRoles()
-				.then(roles => {
-					this.#currentRoles.entitlement = MarBasRoleEntitlement.None;
-					roles.forEach(role => {
-						this.#currentRoles.entitlement = MbUtils.string2BitField(role.entitlement, MarBasRoleEntitlement, MarBasRoleEntitlement.None, 'Full');
-					});
-					resolver();
-				})
-				.catch(reject);						
+					.then(roles => {
+						this.#currentRoles.entitlement = MarBasRoleEntitlement.None;
+						roles.forEach(role => {
+							this.#currentRoles.entitlement = MbUtils.string2BitField(role.entitlement, MarBasRoleEntitlement, MarBasRoleEntitlement.None, 'Full');
+						});
+						resolver();
+					})
+					.catch(reject);
 			}
 		});
 	}
@@ -130,11 +128,11 @@ export class DataBrokerAPI {
 						label: 'Schema',
 						typeDefId: MarBasDefaults.ID_TYPE_CONTAINER
 					};
-				} 
+				}
 			});
 		result.then(grain => {
-				this.#addGrainToCache(grain);
-			}).catch(NoOp);
+			this.#addGrainToCache(grain);
+		}).catch(NoOp);
 		return result;
 	}
 
@@ -155,26 +153,26 @@ export class DataBrokerAPI {
 	deleteGrain(grain) {
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(grain, true);
-			fetch(`${this.#baseUrl}/Grain/${grain.id || grain}`, this.#applyStdFetchOptions({method: 'DELETE'}))
-			.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			})
-			.then(json => {
-				inv.then(() => {
-					resolve(json.success);
-				}).catch(() => resolve(false));
-			})
-			.catch(reject);
+			fetch(`${this.#baseUrl}/Grain/${grain.id || grain}`, this.#applyStdFetchOptions({ method: 'DELETE' }))
+				.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				})
+				.then(json => {
+					inv.then(() => {
+						resolve(json.success);
+					}).catch(() => resolve(false));
+				})
+				.catch(reject);
 		});
 	}
 
 	createGrain(parentOrId, typeOrId, name) {
 
 		const typeId = (typeOrId.id || typeOrId);
-		
+
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(parentOrId, true);
 			const data = {
@@ -194,22 +192,22 @@ export class DataBrokerAPI {
 				},
 				body: JSON.stringify(data)
 			}))
-			.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			})
-			.then(json => {
-				if (json.success) {
-					inv.then(() => {
-						resolve(this.#addGrainToCache(json.yield));	
-					}).catch(() => resolve(json.yield));
-				} else {
-					reject("API returned failure");
-				}
-			})
-			.catch(reject);
+				.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				})
+				.then(json => {
+					if (json.success) {
+						inv.then(() => {
+							resolve(this.#addGrainToCache(json.yield));
+						}).catch(() => resolve(json.yield));
+					} else {
+						reject("API returned failure");
+					}
+				})
+				.catch(reject);
 		});
 	}
 
@@ -268,7 +266,7 @@ export class DataBrokerAPI {
 						resolve(filtered.sort((a, b) => {
 							const result = (a.sortKey > b.sortKey) ? 1 : ((b.sortKey > a.sortKey) ? -1 : 0);
 							return 0 != result ? result : (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
-						}));	
+						}));
 					})
 					.catch(reject);
 			});
@@ -312,7 +310,7 @@ export class DataBrokerAPI {
 		const params = new URLSearchParams();
 		params.set('revision', grain.revision);
 		params.set('lang', this.#lang || grain.culture);
-		return this.#fetchGet(`${this.baseUrl}/Trait/Values/${grain.id}/${propDefOrId.id || propDefOrId}?${params}`);		
+		return this.#fetchGet(`${this.baseUrl}/Trait/Values/${grain.id}/${propDefOrId.id || propDefOrId}?${params}`);
 	}
 
 	storeTraitValues(grain, propDef, values) {
@@ -323,7 +321,7 @@ export class DataBrokerAPI {
 				params.set('revision', grain.revision);
 				params.set('lang', this.#lang || grain.culture);
 
-				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.#applyStdFetchOptions({method: 'DELETE'}));
+				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.#applyStdFetchOptions({ method: 'DELETE' }));
 			} else {
 				req = fetch(`${this.#baseUrl}/Trait/Values`, this.#applyStdFetchOptions({
 					method: 'POST',
@@ -345,9 +343,9 @@ export class DataBrokerAPI {
 					return res.json();
 				}
 				reject(`Request failed (${res.status} ${res.statusText})`);
-			}) .then(json => {
+			}).then(json => {
 				resolve(json.success);
-			}) .catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -360,16 +358,16 @@ export class DataBrokerAPI {
 			typeRes[grain.id] = new Promise((resolve, reject) => {
 				grain._resolved = 1;
 				this.#fetchGet(`${this.#baseUrl}/${ResolverAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || grain.typeName}/${grain.id}?lang=${this.#lang || grain.culture}`)
-				.then(value => {
-					value._resolved = 2;
-					if (value.mixInIds) {
-						value.mixInIds.forEach(typeId => {
-							this.#registerSubtype(grain.id, typeId);
-						});
-					}
-					resolve(merge(grain, value));
-				})
-				.catch(reject);
+					.then(value => {
+						value._resolved = 2;
+						if (value.mixInIds) {
+							value.mixInIds.forEach(typeId => {
+								this.#registerSubtype(grain.id, typeId);
+							});
+						}
+						resolve(merge(grain, value));
+					})
+					.catch(reject);
 			});
 			typeRes[grain.id].then((grain) => {
 				typeRes[grain.id]._fulfilled = true;
@@ -419,7 +417,7 @@ export class DataBrokerAPI {
 				}
 			}).catch(NoOp);
 		}
-		
+
 		return new Promise((resolve, reject) => {
 			Promise.all(pending).then(() => resolve(result)).catch(reject);
 		});
@@ -428,7 +426,7 @@ export class DataBrokerAPI {
 	getGrainPermission(grainOrId, desiredAccess) {
 		return new Promise((resolve, reject) => {
 			const resolver = (grain) => {
-				resolve(desiredAccess == (grain.permissions & desiredAccess)); 
+				resolve(desiredAccess == (grain.permissions & desiredAccess));
 			};
 			if (grainOrId.id) {
 				resolver(grainOrId);
@@ -457,19 +455,19 @@ export class DataBrokerAPI {
 	deleteAclEntry(grainId, roleId) {
 		const inv = this.invalidateGrain(grainId, true);
 		return new Promise((resolve, reject) => {
-			fetch(`${this.#baseUrl}/Acl/${roleId}/${grainId}`, this.#applyStdFetchOptions({method: 'DELETE'}))
-			.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			})
-			.then(json => {
-				inv.then(() => {
-					resolve(json.success);
-				}).catch(() => resolve(false));
-			})
-			.catch(reject);
+			fetch(`${this.#baseUrl}/Acl/${roleId}/${grainId}`, this.#applyStdFetchOptions({ method: 'DELETE' }))
+				.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				})
+				.then(json => {
+					inv.then(() => {
+						resolve(json.success);
+					}).catch(() => resolve(false));
+				})
+				.catch(reject);
 		});
 	}
 
@@ -582,22 +580,22 @@ export class DataBrokerAPI {
 				method: 'PUT',
 				body: formData
 			}))
-			.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			})
-			.then(json => {
-				if (json.success) {
-					inv.then(() => {
-						resolve(this.#addGrainToCache(json.yield));	
-					}).catch(() => resolve(json.yield));
-				} else {
-					reject("API reported failure");
-				}
-			})
-			.catch(reject);			
+				.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				})
+				.then(json => {
+					if (json.success) {
+						inv.then(() => {
+							resolve(this.#addGrainToCache(json.yield));
+						}).catch(() => resolve(json.yield));
+					} else {
+						reject("API reported failure");
+					}
+				})
+				.catch(reject);
 		});
 	}
 
@@ -610,24 +608,24 @@ export class DataBrokerAPI {
 				method: 'POST',
 				body: data
 			}))
-			.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			})
-			.then(json => {
-				if (json.success) {
-					resolve(json.yield);
-				} else {
-					reject("API reported failure");
-				}
-			})
-			.catch(reject);
+				.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				})
+				.then(json => {
+					if (json.success) {
+						resolve(json.yield);
+					} else {
+						reject("API reported failure");
+					}
+				})
+				.catch(reject);
 		});
 	}
 
-	loadBlob(url, acceptType = /.*/, maxSize = 10*1024*1024) {
+	loadBlob(url, acceptType = /.*/, maxSize = 10 * 1024 * 1024) {
 		return new Promise((resolve, reject) => {
 			if (-1 < this.#rejects.indexOf(url)) {
 				reject(`Response from ${url} doesn't match criteria`);
@@ -645,7 +643,7 @@ export class DataBrokerAPI {
 						}
 						return res.blob();
 					}
-					
+
 					reject(`Request to ${url} failed (${res.status} ${res.statusText})`);
 					return null;
 				})
@@ -655,7 +653,7 @@ export class DataBrokerAPI {
 					}
 				})
 				.catch(reject);
-		});	
+		});
 	}
 
 	#addGrainToCache(grain) {

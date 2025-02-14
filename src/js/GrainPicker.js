@@ -1,7 +1,7 @@
 import { Modal } from "bootstrap";
 
 import { SiloTree } from "./SiloTree";
-import { MarBasDefaults } from "../conf/marbas.conf";
+import { MarBasDefaults } from "@crafted-solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
 
 export class GrainPicker {
@@ -80,14 +80,13 @@ export class GrainPicker {
 			}
 		}
 		if (this.grainSelector) {
-			if (newRoot || this.grainSelector._options.typeFilter != typeFilter || this.grainSelector._options.selectableTypes != selectionFilter)
-			{
+			if (newRoot || this.grainSelector._options.typeFilter != typeFilter || this.grainSelector._options.selectableTypes != selectionFilter) {
 				this.grainSelector._options.typeFilter = typeFilter;
 				this.grainSelector._options.selectableTypes = selectionFilter;
-				this.grainSelector.reloadNode(this.#rootGrain);	
+				this.grainSelector.reloadNode(this.#rootGrain);
 			}
 		} else {
-			this.grainSelector = new SiloTree('grain-picker-sel', this.#apiSvc,  [{
+			this.grainSelector = new SiloTree('grain-picker-sel', this.#apiSvc, [{
 				text: this.#rootGrain.label,
 				lazyLoad: true,
 				icon: GrainXAttrs.getGrainIcon(this.#rootGrain),
@@ -103,7 +102,7 @@ export class GrainPicker {
 			}, {
 				selectableTypes: selectionFilter,
 				typeFilter: typeFilter
-			});			
+			});
 		}
 	}
 
@@ -113,7 +112,7 @@ export class GrainPicker {
 		if (!form.checkValidity() || !this.selectedGrain) {
 			return;
 		}
-		
+
 		this.#accepted = true;
 		this.modal.hide();
 	}
