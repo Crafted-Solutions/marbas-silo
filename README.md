@@ -1,7 +1,7 @@
 # marbas-silo
 ![Tool](https://img.shields.io/badge/Node.js-18,20,22-lightblue?logo=nodedotjs&logoColor=white) [<img src="https://img.shields.io/github/v/release/Crafted-Solutions/marbas-silo" title="Latest">](/Crafted-Solutions/marbas-silo/releases)
 
-Schema and content management client for [MarBas databroker](/Crafted-Solutions/marbas-databroker).
+Schema and content management client for [MarBas Databroker](/Crafted-Solutions/marbas-databroker).
 
 ![Main Workspace](doc/screenshots/workspace.png)
 
