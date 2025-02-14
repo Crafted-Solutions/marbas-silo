@@ -1,6 +1,6 @@
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
-import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "../conf/marbas.conf";
+import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted-solutions/marbas-core";
 import { GrainNewDialog } from "./GrainNewDialog";
 import { SiloTree } from "./SiloTree";
 import { BsContextDropdown } from "./BsContextDropdown";
@@ -33,13 +33,13 @@ export class SiloNavi extends SiloTree {
 
 	async deleteNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
-		if (node && 'yes' == await MsgBox.invoke(`Delete ${node.text}?`, {icon: 'primary', buttons: { 'yes': true, 'no': true }})) {
+		if (node && 'yes' == await MsgBox.invoke(`Delete ${node.text}?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
 			const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
 			this.tree.removeNode(node);
 			if (parents.length) {
 				this.tree.selectNode(parents);
 			}
-			await this._apiSvc.deleteGrain(grainOrId.id || grainOrId);	
+			await this._apiSvc.deleteGrain(grainOrId.id || grainOrId);
 			document.dispatchEvent(new CustomEvent('mb-silo:grain-deleted', {
 				detail: grainOrId.id || grainOrId
 			}));
@@ -193,7 +193,7 @@ export class SiloNavi extends SiloTree {
 					}
 					resolve(node);
 				}
-			}, { once: true });	
+			}, { once: true });
 
 			if (node) {
 				this.tree.revealNode(node);
@@ -232,7 +232,7 @@ export class SiloNavi extends SiloTree {
 
 			let c = 0;
 			let allThere = false;
-			while(!allThere) {
+			while (!allThere) {
 				for (let i = 0; i < path.length; i++) {
 					const part = this._getNodeByGrain(path[i]);
 					if (part) {
@@ -268,7 +268,7 @@ export class SiloNavi extends SiloTree {
 	async _getNodeProperties(grain, node) {
 		const result = await super._getNodeProperties(grain, node);
 		const op = this.#clipboard[grain.id];
-		result.tags = op ? [{text: ' ', 'class': `badge bg-light text-dark ms-1 ${'cut' == op ? 'bi-scissors' : 'bi-copy'}`}] : [];
+		result.tags = op ? [{ text: ' ', 'class': `badge bg-light text-dark ms-1 ${'cut' == op ? 'bi-scissors' : 'bi-copy'}` }] : [];
 		return result;
 	}
 
@@ -282,7 +282,7 @@ export class SiloNavi extends SiloTree {
 				if (evt.detail.node == node) {
 					resolve(evt.detail.node);
 				}
-			}, { once: true });	
+			}, { once: true });
 		});
 		this.tree.expandNode(node);
 		return await result;
@@ -393,24 +393,24 @@ export class SiloNavi extends SiloTree {
 							enable = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
 						}
 						if (enable && 'cmdRename' == x) {
-							enable = '__defaults__' != grain.name && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Write); 
+							enable = '__defaults__' != grain.name && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Write);
 						}
 						if (enable && ('cmdDelete' == x || 'cmdCut' == x)) {
 							enable = -1 == MarBasBuiltIns.indexOf(grainId) && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Delete);
-						}	
+						}
 					} catch (e) {
 						console.warn(`Error initiazing menu item`, x, e);
-						enable = false;	
+						enable = false;
 					}
 					this.ctxMnu.enableCmd(x, enable);
 				});
 
 				this.ctxMnu.enableCmd('cmdClearCbrd', this.hasClipboardContent());
 				this.ctxMnu.enableCmd('cmdSecurity', await this._apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadAcl));
-		
+
 			} catch (e) {
 				console.warn(`Error initiazing menu`, e);
-				opCmds.forEach(x => x.enableCmd(x , false));
+				opCmds.forEach(x => x.enableCmd(x, false));
 			}
 		}
 	}

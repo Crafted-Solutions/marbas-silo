@@ -1,9 +1,9 @@
-import {JSONEditor} from "@json-editor/json-editor";
+import { JSONEditor } from "@json-editor/json-editor";
 import merge from "lodash.merge";
 import { Popover } from "bootstrap";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
-import { MarBasDefaults, MarBasGrainAccessFlag } from "../conf/marbas.conf";
+import { MarBasDefaults, MarBasGrainAccessFlag } from "@crafted-solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
@@ -26,7 +26,7 @@ JSONEditor.defaults.callbacks.upload = {
 JSONEditor.defaults.callbacks.template = {
 	fileSizeFormatter: (_, e) => {
 		const baseT = Math.log(e.val) / Math.log(1024) | 0;
-		return `${(e.val / Math.pow(1024, baseT)).toFixed(2)} ${(baseT ? 'KMGTPEZY'[baseT - 1] +'iB' : 'Bytes')}` ;
+		return `${(e.val / Math.pow(1024, baseT)).toFixed(2)} ${(baseT ? 'KMGTPEZY'[baseT - 1] + 'iB' : 'Bytes')}`;
 	}
 };
 JSONEditor.defaults.callbacks.button = {
@@ -42,30 +42,30 @@ const FieldConstrParams = 'root.propDef._constraintParams';
 const TraitPattern = /^root._trait_([^\.]+)\.([0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12})/i;
 
 const TraitUtils = {
-	isArray: function(prop) {
+	isArray: function (prop) {
 		return 1 < prop.cardinalityMax || -1 == prop.cardinalityMax;
 	},
-	getContainerName: function(prop) {
+	getContainerName: function (prop) {
 		const p = prop.path.split('/');
 		return 1 < p.length ? p[p.length - 2] : 'General';
 	},
-	getEditableValue: function(prop, trait) {
+	getEditableValue: function (prop, trait) {
 		return this.isArray(prop) ? trait.map(val => this.convTraitValue(val.value, prop.valueType)) : this.convTraitValue(trait[0].value, prop.valueType);
 	},
-	convTraitValue: function(value, traitType) {
+	convTraitValue: function (value, traitType) {
 		if ('DateTime' == traitType) {
 			return (new Date(value)).getTime() / 1000;
 		}
 		return this.convIdentifiable(value);
 	},
-	convIdentifiable: function(obj) {
+	convIdentifiable: function (obj) {
 		return obj.id ? obj.id : obj;
 	},
-	getStorableValues: function(editorVal, traitType) {
+	getStorableValues: function (editorVal, traitType) {
 		const arr = 'object' == typeof editorVal && 'function' == typeof editorVal.push ? editorVal : [editorVal];
 		return arr.reduce((result, curr) => {
-			const t = typeof(curr);
-			if ('number' == t || 'boolean' == t  || curr) {
+			const t = typeof (curr);
+			if ('number' == t || 'boolean' == t || curr) {
 				if ('DateTime' == traitType) {
 					curr = new Date(curr * 1000).toISOString();
 				}
@@ -77,7 +77,7 @@ const TraitUtils = {
 };
 
 const PropValConstr = {
-	create: function(prop) {
+	create: function (prop) {
 		if (prop.constraintParams) {
 			const params = new URLSearchParams(prop.constraintParams);
 			if (params.get('use') in PropValConstr) {
@@ -86,12 +86,12 @@ const PropValConstr = {
 		}
 		return null;
 	},
-	init: function(propDef) {
+	init: function (propDef) {
 		if (propDef && 'constraintParams' in propDef) {
 			propDef._constraintParams = propDef.constraintParams ? (new URLSearchParams(propDef.constraintParams)).get('use') : null;
 		}
 	},
-	sync: function(propDef, selectedConstr) {
+	sync: function (propDef, selectedConstr) {
 		if (selectedConstr in PropValConstr) {
 			const inst = new PropValConstr[selectedConstr](propDef.valueConstraintId, new URLSearchParams(propDef.constraintParams));
 			inst.updateParams(propDef);
@@ -121,7 +121,7 @@ const PropValConstr = {
 				if (!schemaItem.options.containerAttributes) {
 					schemaItem.options.containerAttributes = {};
 				}
-				schemaItem.options.containerAttributes['data-pickeropts'] = JSON.stringify({root: this.constraintId});	
+				schemaItem.options.containerAttributes['data-pickeropts'] = JSON.stringify({ root: this.constraintId });
 			};
 			tweaker(schema);
 			if (schema.items) {
@@ -262,7 +262,7 @@ export class GrainEditor {
 
 	async verifySaved(disposing = false) {
 		if (this.dirty) {
-			if ('yes' == await MsgBox.invoke("Grain was modified, save?", {  icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
+			if ('yes' == await MsgBox.invoke("Grain was modified, save?", { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
 				await this.save();
 				return true;
 			}
@@ -294,13 +294,12 @@ export class GrainEditor {
 				delete this.customProps.changes[k];
 			}
 		}
-		if (await this.#apiSvc.storeGrain(this.grain))
-		{
+		if (await this.#apiSvc.storeGrain(this.grain)) {
 			const sub = this.editor.getEditor('root.stats.mTime');
 			if (sub) {
 				sub.setValueToInputField((new Date()).toLocaleString());
 			}
-			this.#setDirty(false);	
+			this.#setDirty(false);
 		}
 		return this.grain;
 	}
@@ -347,13 +346,13 @@ export class GrainEditor {
 				this.#updatePropDefEditorByValueType(sub.getValue());
 			} else if (FieldConstrParams == editorKey) {
 				PropValConstr.sync(this.grain, sub.getValue());
-			}			
+			}
 		}
 		if (makeDirty && !this.#markTraitChange(editorKey)) {
 			this.#collectChanges(sub);
 		}
 		this.#resolveGlobalLabels();
-		this.#notify();	
+		this.#notify();
 	}
 
 	onEditorAddRow(editor) {
@@ -386,7 +385,7 @@ export class GrainEditor {
 				}
 			});
 			this.#createActions();
-	
+
 			Object.keys(this.editor.editors).forEach(key => {
 				const sub = this.editor.getEditor(key);
 				if (!sub) {
@@ -400,20 +399,20 @@ export class GrainEditor {
 					this.#addEditorListener(key);
 				}
 			});
-	
+
 			this.editor.on('change', this.#changeCb);
 			this.editor.on('addRow', this.#addRowCb);
-	
+
 			this.updateIcon();
-	
+
 			this.#createFieldActions();
 			this.#resolveSchemaLabels(this.editor.schema);
 			this.#checkEmbeddedMedia();
 			this.#resolveGlobalLabels();
 			this.#renderFieldComments();
-	
+
 			this.#updateSessionLinks();
-	
+
 		} catch (e) {
 			console.error(e);
 			MsgBox.invokeErr(`Error setting up editor: ${e.message}`);
@@ -463,7 +462,7 @@ export class GrainEditor {
 		this.editor.was_dirty = this.editor.is_dirty;
 		const sub = this.editor.getEditor('root._sys.dirty');
 		if (sub) {
-			sub.setValue(dirty ? '*' : '');	
+			sub.setValue(dirty ? '*' : '');
 		}
 		this.editor.is_dirty = dirty;
 		this.editor.root.header.parentNode.querySelectorAll('.mb-grain-edit-save, .mb-grain-edit-reset').forEach(btn => btn.disabled = !dirty);
@@ -505,8 +504,8 @@ export class GrainEditor {
 			btn.classList.add('btn-outline-secondary');
 			btn.classList.remove('btn-secondary', 'btn-sm');
 			btn.addEventListener('click', () => {
-				const evt = new CustomEvent('mb-silo:navigate', {detail: this.grain.id});
-				document.dispatchEvent(evt);			
+				const evt = new CustomEvent('mb-silo:navigate', { detail: this.grain.id });
+				document.dispatchEvent(evt);
 			});
 			btnHolder.appendChild(btn);
 
@@ -519,7 +518,7 @@ export class GrainEditor {
 					this.save();
 				});
 				btnHolder.appendChild(btn);
-	
+
 				btn = this.editor.root.getButton('Reset', 'arrow-counterclockwise', 'Reset');
 				btn.disabled = true;
 				btn.classList.add('mb-grain-edit-reset');
@@ -527,7 +526,7 @@ export class GrainEditor {
 				btn.addEventListener('click', () => {
 					this.resetEditor();
 				});
-				btnHolder.appendChild(btn);	
+				btnHolder.appendChild(btn);
 			} else {
 				this.editor.disable();
 			}
@@ -565,8 +564,8 @@ export class GrainEditor {
 						this.#resolveEditorLabel(sub);
 					};
 					lbl.insertBefore(btn, lbl.firstChild);
-	
-					btn = document.createElement('button');	
+
+					btn = document.createElement('button');
 				}
 
 				btn.title = "Select";
@@ -585,7 +584,7 @@ export class GrainEditor {
 							this.#resolveEditorLabel(sub);
 							this.#checkEmbeddedMedia(sub);
 						}
-					}, this.#getGrainPickerOptions(field));	
+					}, this.#getGrainPickerOptions(field));
 				};
 				lbl.insertBefore(btn, lbl.firstChild);
 			}
@@ -610,11 +609,11 @@ export class GrainEditor {
 							elm.setAttribute('data-bs-toggle', 'popover');
 							elm.setAttribute('data-bs-trigger', 'focus');
 							// elm.innerHTML = '<small>?</small>';
-			
+
 							lbl.appendChild(elm);
 							Popover.getOrCreateInstance(elm);
 						}
-					}			
+					}
 				}).catch(console.warn);
 			});
 		}
@@ -626,19 +625,19 @@ export class GrainEditor {
 		media.forEach((anchor) => {
 			if (anchor.href && anchor.href.startsWith(this.#apiSvc.baseUrl)) {
 				this.#apiSvc.loadBlob(anchor.href, /^(image|video|audio)\/.*/)
-				.then(blob => {
-					if (blob.type.startsWith('image/')) {
-						const elm = document.createElement('img');
-						elm.setAttribute('style', "max-width: 100%; max-height: 100px;");
-						elm.onload = () => URL.revokeObjectURL(objUrl);
-						anchor.setAttribute('title', anchor.textContent);
-						anchor.innerHTML = '';
-						anchor.appendChild(elm);
-						const objUrl = URL.createObjectURL(blob);
-						elm.src = objUrl;	
-					}
-				})
-				.catch(console.warn);
+					.then(blob => {
+						if (blob.type.startsWith('image/')) {
+							const elm = document.createElement('img');
+							elm.setAttribute('style', "max-width: 100%; max-height: 100px;");
+							elm.onload = () => URL.revokeObjectURL(objUrl);
+							anchor.setAttribute('title', anchor.textContent);
+							anchor.innerHTML = '';
+							anchor.appendChild(elm);
+							const objUrl = URL.createObjectURL(blob);
+							elm.src = objUrl;
+						}
+					})
+					.catch(console.warn);
 			}
 		});
 	}
@@ -815,7 +814,7 @@ export class GrainEditor {
 								sub.updateHeaderText();
 								delete this.#labelResolvers[r];
 							}
-						}	
+						}
 					}
 				})
 				.catch(console.warn);
@@ -837,7 +836,7 @@ export class GrainEditor {
 					// editor.schema.title = label;
 					editor.header_text = editor.schema._useTitle ? `${editor.schema._useTitle} (${label})` : label;
 					editor.updateHeaderText();
-				}).catch(console.warn);	
+				}).catch(console.warn);
 			} else {
 				editor.header_text = editor.schema._useTitle || editor.schema.title;
 				editor.updateHeaderText();
@@ -852,9 +851,9 @@ export class GrainEditor {
 			}
 			const val = (editor || this.editor).getValue();
 			const valMod = (value) => {
-				return 'string' == typeof(value) && 0 == value.length ? null : value;
+				return 'string' == typeof (value) && 0 == value.length ? null : value;
 			};
-			if ('object' == typeof(val)) {
+			if ('object' == typeof (val)) {
 				for (const key in val) {
 					if (key.startsWith('_')) {
 						continue;
@@ -867,9 +866,9 @@ export class GrainEditor {
 								continue;
 							}
 							this.grain[sub] = valMod(val[key][sub]);
-						}	
+						}
 					}
-				}	
+				}
 			} else if (editor) {
 				const pp = editor.path.split('.');
 				this.grain[pp[pp.length - 1]] = valMod(val);

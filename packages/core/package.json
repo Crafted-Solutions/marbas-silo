@@ -1,0 +1,31 @@
+{
+	"name": "@crafted-solutions/marbas-core",
+	"version": "0.1.12",
+	"description": "Core modules for mabas-databroker access",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Crafted-Solutions/marbas-silo.git"
+	},
+	"publishConfig": {
+		"@crafted-solutions:registry": "https://npm.pkg.github.com"
+	},
+	"author": "hatelamers",
+	"license": "MIT",
+	"main": "./dist/index.js",
+	"type": "module",
+	"exports": {
+		"import": "./dist/index.js",
+		"require": "./dist/index.cjs"
+	},
+	"scripts": {
+		"build": "npx rollup ./src/js/index.js --file ./dist/index.cjs --format cjs && npx rollup ./src/js/index.js --file ./dist/index.js --format esm",
+		"watch": "rollup ./src/js/index.js --file ./dist/index.js --format esm --watch",
+		"prepack": "npm run build"
+	},
+	"dependencies": {
+		"lodash.merge": "^4.6.2"
+	},
+	"devDependencies": {
+		"rollup": "^4.34.6"
+	}
+}
