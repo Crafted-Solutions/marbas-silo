@@ -46,12 +46,15 @@ jobs:
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
 
     - name: NPM publish
-      run: npm publish --workspaces
+      run: |
+        npm ci
+        npm publish --workspaces
       env:
         NODE_AUTH_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
     - name: Build drop-in
       shell: bash
       run: |
+        npm ci
         npm run build --workspaces --if-present
         npm run build --if-present
 
