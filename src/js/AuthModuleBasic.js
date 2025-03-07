@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { MbDomUtils } from "./MbDomUtils";
 
 const SESSIONKEY_TOKEN = 'mbSiloToken';

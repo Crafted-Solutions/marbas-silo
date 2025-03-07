@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { _Dialog } from "./_Dialog";
 
 export class _NewDialog extends _Dialog {

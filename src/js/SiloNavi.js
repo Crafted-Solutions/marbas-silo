@@ -1,6 +1,6 @@
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
-import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted-solutions/marbas-core";
+import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
 import { GrainNewDialog } from "./GrainNewDialog";
 import { SiloTree } from "./SiloTree";
 import { BsContextDropdown } from "./BsContextDropdown";

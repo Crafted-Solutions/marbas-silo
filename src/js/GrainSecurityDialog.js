@@ -1,5 +1,5 @@
 import startCase from "lodash.startcase";
-import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement, MbUtils } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement, MbUtils } from "@crafted.solutions/marbas-core";
 import { _Dialog } from "./_Dialog";
 import { MbDomUtils } from "./MbDomUtils";
 import { Task } from "./Task";
