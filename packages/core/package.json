@@ -1,18 +1,26 @@
 {
-	"name": "@crafted-solutions/marbas-core",
-	"version": "0.1.12",
+	"name": "@crafted.solutions/marbas-core",
+	"version": "0.1.12-1",
 	"description": "Core modules for mabas-databroker access",
+	"keywords": [
+		"MarBas",
+		"DataBrokerAPI",
+		"MarBasBuiltIns",
+		"MarBasGrainAccessFlag",
+		"ajax client"
+	],
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Crafted-Solutions/marbas-silo.git"
-	},
-	"publishConfig": {
-		"@crafted-solutions:registry": "https://npm.pkg.github.com"
 	},
 	"author": "hatelamers",
 	"license": "MIT",
 	"main": "./dist/index.js",
 	"type": "module",
+	"files": [
+		"src/",
+		"dist/"
+	],
 	"exports": {
 		"import": "./dist/index.js",
 		"require": "./dist/index.cjs"
