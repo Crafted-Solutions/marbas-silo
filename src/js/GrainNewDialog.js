@@ -1,5 +1,5 @@
 import { SiloTree } from "./SiloTree";
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { IconMaps } from "../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
 import { MbDomUtils } from "./MbDomUtils";

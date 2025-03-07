@@ -29,13 +29,9 @@ The client app runs in development mode at http://localhost:5500/.
 Download drop-in archive from [Releases](../../releases/latest), extract its contents into a directory (say `marbas-silo`) under public root of your Web server. You should be able then to use the application under `https://yourdomain.example/marbas-silo`.
 
 ## Using Marbas API Module
-You can integrate API module [marbas-core](../../pkgs/npm/marbas-core) for databroker access in your own applications. Create a file `.npmrc` (if not present) in your project root directory and add the following
-```conf
-@crafted-solutions:registry=https://npm.pkg.github.com
-```
-Install package afterwards
+You can integrate standalone API module [marbas-core](https://www.npmjs.com/package/@crafted.solutions/marbas-core) for databroker access in your own applications. Install the package like
 ```sh
-npm install @crafted-solutions/marbas-core
+npm install @crafted.solutions/marbas-core
 ```
 
 ## Contributing

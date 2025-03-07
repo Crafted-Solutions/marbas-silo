@@ -1,7 +1,7 @@
 import { Modal } from "bootstrap";
 
 import { SiloTree } from "./SiloTree";
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
 
 export class GrainPicker {

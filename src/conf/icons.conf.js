@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 export const IconMaps = {
 	ById: {

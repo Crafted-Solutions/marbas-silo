@@ -1,0 +1,12 @@
+{
+	"[yaml]": {
+		"editor.autoIndent": "advanced",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2
+	},
+	"[github-actions-workflow]": {
+		"editor.autoIndent": "advanced",
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2
+	}
+}

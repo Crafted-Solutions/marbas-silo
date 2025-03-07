@@ -2,7 +2,7 @@ import "../scss/index.scss";
 import { EVENT_INITIALIZED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { AuthModule } from "AuthModule";
-import { MarBasDefaults, DataBrokerAPI } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults, DataBrokerAPI } from "@crafted.solutions/marbas-core";
 import { GrainEditor } from "./GrainEditor";
 import { SiloNavi } from "./SiloNavi";
 import { IconMaps } from "../conf/icons.conf";

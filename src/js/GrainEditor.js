@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { Popover } from "bootstrap";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
-import { MarBasDefaults, MarBasGrainAccessFlag } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults, MarBasGrainAccessFlag } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
