@@ -1,14 +1,11 @@
 {
-	"name": "@crafted-solutions/marbas-silo",
-	"version": "0.1.12",
+	"name": "@crafted.solutions/marbas-silo",
+	"version": "0.1.12-1",
 	"description": "Manages grain silo via marbas-databroker",
 	"private": true,
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Crafted-Solutions/marbas-silo.git"
-	},
-	"publishConfig": {
-		"@crafted-solutions:registry": "https://npm.pkg.github.com"
 	},
 	"author": "hatelamers",
 	"license": "MIT",

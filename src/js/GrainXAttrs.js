@@ -1,5 +1,5 @@
 import merge from "lodash.merge";
-import { MarBasDefaults } from "@crafted-solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { IconMaps } from "../conf/icons.conf";
 
 export const GrainXAttrs = {
