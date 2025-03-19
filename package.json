@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-silo",
-	"version": "0.1.12-1",
+	"version": "0.1.13",
 	"description": "Manages grain silo via marbas-databroker",
 	"private": true,
 	"repository": {
@@ -10,43 +10,44 @@
 	"author": "hatelamers",
 	"license": "MIT",
 	"workspaces": [
+		"./scripts/*",
 		"./packages/*"
 	],
 	"scripts": {
 		"build": "webpack --progress",
 		"build-dev": "webpack --progress --mode development",
 		"watch": "webpack watch --mode development",
-		"start": "concurrently \"npm run watch --workspaces --if-present\"  \"webpack serve --mode development --open\"",
+		"start": "webpack serve --mode development --open",
 		"test": "echo \"No test specified yet\" && exit 0",
 		"prepack": "npm run build"
 	},
 	"dependencies": {
 		"@jbtronics/bs-treeview": "github:hatelamers/bs-treeview",
-		"@json-editor/json-editor": "^2.14.1",
+		"@json-editor/json-editor": "^2.15.2",
 		"@popperjs/core": "^2.11.8",
 		"bootstrap": "^5.3.3",
 		"bootstrap-icons": "^1.11.3",
-		"dompurify": "^3.0.11",
-		"jodit": "^4.2.25",
+		"dompurify": "^3.2.4",
+		"jodit": "^4.5.17",
 		"lodash.merge": "^4.6.2",
 		"lodash.startcase": "^4.4.0"
 	},
 	"devDependencies": {
 		"@types/json-editor": "^0.0.10",
-		"autoprefixer": "^10.4.19",
+		"autoprefixer": "^10.4.21",
 		"concurrently": "^9.1.2",
 		"css-loader": "^7.1.2",
-		"css-minimizer-webpack-plugin": "^6.0.0",
+		"css-minimizer-webpack-plugin": "^7.0.2",
 		"handlebars-loader": "^1.7.3",
-		"html-webpack-plugin": "^5.6.0",
+		"html-webpack-plugin": "^5.6.3",
 		"json-loader": "^0.5.7",
-		"mini-css-extract-plugin": "^2.9.1",
+		"mini-css-extract-plugin": "^2.9.2",
 		"postcss-loader": "^8.1.1",
-		"sass": "1.77.6",
-		"sass-loader": "^16.0.2",
+		"sass": "^1.86.0",
+		"sass-loader": "^16.0.5",
 		"style-loader": "^4.0.0",
-		"webpack": "^5.95.0",
-		"webpack-cli": "^5.1.4",
-		"webpack-dev-server": "^5.1.0"
+		"webpack": "^5.98.0",
+		"webpack-cli": "^6.0.1",
+		"webpack-dev-server": "^5.2.0"
 	}
 }

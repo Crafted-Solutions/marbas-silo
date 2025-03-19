@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { Popover } from "bootstrap";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
-import { MarBasDefaults, MarBasGrainAccessFlag } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
 import { GrainPicker } from "./GrainPicker";
 import { MsgBox } from "./MsgBox";
@@ -17,6 +17,8 @@ JSONEditor.defaults.options.remove_empty_properties = false;
 JSONEditor.defaults.options.disable_properties = true;
 JSONEditor.defaults.options.array_controls_top = false;
 JSONEditor.defaults.options.required_by_default = true;
+JSONEditor.defaults.options.display_required_only = false;
+JSONEditor.defaults.options.show_opt_in = true;
 JSONEditor.defaults.options.disable_array_delete_last_row = true;
 JSONEditor.defaults.callbacks.upload = {
 	uploadHandler: (jseditor, path, file, cbs) => {
@@ -38,6 +40,7 @@ JSONEditor.defaults.callbacks.button = {
 const FieldIcon = 'root.presentation.icon';
 const FieldValueType = 'root.propDef.valueType';
 const FieldRtf = 'root.propDef.isRtf';
+const FieldDateOnly = 'root.propDef.isDateOnly';
 const FieldConstrParams = 'root.propDef._constraintParams';
 const TraitPattern = /^root._trait_([^\.]+)\.([0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12})/i;
 
@@ -53,7 +56,7 @@ const TraitUtils = {
 		return this.isArray(prop) ? trait.map(val => this.convTraitValue(val.value, prop.valueType)) : this.convTraitValue(trait[0].value, prop.valueType);
 	},
 	convTraitValue: function (value, traitType) {
-		if ('DateTime' == traitType) {
+		if (MarBasTraitValueType.DateTime == traitType) {
 			return (new Date(value)).getTime() / 1000;
 		}
 		return this.convIdentifiable(value);
@@ -66,7 +69,7 @@ const TraitUtils = {
 		return arr.reduce((result, curr) => {
 			const t = typeof (curr);
 			if ('number' == t || 'boolean' == t || curr) {
-				if ('DateTime' == traitType) {
+				if (MarBasTraitValueType.DateTime == traitType) {
 					curr = new Date(curr * 1000).toISOString();
 				}
 				result.push(curr);
@@ -150,6 +153,7 @@ export class GrainEditor {
 	#listeners = [];
 	#labelResolvers = {};
 	#grainPicker;
+	#link;
 
 	constructor(elementId, apiSvc) {
 		this.#element = document.getElementById(elementId);
@@ -171,10 +175,12 @@ export class GrainEditor {
 		});
 	}
 
-	async buildEditor(grainBase, forceReload = false) {
-		if (!forceReload && this.grain && grainBase && this.grain.id == grainBase.id && this.grain._ts >= grainBase._ts) {
+	async buildEditor(grainBase, forceReload = false, link = undefined) {
+		if (!forceReload && this.grain && grainBase && this.grain.id == grainBase.id && this.grain._ts >= grainBase._ts && this.#link == link) {
 			return;
 		}
+		this.#link = link;
+
 		await this.unloadEditor();
 		this.grain = grainBase;
 		if (grainBase) {
@@ -202,8 +208,14 @@ export class GrainEditor {
 				}
 				startval[key] = this.grain;
 			}
-			if (this.grain.valueType == 'Memo') {
-				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig.PropDef_Memo);
+
+			if (MarBasDefaults.ID_TYPE_PROPDEF == this.grain.typeDefId && EditorSchemaConfig[`PropDef_${this.grain.valueType}`]) {
+				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
+			}
+			if (this.grain.valueType == MarBasTraitValueType.DateTime) {
+				startval.propDef.isDateOnly = GrainXAttrs.getAttr(this.grain, 'propMod') == "dateonly";
+			}
+			else if (this.grain.valueType == MarBasTraitValueType.Memo) {
 				startval.propDef.isRtf = GrainXAttrs.getAttr(this.grain, 'propMod') == "rtf";
 			}
 			if (this.customProps.def.length && this.customProps.traits) {
@@ -255,7 +267,7 @@ export class GrainEditor {
 		const grainId = (this.grain || {}).id;
 		if (grainId) {
 			this.#apiSvc.invalidateGrain(this.grain);
-			this.buildEditor(await this.#apiSvc.getGrain(grainId, true), true);
+			this.buildEditor(await this.#apiSvc.getGrain(grainId, true), true, this.#link);
 			this.#notify();
 		}
 	}
@@ -280,14 +292,24 @@ export class GrainEditor {
 	}
 
 	async save() {
+		const errors = this.editor.validate();
+		if (errors.length) {
+			console.warn("editor.errors", errors);
+			MsgBox.invokeErr("Please correct errors first");
+			return this.grain;
+		}
 		this.#collectChanges();
 		if (this.customProps && this.customProps.changes) {
 			for (const k in this.customProps.changes) {
 				const sub = this.editor.getEditor(k);
-				if (sub && sub.is_dirty) {
+				if (sub && sub.is_dirty && sub.isActive()) {
 					const m = TraitPattern.exec(k);
 					if (m && 2 < m.length) {
-						await this.#apiSvc.storeTraitValues(this.grain, { id: m[2], valueType: sub.schema._origType }, TraitUtils.getStorableValues(sub.getValue(), sub.schema._origType));
+						await this.#apiSvc.storeTraitValues(this.grain, {
+							id: m[2],
+							valueType: sub.schema._origType,
+							localizable: sub.schema._localizable
+						}, TraitUtils.getStorableValues(sub.getValue(), sub.schema._origType));
 					}
 					sub.is_dirty = false;
 				}
@@ -342,6 +364,8 @@ export class GrainEditor {
 		} else if (sub) {
 			if (FieldRtf == editorKey) {
 				GrainXAttrs.setAttr(this.grain, 'propMod', sub.getValue() ? 'rtf' : null);
+			} else if (FieldDateOnly == editorKey) {
+				GrainXAttrs.setAttr(this.grain, 'propMod', sub.getValue() ? 'dateonly' : null);
 			} else if (FieldValueType == editorKey) {
 				this.#updatePropDefEditorByValueType(sub.getValue());
 			} else if (FieldConstrParams == editorKey) {
@@ -509,6 +533,16 @@ export class GrainEditor {
 			});
 			btnHolder.appendChild(btn);
 
+			if (this.#link) {
+				btn = this.editor.root.getButton('', 'link', 'Edit link');
+				btn.classList.add('btn-outline-secondary');
+				btn.classList.remove('btn-secondary', 'btn-sm');
+				btn.addEventListener('click', async () => {
+					this.buildEditor(await this.#apiSvc.getGrain(this.#link));
+				});
+				btnHolder.appendChild(btn);
+			}
+
 			if (await this.#apiSvc.getGrainPermission(this.grain, MarBasGrainAccessFlag.Write)) {
 				btn = this.editor.root.getButton('Save', 'save', 'Save');
 				btn.disabled = true;
@@ -675,12 +709,13 @@ export class GrainEditor {
 					propertyOrder: ord++,
 					properties: {}
 				};
-				this.#labelResolvers[secKey] = this.#apiSvc.getLabel(prop.parentId);
+				this.#labelResolvers[secKey] = this.#apiSvc.resolveGrainLabel(prop.parentId);
 			}
 
 			let propSchema = {
 				type: 'string',
-				_origType: prop.valueType
+				_origType: prop.valueType,
+				_localizable: prop.localizable
 			};
 			let configKey = `TRAIT_${prop.valueType}`;
 			const mod = GrainXAttrs.getAttr(prop, 'propMod');
@@ -688,13 +723,13 @@ export class GrainEditor {
 				configKey = `${configKey}_${mod}`;
 			}
 			switch (prop.valueType) {
-				case 'Number':
+				case MarBasTraitValueType.Number:
 					propSchema.type = 'number';
 					break;
-				case 'Boolean':
+				case MarBasTraitValueType.Boolean:
 					propSchema.type = 'boolean';
 					break;
-				case 'DateTime':
+				case MarBasTraitValueType.DateTime:
 					propSchema.type = 'integer';
 					propSchema.format = 'datetime-local';
 					break;
@@ -731,9 +766,13 @@ export class GrainEditor {
 				}
 			} else {
 				propSchema._useTitle = prop.label;
+				propSchema.required = 0 < prop.cardinalityMin;
+				if (propSchema.required && (MarBasTraitValueType.Text == prop.valueType || MarBasTraitValueType.Memo == prop.valueType)) {
+					propSchema.minLength = 1;
+				}
 			}
 			propSchema.title = prop.label;
-			propSchema.required = true;
+			// propSchema.required = true;
 			propSchema.propertyOrder = this.#makeOrderKey(prop.sortKey, prop.name);
 
 			const valConstr = PropValConstr.create(prop);
@@ -770,17 +809,23 @@ export class GrainEditor {
 
 	#updatePropDefEditorByValueType(valueType) {
 		const ed = this.editor.getEditor(FieldValueType).parent;
-		if ('Memo' == valueType) {
+		const customProps = EditorSchemaConfig[`PropDef_${valueType}`];
+		const extList = { [MarBasTraitValueType.Memo]: EditorSchemaConfig.PropDef_Memo, [MarBasTraitValueType.DateTime]: EditorSchemaConfig.PropDef_DateTime };
+		if (customProps) {
+			delete extList[valueType];
 			if (ed) {
 				this.editor.schema.definitions.propDef.additionalProperties = true;
-				ed.schema.properties = merge({}, ed.schema.properties, EditorSchemaConfig.PropDef_Memo);
-				for (const k in EditorSchemaConfig.PropDef_Memo) {
+				ed.schema.properties = merge({}, ed.schema.properties, customProps);
+				for (const k in customProps) {
 					ed.addObjectProperty(k);
 					this.#addEditorListener(`${ed.path}.${k}`);
 				}
 			}
 		} else {
-			for (const k in EditorSchemaConfig.PropDef_Memo) {
+			GrainXAttrs.setAttr(this.grain, 'propMod', null);
+		}
+		for (const ext in extList) {
+			for (const k in extList[ext]) {
 				delete this.grain[k];
 				if (ed) {
 					this.#removeEditorListener(`${ed.path}.${k}`);
@@ -788,7 +833,6 @@ export class GrainEditor {
 					delete ed.cached_editors[k];
 				}
 			}
-			GrainXAttrs.setAttr(this.grain, 'propMod', null);
 		}
 	}
 
@@ -832,7 +876,7 @@ export class GrainEditor {
 		if (editor) {
 			const val = editor.getValue();
 			if (val) {
-				this.#apiSvc.getLabel(val).then(label => {
+				this.#apiSvc.resolveGrainLabel(val).then(label => {
 					// editor.schema.title = label;
 					editor.header_text = editor.schema._useTitle ? `${editor.schema._useTitle} (${label})` : label;
 					editor.updateHeaderText();
