@@ -6,10 +6,10 @@ name: Node.js CI
 on:
   push:
     branches: [ "main", "develop" ]
-    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json" ]
+    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json", "scripts/**" ]
   pull_request:
     branches: [ "main", "develop" ]
-    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json" ]
+    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json", "scripts/**" ]
   workflow_dispatch:
     inputs:
       logLevel:

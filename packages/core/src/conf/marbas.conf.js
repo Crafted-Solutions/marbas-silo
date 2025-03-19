@@ -1,6 +1,6 @@
 export const MarBasDefaults = {
-	MinSchemaVersion: '0.1.13',
-	MinAPIVersion: '0.1.15.1',
+	MinSchemaVersion: '0.1.15',
+	MinAPIVersion: '0.1.17',
 	LANG: 'en',
 	ID_DEFAULT: '00000000-0000-1000-a000-000000000000',
 	ID_ROOT: '00000000-0000-1000-a000-000000000001',
@@ -15,11 +15,14 @@ export const MarBasDefaults = {
 	ID_TYPE_CONTAINER: '00000000-0000-1000-a000-000000000005',
 	ID_TYPE_FILE: '00000000-0000-1000-a000-00000000000a',
 	ID_TYPE_TRASH: '00000000-0000-1000-a000-00000000000e',
-	ID_PROPDEF_COMMENT: '00000000-0000-1000-a000-00000000000d'
+	ID_TYPE_LINK: '00000000-0000-1000-a000-00000000000f',
+	ID_PROPDEF_COMMENT: '00000000-0000-1000-a000-00000000000d',
+	ID_PROPDEF_LINKTARGET: '00000000-0000-1000-a000-000000000012'
 }
 export const MarBasBuiltIns = [
 	MarBasDefaults.ID_ROOT, MarBasDefaults.ID_CONTENT, MarBasDefaults.ID_SCHEMA, MarBasDefaults.ID_FILES, MarBasDefaults.ID_TRASH_CONTENT, MarBasDefaults.ID_TRASH_SCHEMA,
-	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_TRASH
+	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_PROPDEF_LINKTARGET, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_FILE,
+	MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_LINK
 ];
 export const MarBasGrainAccessFlag = {
 	None: 0x000,
@@ -49,4 +52,9 @@ export const MarBasRoleEntitlement = {
 	SkipPermissionCheck: 0x2000,
 	DeleteBuiltInElements: 0x3000,
 	Full: 0xffffffff
-}
+};
+
+export const MarBasTraitValueTypes = [
+	'Text', 'Memo', 'Number', 'Boolean', 'DateTime', 'File', 'Grain'
+];
+export const MarBasTraitValueType = MarBasTraitValueTypes.reduce((accu, curr) => { accu[curr] = curr; return accu }, {});

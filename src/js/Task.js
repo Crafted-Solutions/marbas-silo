@@ -49,7 +49,7 @@ export class Task {
 		this.#binds.onError = this.#onError.bind(this);
 		this.#binds.onAbort = this.#onAbort.bind(this);
 		this.#binds.onStatus = this.#onStatus.bind(this);
-		this.#worker = 'function' == typeof(worker) ? {
+		this.#worker = 'function' == typeof (worker) ? {
 			start: worker
 		} : worker;
 		this.name = name;
@@ -222,14 +222,14 @@ export class TaskLayer {
 		});
 		document.addEventListener(Task.Event.ERROR, (evt) => {
 			if (this.#handleTaskError(evt.detail.task, evt.detail.payload)) {
-				this.#finalizeEvent(evt);	
+				this.#finalizeEvent(evt);
 			} else if ('function' == typeof this.#defaultHandler) {
 				this.#defaultHandler(evt);
 			}
 		});
 		document.addEventListener(Task.Event.ABORT, (evt) => {
 			if (this.#handleTaskAbort(evt.detail.task, evt.detail.payload)) {
-				this.#finalizeEvent(evt);	
+				this.#finalizeEvent(evt);
 			}
 		});
 		document.addEventListener(Task.Event.STATUS, (evt) => {
@@ -312,7 +312,7 @@ export class TaskLayer {
 	#handleTaskStatus(task, status) {
 		if (task.isRunning && this.#tasks[task.id]) {
 			if ('string' == typeof status) {
-				this.#element.querySelector(`#${task.id} .${this.#scope}-text`).textContent = `${(task.caption || task.name)}: ${status}`; 
+				this.#element.querySelector(`#${task.id} .${this.#scope}-text`).textContent = `${(task.caption || task.name)}: ${status}`;
 			}
 			return true;
 		}
@@ -383,7 +383,7 @@ export class TaskLayer {
 			this.#pendingHide = setTimeout(() => {
 				this.canvas.hide();
 				this.#pendingHide = undefined;
-			}, 500);	
+			}, 500);
 		}
 	}
 
