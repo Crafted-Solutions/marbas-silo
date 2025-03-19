@@ -6,10 +6,10 @@ name: Node.js CI
 on:
   push:
     branches: [ "main", "develop" ]
-    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json" ]
+    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json", "scripts/**" ]
   pull_request:
     branches: [ "main", "develop" ]
-    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json" ]
+    paths: [ "package.json", "webpack.config.js", "src/**", ".github/workflows/**", "packages/*/src/**", "packages/*/package.json", "scripts/**" ]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -38,7 +38,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        cache: 'npm-${{ matrix.node-version }}'
     - run: npm ci
     - run: npm run build --workspaces --if-present
     - run: npm run build --if-present
