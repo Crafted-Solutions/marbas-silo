@@ -71,7 +71,13 @@ module.exports = (env) => {
 							}
 						},
 						{
-							loader: 'sass-loader'
+							loader: 'sass-loader',
+							options: {
+								sassOptions: {
+									quietDeps: true,
+									silenceDeprecations: ['import']
+								}
+							}
 						}
 					]
 				}
@@ -83,7 +89,7 @@ module.exports = (env) => {
 				template: 'src/index.hbs',
 				templateParameters: {
 					apiBaseUrl: 'https://localhost:7277/api/marbas',
-					panelClasses: 'border border-1 rounded navbar py-2 px-3 my-2 bg-light flex-shrink-0'
+					panelClasses: 'card card-body my-3 bg-light'
 				},
 				meta: {
 					viewport: 'width=device-width,initial-scale=1'
