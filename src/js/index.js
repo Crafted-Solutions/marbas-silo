@@ -2,13 +2,14 @@ import "../scss/index.scss";
 import { EVENT_INITIALIZED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { AuthModule } from "AuthModule";
-import { MarBasDefaults, DataBrokerAPI } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, DataBrokerAPI, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
 import { GrainEditor } from "./GrainEditor";
 import { SiloNavi } from "./SiloNavi";
 import { IconMaps } from "../conf/icons.conf";
 import { LangSelector } from "./LangSelector";
 import { Task, TaskLayer } from "./Task";
 import { MsgBox } from "./MsgBox";
+import { ExtensionLoader } from "./ExtensionLoader";
 
 global.NoOp = () => { };
 
@@ -58,6 +59,13 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 	}
 }]);
 const editorMgr = new GrainEditor('grain-edit', apiSvc);
+await ExtensionLoader.installExtension('GrainEditor', {
+	Task: Task,
+	MarBasDefaults: MarBasDefaults,
+	MarBasTraitValueType: MarBasTraitValueType,
+	GrainEditor: GrainEditor,
+	instance: editorMgr
+});
 
 naviMgr.addEventListener(EVENT_INITIALIZED, () => {
 	if (authModule.isLoggedIn) {

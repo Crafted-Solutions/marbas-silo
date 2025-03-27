@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -16,6 +17,16 @@ module.exports = (env) => {
 		resolveAlias['@json-editor/json-editor'] = path.resolve(__dirname, "node_modules/@json-editor/json-editor/dist/nonmin/jsoneditor.js");
 	}
 
+	const extensionPoint = './marbas-silo.ext';
+	if ('development' == mode) {
+		['js', 'css'].forEach(ext => {
+			const xpfile = path.resolve(__dirname, 'dist', `${extensionPoint}.${ext}`);
+			if (!fs.existsSync(xpfile)) {
+				fs.closeSync(fs.openSync(xpfile, 'a'));
+			}
+		});
+	}
+
 	return {
 		mode: mode,
 		entry: {
@@ -23,7 +34,9 @@ module.exports = (env) => {
 			libs: './src/js/libs.js'
 		},
 		devServer: {
-			static: './dist',
+			static: {
+				directory: './dist'
+			},
 			port: 5500,
 			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css', 'packages/**/src/**/*.js']
 		},
@@ -88,8 +101,10 @@ module.exports = (env) => {
 				title: 'MarBas Silo',
 				template: 'src/index.hbs',
 				templateParameters: {
+					title: 'MarBas Silo',
 					apiBaseUrl: 'https://localhost:7277/api/marbas',
-					panelClasses: 'card card-body my-3 bg-light'
+					panelClasses: 'card card-body my-3 bg-light',
+					extensionPoint: extensionPoint
 				},
 				meta: {
 					viewport: 'width=device-width,initial-scale=1'

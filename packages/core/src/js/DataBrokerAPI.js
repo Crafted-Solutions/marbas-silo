@@ -203,6 +203,31 @@ export class DataBrokerAPI {
 		return result;
 	}
 
+	getGrainByPath(path, ignoreCache = false) {
+		if (!path || 'marbas' == path || '/' == path) {
+			return this.getGrain(null, ignoreCache);
+		}
+		const searchPath = path.replace(/^(\/|marbas)/, '').replace(/\/\**$/, '');
+		return new Promise(resolve => {
+			if (!ignoreCache && this.#grains.some(grain => {
+				if (`marbas/${searchPath}` == grain.path) {
+					resolve(grain);
+					return true;
+				}
+				return false;
+			})) {
+				return;
+			}
+
+			this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Tree/${searchPath}`))
+				.then(grains => {
+					const grain = grains && grains.length ? this.#addGrainToCache(grains[0]) : null;
+					resolve(grain);
+				})
+				.catch(() => { resolve(null) });
+		});
+	}
+
 	storeGrain(grain) {
 		if (grain._siloAttrs && grain._siloAttrsMod) {
 			grain.xAttrs = Object.keys(grain._siloAttrs).length ? `"silo":${JSON.stringify(grain._siloAttrs)}` : null;
@@ -338,29 +363,47 @@ export class DataBrokerAPI {
 					.catch(reject);
 			});
 		}
-		const params = new URLSearchParams();
-		params.append('sortOptions', JSON.stringify({
+		const result = this.listGrains(id, [{
 			field: 'SortKey',
 			order: 'Asc'
-		}));
-		params.append('sortOptions', JSON.stringify({
+		}, {
 			field: 'Name',
 			order: 'Asc'
-		}));
+		}], false, typeFilter);
+		result.then(list => {
+			if (this.#grains[id] && !typeFilter) {
+				this.#grains[id]._listed = 1;
+			}
+		}).catch(NoOp);
+		return result;
+	}
+
+	listGrains(parentOrId, sortOptions = null, recursive = false, typeFilter = null, idFilter = null) {
+		const params = new URLSearchParams();
+		if (sortOptions) {
+			sortOptions.forEach(item => {
+				params.append('sortOptions', JSON.stringify(item));
+			});
+		}
 		if (typeFilter) {
 			typeFilter.forEach(filter => {
 				params.append('typeFilter', filter);
 			});
 		}
+		if (idFilter) {
+			idFilter.forEach(filter => {
+				params.append('idFilter', filter);
+			});
+		}
+		if (recursive) {
+			params.set('recursive', true);
+		}
 		this.#addLangParam(params);
-		const result = this.#fetchGet(`${this.#baseUrl}/Grain/${id}/List?${params}`);
+		const result = this.#fetchGet(`${this.#baseUrl}/Grain/${parentOrId.id || parentOrId}/List?${params}`);
 		result.then(list => {
 			list.forEach(element => {
 				this.#addGrainToCache(element);
 			})
-			if (this.#grains[id] && !typeFilter) {
-				this.#grains[id]._listed = 1;
-			}
 		}).catch(NoOp);
 		return result;
 	}
