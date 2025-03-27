@@ -9,7 +9,7 @@ import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED } from "@jbtron
 
 import { GrainXAttrs } from "./GrainXAttrs";
 import { Task } from "./Task";
-import { MarBasBuiltIns, MarBasDefaults } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 export class SiloTree {
 	_element;

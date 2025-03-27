@@ -82,7 +82,7 @@ export class SiloNavi extends SiloTree {
 	async renameNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
 		if (node) {
-			const oldName = node.text;
+			const oldName = grainOrId.name || (await this._apiSvc.getGrain(grainOrId.id || grainOrId)).name || node.text;
 			const newName = await InputDialog.requestTextFromUser({
 				title: `Rename "${oldName}"`,
 				prompt: 'New Grain Name',
@@ -182,6 +182,7 @@ export class SiloNavi extends SiloTree {
 					const parentId = parentOrId.id || parentOrId;
 					if (parentId != oldParentId) {
 						await this.reloadNode(oldParentId);
+						this.tree.expandNode(this._getNodeByGrain(oldParentId));
 					}
 				}
 			} else {
@@ -190,7 +191,7 @@ export class SiloNavi extends SiloTree {
 			if (grain) {
 				this.clearClipboard();
 				await this.reloadNode(parentOrId);
-				await this.tree.expandNode(this._getNodeByGrain(parentOrId));
+				await this.expandBranch(grain);
 			}
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	}
@@ -207,7 +208,7 @@ export class SiloNavi extends SiloTree {
 			if (link) {
 				this.clearClipboard();
 				await this.reloadNode(parentOrId);
-				await this.tree.expandNode(this._getNodeByGrain(parentOrId));
+				this.tree.expandNode(this._getNodeByGrain(parentOrId));
 			}
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	}
@@ -255,7 +256,7 @@ export class SiloNavi extends SiloTree {
 		return await result;
 	}
 
-	async navigateToNode(grainOrId) {
+	async expandBranch(grainOrId) {
 		let node = this._getNodeByGrain(grainOrId);
 		const handleErr = (errMsg) => {
 			console.warn('navigateToNode', errMsg);
@@ -294,7 +295,11 @@ export class SiloNavi extends SiloTree {
 				}
 			};
 		}
-		if (node) {
+		return node;
+	}
+
+	async navigateToNode(grainOrId) {
+		if (await this.expandBranch(grainOrId)) {
 			return await this.revealAndSelectNode(grainOrId);
 		}
 		return null;

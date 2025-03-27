@@ -8,5 +8,8 @@
 		"editor.autoIndent": "advanced",
 		"editor.insertSpaces": true,
 		"editor.tabSize": 2
+	},
+	"[scss]": {
+		"editor.formatOnSave": false
 	}
 }
