@@ -3,21 +3,25 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>{{htmlWebpackPlugin.options.title}}</title>
+	<title>{{title}}</title>
 	<script type="text/javascript">
 		const EnvConfig = {
-			apiBaseUrl: "{{htmlWebpackPlugin.options.templateParameters.apiBaseUrl}}",
-			panelClasses: '{{htmlWebpackPlugin.options.templateParameters.panelClasses}}'
+			apiBaseUrl: "{{apiBaseUrl}}",
+			panelClasses: '{{panelClasses}}',
+			extensionPoint: '{{extensionPoint}}'
 		};
 	</script>
+	{{#if extensionPoint}}
+	<link href="{{extensionPoint}}.css" type="text/css" rel="stylesheet">
+	{{/if}}
 </head>
 
 <body>
-	<article id="main" class="container-fluid py-4 px-3">
-		<h1>{{htmlWebpackPlugin.options.title}}</h1>
+	<article id="main" class="container-fluid py-4 px-3 d-flex flex-column vh-100 overflow-hidden">
+		<h1>{{title}}</h1>
 
-		<section id="top" class="{{htmlWebpackPlugin.options.templateParameters.panelClasses}}">
-			<div class="row row-cols-2">
+		<section id="top" class="border border-1 rounded navbar py-2 px-3 my-2 bg-light flex-shrink-0">
+			<div class="row row-cols-2 flex-grow-1">
 				<div class="silo-auth col-3 d-none" aria-hidden="true">
 					<label class="d-none" for="silo-lang">Language</label>
 					<select id="silo-lang" class="form-select" title="Language">
@@ -32,11 +36,11 @@
 			</div>
 		</section>
 
-		<section class="row row-cols-2 silo-auth">
-			<div class="col-3" style="min-width: 20em">
+		<section class="row row-cols-2 silo-auth flex-grow-1 overflow-hidden">
+			<div class="col-4 mh-100 overflow-auto" style="min-width: 20em">
 				<nav id="silo-nav" class="silo-auth d-none" aria-hidden="true"></nav>
 			</div>
-			<div class="col-9" style="min-width: 30em;">
+			<div class="col-8 mh-100 overflow-auto" style="min-width: 30em;">
 				<div id="grain-edit" class="silo-auth d-none" aria-hidden="true"></div>
 			</div>
 		</section>

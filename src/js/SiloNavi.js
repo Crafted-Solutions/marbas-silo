@@ -8,6 +8,7 @@ import { FileNewDialog } from "./FileNewDialog";
 import { InputDialog } from "./InputDialog";
 import { MsgBox } from "./MsgBox";
 import { GrainSecurityDialog } from "./GrainSecurityDialog";
+import { Task } from "./Task";
 
 export class SiloNavi extends SiloTree {
 
@@ -34,15 +35,17 @@ export class SiloNavi extends SiloTree {
 	async deleteNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
 		if (node && 'yes' == await MsgBox.invoke(`Delete ${node.text}?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
-			const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
-			this.tree.removeNode(node);
-			if (parents.length) {
-				this.tree.selectNode(parents);
-			}
-			await this._apiSvc.deleteGrain(grainOrId.id || grainOrId);
-			document.dispatchEvent(new CustomEvent('mb-silo:grain-deleted', {
-				detail: grainOrId.id || grainOrId
-			}));
+			await Task.nowAsync('Creating file', async () => {
+				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
+				this.tree.removeNode(node);
+				if (parents.length) {
+					this.tree.selectNode(parents);
+				}
+				await this._apiSvc.deleteGrain(grainOrId.id || grainOrId);
+				document.dispatchEvent(new CustomEvent('mb-silo:grain-deleted', {
+					detail: grainOrId.id || grainOrId
+				}));
+			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 		}
 	}
 
@@ -51,8 +54,10 @@ export class SiloNavi extends SiloTree {
 			this.#grainNewDlg = new GrainNewDialog("grain-new", this._apiSvc);
 			this.#grainNewDlg.addEventListener('hidden.bs.modal', async () => {
 				if (this.#grainNewDlg.accepted) {
-					const grain = await this._apiSvc.createGrain(this.#grainNewDlg.parentGrain, this.#grainNewDlg.grainType, this.#grainNewDlg.grainName);
-					this.revealAndSelectNode(grain);
+					await Task.nowAsync("Creating grain", async () => {
+						const grain = await this._apiSvc.createGrain(this.#grainNewDlg.parentGrain, this.#grainNewDlg.grainType, this.#grainNewDlg.grainName);
+						await this.revealAndSelectNode(grain);
+					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 				}
 			});
 		}
@@ -64,8 +69,10 @@ export class SiloNavi extends SiloTree {
 			this.#fileNewDlg = new FileNewDialog("file-new", this._apiSvc);
 			this.#fileNewDlg.addEventListener('hidden.bs.modal', async () => {
 				if (this.#fileNewDlg.accepted) {
-					const grain = await this._apiSvc.createFile(this.#fileNewDlg.formData);
-					this.revealAndSelectNode(grain);
+					await Task.nowAsync('Creating file', async () => {
+						const grain = await this._apiSvc.createFile(this.#fileNewDlg.formData);
+						await this.revealAndSelectNode(grain);
+					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 				}
 			});
 		}
@@ -75,7 +82,7 @@ export class SiloNavi extends SiloTree {
 	async renameNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
 		if (node) {
-			const oldName = node.text;
+			const oldName = grainOrId.name || (await this._apiSvc.getGrain(grainOrId.id || grainOrId)).name || node.text;
 			const newName = await InputDialog.requestTextFromUser({
 				title: `Rename "${oldName}"`,
 				prompt: 'New Grain Name',
@@ -148,8 +155,14 @@ export class SiloNavi extends SiloTree {
 		}
 	}
 
-	hasClipboardContent() {
-		return !!Object.keys(this.#clipboard).length;
+	hasClipboardContent(operation = undefined) {
+		let result = !!Object.keys(this.#clipboard).length;
+		if (result && operation) {
+			result = Object.keys(this.#clipboard).every((id) => {
+				return this.#clipboard[id] == operation;
+			});
+		}
+		return result;
 	}
 
 	async pasteIntoNode(parentOrId) {
@@ -158,23 +171,46 @@ export class SiloNavi extends SiloTree {
 		}
 		const id = Object.keys(this.#clipboard)[0];
 		const op = this.#clipboard[id];
-		let grain;
-		if ('cut' == op) {
-			const oldParentId = (await this._apiSvc.getGrain(id)).parentId;
-			grain = await this._apiSvc.moveGrain(id, parentOrId);
-			if (grain) {
-				const parentId = parentOrId.id || parentOrId;
-				if (parentId != oldParentId) {
-					await this.reloadNode(oldParentId);
+
+		const taskName = `${'cut' == op ? "Copying" : "Moving"} grain`;
+		await Task.nowAsync(taskName, async () => {
+			let grain;
+			if ('cut' == op) {
+				const oldParentId = (await this._apiSvc.getGrain(id)).parentId;
+				grain = await this._apiSvc.moveGrain(id, parentOrId);
+				if (grain) {
+					const parentId = parentOrId.id || parentOrId;
+					if (parentId != oldParentId) {
+						await this.reloadNode(oldParentId);
+						this.tree.expandNode(this._getNodeByGrain(oldParentId));
+					}
 				}
+			} else {
+				grain = await this._apiSvc.cloneGrain(id, parentOrId);
 			}
-		} else {
-			grain = await this._apiSvc.cloneGrain(id, parentOrId);
+			if (grain) {
+				this.clearClipboard();
+				await this.reloadNode(parentOrId);
+				await this.expandBranch(grain);
+			}
+		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+	}
+
+	async pasteLinkIntoNode(parentOrId) {
+		if (!this.hasClipboardContent('copy')) {
+			return null;
 		}
-		if (grain) {
-			await this.reloadNode(parentOrId);
-			this.clearClipboard();
-		}
+		const taskName = "Creating link";
+		await Task.nowAsync(taskName, async () => {
+			const id = Object.keys(this.#clipboard)[0];
+			const target = await this._apiSvc.getGrain(id);
+			const link = await this._apiSvc.createGrainLink(parentOrId, target);
+			if (link) {
+				this.clearClipboard();
+				await this.reloadNode(parentOrId);
+				this.tree.expandNode(this._getNodeByGrain(parentOrId));
+			}
+		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	}
 
 	async revealAndSelectNode(grain) {
@@ -182,6 +218,11 @@ export class SiloNavi extends SiloTree {
 		let parent = this._getNodeByGrain(grain.parentId);
 
 		const result = new Promise((resolve) => {
+			this._element.addEventListener(EVENT_NODE_SELECTED, (evt) => {
+				if (evt.detail.node == node) {
+					document.getElementById(node.id).scrollIntoView();
+				}
+			}, { once: true });
 			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
 				if (evt.detail.node == parent) {
 					if (!node) {
@@ -215,8 +256,13 @@ export class SiloNavi extends SiloTree {
 		return await result;
 	}
 
-	async navigateToNode(grainOrId) {
+	async expandBranch(grainOrId) {
 		let node = this._getNodeByGrain(grainOrId);
+		const handleErr = (errMsg) => {
+			console.warn('navigateToNode', errMsg);
+			MsgBox.invokeErr(errMsg);
+			return null;
+		};
 		if (node) {
 			if (!grainOrId.id) {
 				grainOrId = await this._apiSvc.getGrain(grainOrId);
@@ -224,8 +270,7 @@ export class SiloNavi extends SiloTree {
 		} else {
 			const path = await this._apiSvc.getGrainPath(grainOrId, true);
 			if (!path || !path.length) {
-				console.warn(`No path returned for ${grainOrId}`);
-				return null;
+				return handleErr(`No path returned for ${grainOrId}`);
 			}
 			grainOrId = path[0];
 			const id = grainOrId.id;
@@ -246,12 +291,15 @@ export class SiloNavi extends SiloTree {
 					}
 				}
 				if (1000 < ++c) {
-					console.warn(`Path to ${id} is too deep`);
-					break;
+					return handleErr(`Path to ${id} is too deep`);
 				}
 			};
 		}
-		if (node) {
+		return node;
+	}
+
+	async navigateToNode(grainOrId) {
+		if (await this.expandBranch(grainOrId)) {
 			return await this.revealAndSelectNode(grainOrId);
 		}
 		return null;
@@ -268,7 +316,11 @@ export class SiloNavi extends SiloTree {
 	async _getNodeProperties(grain, node) {
 		const result = await super._getNodeProperties(grain, node);
 		const op = this.#clipboard[grain.id];
-		result.tags = op ? [{ text: ' ', 'class': `badge bg-light text-dark ms-1 ${'cut' == op ? 'bi-scissors' : 'bi-copy'}` }] : [];
+		this._updateNodeTags({
+			text: ' ',
+			'data-tag': 'clipboard',
+			'class': `badge bg-light text-dark ms-1 ${'cut' == op ? 'bi-scissors' : 'bi-copy'}`
+		}, result, !op);
 		return result;
 	}
 
@@ -339,6 +391,12 @@ export class SiloNavi extends SiloTree {
 				this.pasteIntoNode(grainId);
 			}
 		});
+		this.ctxMnu.addCmdListener('cmdPasteLink', (evt) => {
+			const grainId = this._getGrainIdFor(evt);
+			if (grainId) {
+				this.pasteLinkIntoNode(grainId);
+			}
+		});
 		this.ctxMnu.addCmdListener('cmdClearCbrd', (evt) => {
 			this.clearClipboard();
 		});
@@ -365,7 +423,7 @@ export class SiloNavi extends SiloTree {
 	async #onContextMenu(evt) {
 		const grainId = this._getGrainIdFor(evt.menuEvent);
 		if (grainId) {
-			const opCmds = ['cmdDelete', 'cmdNew', 'cmdNewContainer', 'cmdNewFile', 'cmdNewType', 'cmdCut', 'cmdCopy', 'cmdPaste', 'cmdRename'];
+			const opCmds = ['cmdDelete', 'cmdNew', 'cmdNewContainer', 'cmdNewFile', 'cmdNewType', 'cmdCut', 'cmdCopy', 'cmdPaste', 'cmdPasteLink', 'cmdRename'];
 			try {
 				const grain = await this._apiSvc.getGrain(grainId);
 				const isRoot = MarBasDefaults.ID_ROOT == grainId;
@@ -377,8 +435,8 @@ export class SiloNavi extends SiloTree {
 				opCmds.forEach(async x => {
 					let enable = 'cmdNewContainer' == x || !isRoot;
 					try {
-						if (enable && 'cmdPaste' == x) {
-							enable = this.hasClipboardContent();
+						if (enable && x.startsWith('cmdPaste')) {
+							enable = this.hasClipboardContent('cmdPasteLink' == x ? 'copy' : undefined);
 						}
 						if (enable && ('cmdNewType' == x)) {
 							enable = isContainer && isInSchema;
@@ -389,7 +447,7 @@ export class SiloNavi extends SiloTree {
 						if (enable && x.startsWith('cmdNew') && 'cmdNewContainer' != x) {
 							enable = !isInTrash;
 						}
-						if (enable && ('cmdPaste' == x || x.startsWith('cmdNew'))) {
+						if (enable && (x.startsWith('cmdPaste') || x.startsWith('cmdNew'))) {
 							enable = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
 						}
 						if (enable && 'cmdRename' == x) {

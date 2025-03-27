@@ -1,0 +1,15 @@
+{
+	"private": true,
+	"name": "publish-packages",
+	"description": "Utility to conditionally publish packages",
+	"version": "0.0.0",
+	"type": "module",
+	"main": "./publish-packages.js",
+	"bin": {
+		"publish-packages": "./publish-packages.js"
+	},
+	"scripts": {
+		"build": "exit 0",
+		"test": "exit 0"
+	}
+}

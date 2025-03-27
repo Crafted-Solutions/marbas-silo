@@ -20,6 +20,7 @@ export class SiloTree {
 
 	constructor(elementId, apiSvc, rootNodes, initCallback = null, options = null) {
 		this._element = document.getElementById(elementId);
+		this._element.classList.add('silo-tree');
 		this._apiSvc = apiSvc;
 		this._seed = rootNodes;
 		if (null != options) {
@@ -43,7 +44,11 @@ export class SiloTree {
 			tagsClass: 'badge bg-secondary ms-1',
 			wrapNodeText: true,
 			showBorder: true,
-			lazyLoad: (node, renderer) => this._loadNodeChildren(node, renderer)
+			// showCheckbox: true,
+			// checkboxFirst: true,
+			// checkedIcon: 'bi-check-square',
+			// uncheckedIcon: 'bi-square',
+			lazyLoad: async (node, renderer) => this._loadNodeChildren(node, renderer)
 		}, [BS5Theme]);
 
 		for (const key in this._listeners) {
@@ -139,7 +144,7 @@ export class SiloTree {
 
 	async _loadNodeChildren(node, renderer) {
 		const grainId = (node.dataAttr || {}).grain;
-		const flags = MarBasDefaults.ID_ROOT == grainId ? Task.Flag.DEFAULT | Task.Flag.REPORT_START : Task.Flag.REPORT_START;
+		const flags = MarBasDefaults.ID_ROOT == grainId ? Task.Flag.DEFAULT | Task.Flag.REPORT_START : Task.Flag.REPORT_ERROR | Task.Flag.REPORT_START;
 		await Task.nowAsync("Loading grains", async () => {
 			const grain = await this._apiSvc.getGrain(grainId);
 			await this._getNodeProperties(grain, node);
@@ -169,13 +174,41 @@ export class SiloTree {
 				disabled: true
 			}
 		}
+		const isLink = await this._apiSvc.isGrainInstanceOf(grain, MarBasDefaults.ID_TYPE_LINK);
+		if (isLink && (!result['class'] || !result['class'].match(/\bnode-link\b/))) {
+			if (result['class']) {
+				result['class'] += " node-link";
+			} else {
+				result['class'] = "node-link";
+			}
+		}
+
 		result.text = grain.label;
+		result.tooltip = `${grain.label} (${grain.typeName || 'Type'})`;
 		result.icon = grain.icon || GrainXAttrs.getGrainIcon(grain);
 		if (!result.dataAttr) {
 			result.dataAttr = {};
 		}
 		result.dataAttr.grain = grain.id;
 		return result;
+	}
+
+	_updateNodeTags(tag, node, remove = false) {
+		const i = node.tags && node.tags.length ? node.tags.findIndex((value) => value['data-tag'] == tag['data-tag']) : -2;
+		if (remove) {
+			if (-1 < i) {
+				node.tags.splice(i, 1);
+			}
+		} else {
+			if (-2 == i) {
+				node.tags = [tag];
+			} else if (-1 == i) {
+				node.tags[i] == tag;
+			} else {
+				node.tags.push(tag);
+			}
+		}
+		return node;
 	}
 
 	_getNodeByGrain(grainOrId) {

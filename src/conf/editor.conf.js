@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
 
 export const EditorSchemaConfig = {
 	BASIC: {
@@ -154,6 +154,9 @@ export const EditorSchemaConfig = {
 	TRAIT_Memo_rtf: {
 		format: 'jodit'
 	},
+	TRAIT_DateTime_dateonly: {
+		format: 'date'
+	},
 	TRAIT_Grain: {
 		format: "string",
 		readonly: true,
@@ -209,7 +212,7 @@ export const EditorSchemaConfig = {
 				type: 'object',
 				properties: {
 					defaultInstanceId: {
-						required: true,
+						required: false,
 						title: 'Default Values',
 						type: 'string',
 						format: 'button',
@@ -227,6 +230,8 @@ export const EditorSchemaConfig = {
 						title: 'Type Mix-Ins',
 						type: 'array',
 						uniqueItems: true,
+						minItems: 0,
+						required: true,
 						options: {
 							containerAttributes: {
 								'data-pickeropts': 'TypeDef'
@@ -273,7 +278,7 @@ export const EditorSchemaConfig = {
 					valueType: {
 						title: 'Value Type',
 						type: 'string',
-						enum: ['Text', 'Memo', 'Number', 'Boolean', 'DateTime', 'File', 'Grain'],
+						enum: MarBasTraitValueTypes,
 						options: {
 							grid_break: true,
 							grid_columns: 12
@@ -424,6 +429,13 @@ export const EditorSchemaConfig = {
 					}
 				}
 			}
+		}
+	},
+	PropDef_DateTime: {
+		isDateOnly: {
+			type: "boolean",
+			format: "checkbox",
+			title: "Date Only"
 		}
 	},
 	PropDef_Memo: {

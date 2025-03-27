@@ -1,5 +1,5 @@
 import merge from "lodash.merge";
-import { MarBasDefaults, MarBasRoleEntitlement } from "../conf/marbas.conf.js";
+import { MarBasDefaults, MarBasRoleEntitlement, MarBasTraitValueType } from "../conf/marbas.conf.js";
 import { MbUtils } from "./MbUtils.js";
 
 const NoOp = () => { };
@@ -99,15 +99,82 @@ export class DataBrokerAPI {
 		return this.#fetchGet(`${this.#baseUrl}/Role/${roleId}`);
 	}
 
-	getLabel(grainOrId) {
+	resolveGrainLabel(grainOrId) {
 		return new Promise((resolve) => {
 			if (grainOrId.label) {
 				resolve(grainOrId.label);
 			} else {
-				this.getGrain(grainOrId.id || grainOrId)
-					.then(grain => resolve(grain.label))
-					.catch(() => resolve(''));
+				this.getGrainLabels(grainOrId, [grainOrId.culture || this.#lang || MarBasDefaults.LANG])
+					.then(labels => resolve(labels && labels.length ? labels[0].label : '-'))
+					.catch(() => resolve('-'));
 			}
+		});
+	}
+
+	resolveGrainLink(linkOrId) {
+		return new Promise(async (resolve, reject) => {
+			const link = linkOrId.id ? linkOrId : await this.getGrain(linkOrId);
+			this.getTraitValues(link, MarBasDefaults.ID_PROPDEF_LINKTARGET)
+				.then(targets => {
+					if (targets && targets.length && targets[0].value) {
+						this.getGrain(targets[0].value).then(resolve).catch(reject);
+					} else {
+						resolve(link);
+					}
+				})
+				.catch(reject);
+		});
+	}
+
+	createGrainLink(parentOrId, target) {
+		return new Promise((resolve, reject) => {
+			this.createGrain(parentOrId, MarBasDefaults.ID_TYPE_LINK, `${target.name}-Link-${((Math.random() * 0xfffffff) << 2).toString(16)}`)
+				.then(link => {
+					link.label = target.label;
+					link.culture = target.culture;
+					link.sortKey = target.sortKey;
+					let xAttrs;
+					if (link.typeXAttrs) {
+						xAttrs = JSON.parse(`{${target.typeXAttrs}}`);
+					}
+					if (link.xAttrs) {
+						xAttrs = merge(xAttrs || {}, JSON.parse(`{${target.xAttrs}}`));
+					}
+					if (target.icon && (!xAttrs || !xAttrs.silo || !xAttrs.silo.icon)) {
+						xAttrs = xAttrs || {};
+						xAttrs.silo = xAttrs.silo || {};
+						xAttrs.silo.icon = target.icon;
+					}
+					if (xAttrs) {
+						link.xAttrs = JSON.stringify(xAttrs).slice(1, -1);
+					}
+					this.storeGrain(link)
+						.then(() => {
+							this.getGrainLabels(target)
+								.then((labels) => {
+									labels.forEach(label => {
+										if (label.culture && label.culture != link.culture) {
+											this.storeGrain({
+												id: link.id,
+												typeDefId: link.typeDefId,
+												culture: label.culture,
+												label: label.label
+											}).catch(NoOp);
+										}
+									});
+								})
+								.catch(NoOp);
+
+							this.storeTraitValues(link, {
+								id: MarBasDefaults.ID_PROPDEF_LINKTARGET,
+								valueType: MarBasTraitValueType.Grain
+							}, [target.id])
+								.then(() => resolve(link))
+								.catch(reject);
+						})
+						.catch(reject);
+				})
+				.catch(reject);
 		});
 	}
 
@@ -134,6 +201,31 @@ export class DataBrokerAPI {
 			this.#addGrainToCache(grain);
 		}).catch(NoOp);
 		return result;
+	}
+
+	getGrainByPath(path, ignoreCache = false) {
+		if (!path || 'marbas' == path || '/' == path) {
+			return this.getGrain(null, ignoreCache);
+		}
+		const searchPath = path.replace(/^(\/|marbas)/, '').replace(/\/\**$/, '');
+		return new Promise(resolve => {
+			if (!ignoreCache && this.#grains.some(grain => {
+				if (`marbas/${searchPath}` == grain.path) {
+					resolve(grain);
+					return true;
+				}
+				return false;
+			})) {
+				return;
+			}
+
+			this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Tree/${searchPath}`))
+				.then(grains => {
+					const grain = grains && grains.length ? this.#addGrainToCache(grains[0]) : null;
+					resolve(grain);
+				})
+				.catch(() => { resolve(null) });
+		});
 	}
 
 	storeGrain(grain) {
@@ -271,29 +363,47 @@ export class DataBrokerAPI {
 					.catch(reject);
 			});
 		}
-		const params = new URLSearchParams();
-		params.append('sortOptions', JSON.stringify({
+		const result = this.listGrains(id, [{
 			field: 'SortKey',
 			order: 'Asc'
-		}));
-		params.append('sortOptions', JSON.stringify({
+		}, {
 			field: 'Name',
 			order: 'Asc'
-		}));
+		}], false, typeFilter);
+		result.then(list => {
+			if (this.#grains[id] && !typeFilter) {
+				this.#grains[id]._listed = 1;
+			}
+		}).catch(NoOp);
+		return result;
+	}
+
+	listGrains(parentOrId, sortOptions = null, recursive = false, typeFilter = null, idFilter = null) {
+		const params = new URLSearchParams();
+		if (sortOptions) {
+			sortOptions.forEach(item => {
+				params.append('sortOptions', JSON.stringify(item));
+			});
+		}
 		if (typeFilter) {
 			typeFilter.forEach(filter => {
 				params.append('typeFilter', filter);
 			});
 		}
+		if (idFilter) {
+			idFilter.forEach(filter => {
+				params.append('idFilter', filter);
+			});
+		}
+		if (recursive) {
+			params.set('recursive', true);
+		}
 		this.#addLangParam(params);
-		const result = this.#fetchGet(`${this.#baseUrl}/Grain/${id}/List?${params}`);
+		const result = this.#fetchGet(`${this.#baseUrl}/Grain/${parentOrId.id || parentOrId}/List?${params}`);
 		result.then(list => {
 			list.forEach(element => {
 				this.#addGrainToCache(element);
 			})
-			if (this.#grains[id] && !typeFilter) {
-				this.#grains[id]._listed = 1;
-			}
 		}).catch(NoOp);
 		return result;
 	}
@@ -304,6 +414,18 @@ export class DataBrokerAPI {
 
 	getGrainTraits(grain) {
 		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Grain/${grain.id || grain}/Traits`));
+	}
+
+	getGrainLabels(grainOrId, langCodes = undefined) {
+		let url = `${this.#baseUrl}/Grain/${grainOrId.id || grainOrId}/Labels`;
+		if (langCodes && langCodes.length) {
+			const params = new URLSearchParams();
+			langCodes.forEach((lang) => {
+				params.append('lang', lang);
+			});
+			url += `?${params}`;
+		}
+		return this.#fetchGet(url);
 	}
 
 	getTraitValues(grain, propDefOrId) {
@@ -319,7 +441,9 @@ export class DataBrokerAPI {
 			if (0 == values.length) {
 				const params = new URLSearchParams();
 				params.set('revision', grain.revision);
-				params.set('lang', this.#lang || grain.culture);
+				if (propDef.localizable) {
+					params.set('lang', this.#lang || grain.culture);
+				}
 
 				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.#applyStdFetchOptions({ method: 'DELETE' }));
 			} else {
@@ -332,7 +456,7 @@ export class DataBrokerAPI {
 						grainId: grain.id,
 						propDefId: propDef.id,
 						valueType: propDef.valueType,
-						culture: this.#lang || grain.culture,
+						culture: propDef.localizable ? this.#lang || grain.culture : null,
 						revision: grain.revision,
 						values: values
 					})

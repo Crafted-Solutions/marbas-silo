@@ -1,15 +1,19 @@
 @import "~bootstrap/scss/bootstrap";
 $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 @import "~bootstrap-icons/font/bootstrap-icons.scss";
+
 .bi-blank {
-    visibility: hidden;
+	visibility: hidden;
 }
+
 .sr-only[for="root-property-selector"] {
 	display: none;
 }
+
 .th-rotate {
 	height: 5em;
 }
+
 .th-rotate .th-content {
 	transform: rotate(190deg);
 	font-size: smaller;
@@ -17,32 +21,55 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 	text-align: left;
 	writing-mode: vertical-lr;
 }
-.node-silo-nav {
+
+.silo-tree .list-group-item {
 	white-space: nowrap;
 }
-.node-silo-nav.node-selected .expand-icon {
+
+.silo-tree .list-group-item.node-selected .expand-icon {
 	color: var(--bs-white) !important;
 }
-.node-silo-nav .node-icon {
+
+.silo-tree .list-group-item .node-icon {
 	font-size: 1.2rem;
 }
+
+.silo-tree .list-group-item.node-link .text::before {
+	content: "\f471";
+	font-family: "bootstrap-icons" !important;
+	vertical-align: sub;
+	display: inline-block;
+	text-indent: -1em;
+	color: brown;
+	transform: translateY(0.7em);
+}
+
+.silo-tree .list-group-item.node-selected.node-link .text::before {
+	color: lightcoral;
+}
+
 .mb-grain-icon {
 	font-size: 2rem !important;
 }
+
 .dropdown-item:disabled * {
 	color: var(--bs-dropdown-link-disabled-color) !important;
 	background-color: transparent;
 }
+
 .mb-grain-file {
 	margin-right: 0.25rem !important;
 	vertical-align: top;
 }
+
 .mb-session-link {
 	vertical-align: top;
 }
+
 [data-schematype="array"] .btn-group:last-of-type {
 	margin-top: 0.25rem !important;
 }
+
 .grain-security-role:nth-child(1) {
 	white-space: nowrap;
 }

@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
@@ -8,6 +9,24 @@ module.exports = (env) => {
 	// TODO configure something different for production
 	const authModule = 'AuthModuleBasic';
 
+	const resolveAlias = {
+		AuthModule: path.resolve(__dirname, `src/js/${authModule}.js`),
+		'@crafted.solutions/marbas-core': path.resolve(__dirname, 'packages/core/src/js/index.js')
+	};
+	if (env.DEBUG_JSONEDITOR) {
+		resolveAlias['@json-editor/json-editor'] = path.resolve(__dirname, "node_modules/@json-editor/json-editor/dist/nonmin/jsoneditor.js");
+	}
+
+	const extensionPoint = './marbas-silo.ext';
+	if ('development' == mode) {
+		['js', 'css'].forEach(ext => {
+			const xpfile = path.resolve(__dirname, 'dist', `${extensionPoint}.${ext}`);
+			if (!fs.existsSync(xpfile)) {
+				fs.closeSync(fs.openSync(xpfile, 'a'));
+			}
+		});
+	}
+
 	return {
 		mode: mode,
 		entry: {
@@ -15,15 +34,15 @@ module.exports = (env) => {
 			libs: './src/js/libs.js'
 		},
 		devServer: {
-			static: './dist',
+			static: {
+				directory: './dist'
+			},
 			port: 5500,
-			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css']
+			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css', 'packages/**/src/**/*.js']
 		},
 		devtool: 'production' == mode ? false : "eval-cheap-source-map",
 		resolve: {
-			alias: {
-				AuthModule: path.resolve(__dirname, `src/js/${authModule}.js`)
-			}
+			alias: resolveAlias
 		},
 		module: {
 			rules: [
@@ -65,7 +84,13 @@ module.exports = (env) => {
 							}
 						},
 						{
-							loader: 'sass-loader'
+							loader: 'sass-loader',
+							options: {
+								sassOptions: {
+									quietDeps: true,
+									silenceDeprecations: ['import']
+								}
+							}
 						}
 					]
 				}
@@ -76,8 +101,10 @@ module.exports = (env) => {
 				title: 'MarBas Silo',
 				template: 'src/index.hbs',
 				templateParameters: {
+					title: 'MarBas Silo',
 					apiBaseUrl: 'https://localhost:7277/api/marbas',
-					panelClasses: 'card card-body my-3 bg-light'
+					panelClasses: 'card card-body my-3 bg-light',
+					extensionPoint: extensionPoint
 				},
 				meta: {
 					viewport: 'width=device-width,initial-scale=1'
