@@ -1,6 +1,10 @@
 name: Publish Test
 
 on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -27,7 +31,7 @@ jobs:
         node-version: 22.x
         registry-url: https://registry.npmjs.org
         cache: 'npm'
-        
+
     - name: NPM publish
       run: |
         npm ci
