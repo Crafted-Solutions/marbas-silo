@@ -26,7 +26,7 @@
 		"require": "./dist/index.cjs"
 	},
 	"scripts": {
-		"build": "npx rollup ./src/js/index.js --file ./dist/index.cjs --format cjs && npx rollup ./src/js/index.js --file ./dist/index.js --format esm",
+		"build": "rollup ./src/js/index.js --file ./dist/index.cjs --format cjs && rollup ./src/js/index.js --file ./dist/index.js --format esm",
 		"watch": "rollup ./src/js/index.js --file ./dist/index.js --format esm --watch",
 		"prepack": "npm run build"
 	},

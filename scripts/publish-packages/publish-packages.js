@@ -3,7 +3,7 @@ import { parseArgs } from 'node:util';
 import { argv } from 'node:process';
 import { realpath } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { exec } from 'node:child_process';
+import { spawn, exec } from 'node:child_process';
 import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
@@ -47,6 +47,34 @@ export async function publish() {
 		}
 
 		console.log(`Publishing ${pkg}@${version}`);
-		await execAsync(`npm publish -w ${pkg} --access public --provenance`);
+
+		await new Promise((resolve, reject) => {
+			const errHandler = (err) => {
+				console.error("NPM error", err);
+				reject(err);
+			};
+			try {
+				// console.log(process.env);
+				let cmd = 'npm';
+				if ('win32' === process.platform) {
+					cmd += '.cmd';
+				}
+				const proc = spawn(cmd, [
+					'publish',
+					'-w',
+					pkg,
+					'--access',
+					'public',
+					'--provenance'
+				], {
+					stdio: 'inherit',
+					env: process.env
+				});
+				proc.on('error', errHandler);
+				proc.on('close', resolve);
+			} catch (e) {
+				errHandler(e);
+			}
+		});
 	}
 }
