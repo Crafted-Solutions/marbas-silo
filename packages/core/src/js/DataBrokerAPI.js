@@ -134,10 +134,10 @@ export class DataBrokerAPI {
 					link.culture = target.culture;
 					link.sortKey = target.sortKey;
 					let xAttrs;
-					if (link.typeXAttrs) {
+					if (target.typeXAttrs) {
 						xAttrs = JSON.parse(`{${target.typeXAttrs}}`);
 					}
-					if (link.xAttrs) {
+					if (target.xAttrs) {
 						xAttrs = merge(xAttrs || {}, JSON.parse(`{${target.xAttrs}}`));
 					}
 					if (target.icon && (!xAttrs || !xAttrs.silo || !xAttrs.silo.icon)) {
@@ -207,11 +207,11 @@ export class DataBrokerAPI {
 		if (!path || 'marbas' == path || '/' == path) {
 			return this.getGrain(null, ignoreCache);
 		}
-		const searchPath = path.replace(/^(\/|marbas)/, '').replace(/\/\**$/, '');
+		const searchPath = path.replace(/^(\/|marbas\/)/, '').replace(/\/\**$/, '');
 		return new Promise(resolve => {
-			if (!ignoreCache && this.#grains.some(grain => {
-				if (`marbas/${searchPath}` == grain.path) {
-					resolve(grain);
+			if (!ignoreCache && Object.keys(this.#grains).some(id => {
+				if (`marbas/${searchPath}` == this.#grains[id].path) {
+					resolve(this.#grains[id]);
 					return true;
 				}
 				return false;
@@ -435,14 +435,14 @@ export class DataBrokerAPI {
 		return this.#fetchGet(`${this.baseUrl}/Trait/Values/${grain.id}/${propDefOrId.id || propDefOrId}?${params}`);
 	}
 
-	storeTraitValues(grain, propDef, values) {
+	storeTraitValues(grain, propDef, values, langOverride = null) {
 		return new Promise((resolve, reject) => {
 			let req;
 			if (0 == values.length) {
 				const params = new URLSearchParams();
 				params.set('revision', grain.revision);
 				if (propDef.localizable) {
-					params.set('lang', this.#lang || grain.culture);
+					params.set('lang', langOverride || this.#lang || grain.culture);
 				}
 
 				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.#applyStdFetchOptions({ method: 'DELETE' }));
@@ -456,7 +456,7 @@ export class DataBrokerAPI {
 						grainId: grain.id,
 						propDefId: propDef.id,
 						valueType: propDef.valueType,
-						culture: propDef.localizable ? this.#lang || grain.culture : null,
+						culture: propDef.localizable ? langOverride || this.#lang || grain.culture : null,
 						revision: grain.revision,
 						values: values
 					})
