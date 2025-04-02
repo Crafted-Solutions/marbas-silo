@@ -409,7 +409,7 @@ export class DataBrokerAPI {
 	}
 
 	getGrainPropDefs(grain) {
-		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/TypeDef/${grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
+		return this.getTypePropDefs(grain.typeDefId);
 	}
 
 	getGrainTraits(grain) {
@@ -426,6 +426,10 @@ export class DataBrokerAPI {
 			url += `?${params}`;
 		}
 		return this.#fetchGet(url);
+	}
+
+	getTypePropDefs(typeDefOrId) {
+		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/TypeDef/${typeDefOrId.id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
 	}
 
 	getTraitValues(grain, propDefOrId) {
@@ -747,6 +751,10 @@ export class DataBrokerAPI {
 				})
 				.catch(reject);
 		});
+	}
+
+	loadFileBlob(grainOrId, disposition = 'Attachment', acceptType = /.*/, maxSize = 10 * 1024 * 1024) {
+		return this.loadBlob(`${this.baseUrl}/File/${grainOrId.id || grainOrId}/${disposition}`, acceptType, maxSize);
 	}
 
 	loadBlob(url, acceptType = /.*/, maxSize = 10 * 1024 * 1024) {
