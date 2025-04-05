@@ -66,4 +66,4 @@ jobs:
       with:
         files: "marbas-silo-drop-in-*"
       env:
-        GITHUB_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}

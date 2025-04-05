@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-core",
-	"version": "0.1.13",
+	"version": "0.1.13-1",
 	"description": "Core modules for mabas-databroker access",
 	"keywords": [
 		"MarBas",
