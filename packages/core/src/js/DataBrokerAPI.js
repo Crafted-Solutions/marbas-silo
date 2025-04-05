@@ -429,7 +429,7 @@ export class DataBrokerAPI {
 	}
 
 	getTypePropDefs(typeDefOrId) {
-		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/TypeDef/${typeDefOrId.id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
+		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/TypeDef/${(typeDefOrId || {}).id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
 	}
 
 	getTraitValues(grain, propDefOrId) {
