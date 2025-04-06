@@ -7,8 +7,8 @@ import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/modu
 })();
 import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED } from "@jbtronics/bs-treeview";
 
-import { GrainXAttrs } from "./GrainXAttrs";
-import { Task } from "./Task";
+import { GrainXAttrs } from "./cmn/GrainXAttrs";
+import { Task } from "./cmn/Task";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 export class SiloTree {

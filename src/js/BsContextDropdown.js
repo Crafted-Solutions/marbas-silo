@@ -6,8 +6,8 @@ export class BsContextDropdown {
 	#menuEvt;
 	#lastFocus;
 	constructor(menuElm, triggerElm) {
-		this.#menuElm =  'string' == typeof (menuElm) ? document.getElementById(menuElm) : menuElm;
-		this.#triggerElm = 'string' == typeof(triggerElm) ? document.getElementById(triggerElm) : triggerElm;
+		this.#menuElm = 'string' == typeof (menuElm) ? document.getElementById(menuElm) : menuElm;
+		this.#triggerElm = 'string' == typeof (triggerElm) ? document.getElementById(triggerElm) : triggerElm;
 
 		["contextmenu", "long-press"].forEach((type) => {
 			this.#triggerElm.addEventListener(type, (evt) => {
@@ -61,5 +61,50 @@ export class BsContextDropdown {
 	enableCmd(cmd, enable = true) {
 		const elm = this.#menuElm.querySelector(`#${cmd}`);
 		elm.disabled = !enable;
+	}
+
+	isCmdEnabled(cmd) {
+		const elm = this.#menuElm.querySelector(`#${cmd}`);
+		return elm && !elm.disabled;
+	}
+
+	addCmd(options, beforeCmd, skipSeparator, listener) {
+		const btn = document.createElement('button');
+		btn.type = 'button';
+		btn.id = options.id;
+		btn.className = 'dropdown-item';
+		btn.textContent = options.title;
+
+		if (listener) {
+			btn.addEventListener('click', (evt) => {
+				listener(this.#menuEvt || evt);
+			});
+		}
+
+		const item = document.createElement('li');
+		item.appendChild(btn);
+
+		const mnu = this.#menuElm.querySelector('ul.dropdown-menu');
+		if (beforeCmd) {
+			let nextItem = (this.#menuElm.querySelector(`#${beforeCmd}`) || {}).parentElement;
+			if (nextItem && skipSeparator && nextItem.querySelector('.dropdown-divider')) {
+				nextItem = nextItem.previousSibling;
+			}
+			return mnu.insertBefore(item, nextItem);
+		}
+		return mnu.appendChild(item);
+	}
+
+	addSeparator(beforeCmd) {
+		let nextItem = (this.#menuElm.querySelector(`#${beforeCmd}`) || {}).parentElement;
+		if (nextItem) {
+			const hr = document.createElement('hr');
+			hr.className = 'dropdown-divider';
+
+			const item = document.createElement('li');
+			item.appendChild(hr);
+
+			return this.#menuElm.querySelector('ul.dropdown-menu').insertBefore(item, nextItem);
+		}
 	}
 }
