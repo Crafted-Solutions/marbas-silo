@@ -45,7 +45,19 @@ export <EXTENSION_POINT> = {
 	}
 };
 ```
-`EXTENSION_POINT` can be `GrainEditorStatic` or `GrainEditor` (more to come in the future), for more details s. [basic example](doc/extensions/basic/marbas-silo.ext.js).
+`EXTENSION_POINT` can be `GrainEditorStatic` or `GrainEditor` (more to come in the future), for more details s. [basic example](doc/extensions/basic/marbas-silo.ext.js). An extension can request any of public modules provided by Silo app in `src/js/cmn` directory, those modules will be then available in `ctx` object at install time, f.i.
+```javascript
+export GrainEditor = {
+	requires: ['Task', 'InputDialog'],
+	install: function(ctx) {
+		ctx.Task.now("Doing something important", (done) => {
+			...
+			done();
+		});
+	}
+};
+```
+
 
 To extend / modify styles used int the app create a file `marbas-silo.ext.css` (in the same location as `marbas-silo.ext.js`). The file can contain any CSS instructions you need, s. [basic example](doc/extensions/basic/marbas-silo.ext.css).
 

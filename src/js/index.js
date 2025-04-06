@@ -7,8 +7,8 @@ import { GrainEditor } from "./GrainEditor";
 import { SiloNavi } from "./SiloNavi";
 import { IconMaps } from "../conf/icons.conf";
 import { LangSelector } from "./LangSelector";
-import { Task, TaskLayer } from "./Task";
-import { MsgBox } from "./MsgBox";
+import { Task, TaskLayer } from "./cmn/Task";
+import { MsgBox } from "./cmn/MsgBox";
 import { ExtensionLoader } from "./ExtensionLoader";
 
 global.NoOp = () => { };
@@ -60,10 +60,10 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 }]);
 const editorMgr = new GrainEditor('grain-edit', apiSvc);
 await ExtensionLoader.installExtension('GrainEditor', {
-	Task: Task,
 	MarBasDefaults: MarBasDefaults,
 	MarBasTraitValueType: MarBasTraitValueType,
 	GrainEditor: GrainEditor,
+	navi: naviMgr,
 	instance: editorMgr
 });
 

@@ -365,7 +365,7 @@ export class TaskLayer {
 			this.#pendingShow = setTimeout(() => {
 				this.canvas.show();
 				this.#pendingShow = undefined;
-			}, 200);
+			}, 300);
 		}
 	}
 

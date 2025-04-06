@@ -1,5 +1,5 @@
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
-import { MbDomUtils } from "./MbDomUtils";
+import { MbDomUtils } from "./cmn/MbDomUtils";
 
 const SESSIONKEY_TOKEN = 'mbSiloToken';
 const SESSIONKEY_URL = 'mbSiloBrokeUrl';

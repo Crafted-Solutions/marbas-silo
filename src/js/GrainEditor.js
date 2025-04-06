@@ -4,10 +4,10 @@ import { Popover } from "bootstrap";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
 import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
-import { GrainXAttrs } from "./GrainXAttrs";
-import { GrainPicker } from "./GrainPicker";
-import { MsgBox } from "./MsgBox";
-import { MbDomUtils } from "./MbDomUtils";
+import { GrainXAttrs } from "./cmn/GrainXAttrs";
+import { GrainPicker } from "./cmn/GrainPicker";
+import { MsgBox } from "./cmn/MsgBox";
+import { MbDomUtils } from "./cmn/MbDomUtils";
 import { ExtensionLoader } from "./ExtensionLoader";
 
 JSONEditor.defaults.options.theme = 'bootstrap5';
