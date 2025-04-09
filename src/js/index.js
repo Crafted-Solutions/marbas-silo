@@ -58,6 +58,15 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 		expanded: false
 	}
 }]);
+
+await ExtensionLoader.installExtension('GlobalInit', {
+	MarBasDefaults: MarBasDefaults,
+	auth: authModule,
+	api: apiSvc,
+	languages: langSelector,
+	navi: naviMgr
+})
+
 const editorMgr = new GrainEditor('grain-edit', apiSvc);
 await ExtensionLoader.installExtension('GrainEditor', {
 	MarBasDefaults: MarBasDefaults,
