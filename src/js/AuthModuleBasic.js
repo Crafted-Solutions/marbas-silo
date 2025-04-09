@@ -87,7 +87,7 @@ export class AuthModule {
 				if (res.ok) {
 					return res.json();
 				}
-				this.#reportError("Invalid user or password", `Request failed (${res.status} ${res.statusText})`);
+				this.#reportError(404 == res.status ? "Invalid URL" : "Invalid user or password", `Request failed (${res.status} ${res.statusText})`);
 				this.#triggerEvent('silo-auth:failure');
 				return null;
 			})
