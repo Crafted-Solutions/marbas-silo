@@ -207,7 +207,7 @@ export class GrainEditor {
 			if (this.customProps.def.length) {
 				this.customProps.traits = await this._apiSvc.getGrainTraits(this.grain);
 			}
-			const schema = this.#getSchema(this.grain, this.customProps);
+			const schema = this._getSchema(this.grain, this.customProps);
 			const startval = {
 				_sys: {
 					api: this._apiSvc.baseUrl
@@ -643,7 +643,11 @@ export class GrainEditor {
 			this.customProps.def.forEach((prop) => {
 				this._apiSvc.getTraitValues(prop, MarBasDefaults.ID_PROPDEF_COMMENT).then((comments) => {
 					if (comments && comments.length && comments[0].value) {
-						const lbl = this.editor.element.querySelector(`[data-schemapath="root._trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] label`);
+						const lbl = this.editor.element.querySelector(
+							1 == prop.cardinalityMax
+								? `[data-schemapath="root._trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] label`
+								: `[data-schemapath="root._trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] .card-title`
+						);
 						if (lbl) {
 							const elm = this.editor.theme.getInfoButton(comments[0].value);
 							// const elm = document.createElement('button');
@@ -655,6 +659,7 @@ export class GrainEditor {
 							elm.removeAttribute('data-toggle');
 							elm.setAttribute('data-bs-toggle', 'popover');
 							elm.setAttribute('data-bs-trigger', 'focus');
+							elm.classList.add('fs-5', 'align-top');
 							// elm.innerHTML = '<small>?</small>';
 
 							lbl.appendChild(elm);
@@ -689,7 +694,7 @@ export class GrainEditor {
 		});
 	}
 
-	#getSchema(grain, customProps) {
+	_getSchema(grain, customProps) {
 		let result = EditorSchemaConfig.BASIC;
 		if (!grain.typeDefId) {
 			result = structuredClone(result);
@@ -699,12 +704,12 @@ export class GrainEditor {
 		if (EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]) {
 			result = merge({}, result, EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]);
 		}
-		result = this.#extendSchemaByTraits(customProps, result);
+		result = this._extendSchemaByTraits(customProps, result);
 		console.log('getSchema', result);
 		return result;
 	}
 
-	#extendSchemaByTraits(customProps, baseSchema) {
+	_extendSchemaByTraits(customProps, baseSchema) {
 		if (!customProps || !customProps.def || !customProps.def.length) {
 			return baseSchema;
 		}
@@ -726,9 +731,7 @@ export class GrainEditor {
 			}
 
 			let propSchema = {
-				type: 'string',
-				_origType: prop.valueType,
-				_localizable: prop.localizable
+				type: 'string'
 			};
 			let configKey = `TRAIT_${prop.valueType}`;
 			const mod = GrainXAttrs.getAttr(prop, 'propMod');
@@ -787,6 +790,8 @@ export class GrainEditor {
 					propSchema.minLength = 1;
 				}
 			}
+			propSchema._origType = prop.valueType;
+			propSchema._localizable = prop.localizable;
 			propSchema.title = prop.label;
 			// propSchema.required = true;
 			propSchema.propertyOrder = this.#makeOrderKey(prop.sortKey, prop.name);
