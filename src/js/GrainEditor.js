@@ -278,7 +278,7 @@ export class GrainEditor {
 		const grainId = (this.grain || {}).id;
 		if (grainId) {
 			this._apiSvc.invalidateGrain(this.grain);
-			this.buildEditor(await this._apiSvc.getGrain(grainId, true), true, this._link);
+			await this.buildEditor(await this._apiSvc.getGrain(grainId, true), true, this._link);
 			this._notify();
 		}
 	}

@@ -20,7 +20,7 @@ export const ExtensionLoader = {
 		if (ext) {
 			if (ext.requires) {
 				for (const m in ext.requires) {
-					ctx = merge(ctx, await import(/* webpackInclude: /\.js$/ */ /* webpackExclude: /^_.*\.js$/ */`./cmn/${ext.requires[m]}`));
+					ctx = merge(ctx, await import(/* webpackInclude: /\.js$/ */`./cmn/${ext.requires[m]}`));
 				}
 			}
 
