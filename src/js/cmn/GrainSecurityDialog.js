@@ -10,7 +10,7 @@ const LoadTaskName = "Reading grain security";
 
 export class GrainSecurityDialog extends _Dialog {
 	#grain;
-	#apiSvs;
+	#apiSvc;
 	#grainAcl;
 	#canWrite;
 	#canDelete;
@@ -23,7 +23,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 	constructor(apiSvc, scope = null) {
 		super(scope || 'grain-security');
-		this.#apiSvs = apiSvc;
+		this.#apiSvc = apiSvc;
 		this.#aclHeadElm = this._element.querySelector(`#${this._scope}-aclhead`);
 		this.#aclBodyElm = this._element.querySelector(`#${this._scope}-acl tbody`);
 		document.addEventListener(Task.Event.ERROR, (evt) => {
@@ -61,14 +61,14 @@ export class GrainSecurityDialog extends _Dialog {
 	async _load(grainId) {
 		Task.nowAsync(LoadTaskName, async () => {
 			if (grainId) {
-				this.#grain = await this.#apiSvs.getGrain(grainId);
+				this.#grain = await this.#apiSvc.getGrain(grainId);
 			}
 
 
-			this.#grainAcl = await this.#apiSvs.getGrainAcl(grainId);
-			this.#canWrite = await this.#apiSvs.getGrainPermission(this.#grain, MarBasGrainAccessFlag.ModifyAcl);
-			this.#canWrite = this.#canWrite && await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.WriteAcl);
-			this.#canDelete = this.#canWrite && (await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.DeleteAcl));
+			this.#grainAcl = await this.#apiSvc.getGrainAcl(grainId);
+			this.#canWrite = await this.#apiSvc.getGrainPermission(this.#grain, MarBasGrainAccessFlag.ModifyAcl);
+			this.#canWrite = this.#canWrite && await this.#apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.WriteAcl);
+			this.#canDelete = this.#canWrite && (await this.#apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.DeleteAcl));
 			await this.#loadRoles();
 			this.#buildAclTable();
 
@@ -313,7 +313,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 	#resolveGrains(ids) {
 		for (const k in ids) {
-			this.#apiSvs.getGrain(k)
+			this.#apiSvc.getGrain(k)
 				.then((grain) => {
 					ids[k].forEach(trId => {
 						const td = this._element.querySelector(`#${trId} .${this._scope}-source`);
@@ -338,10 +338,10 @@ export class GrainSecurityDialog extends _Dialog {
 		const actionCnt = this._element.querySelector(`#${this._scope}-add .dropdown-menu`);
 		MbDomUtils.clearNode(actionCnt);
 
-		if (await this.#apiSvs.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadRoles)) {
+		if (await this.#apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadRoles)) {
 			const addTpl = this._getTemplate('addentry', 'li');
 
-			const roles = await this.#apiSvs.listRoles();
+			const roles = await this.#apiSvc.listRoles();
 			roles.forEach(role => {
 				this.#roles[role.id] = role.name;
 				if (this.#canWrite) {
