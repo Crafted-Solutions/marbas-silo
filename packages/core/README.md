@@ -8,6 +8,7 @@ Modules for Javascript clients for accessing [MarBas Databroker](/Crafted-Soluti
 	import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 	console.log("MarBasDefaults.MinAPIVersion", MarBasDefaults.MinAPIVersion);
 	```
+ 
 1. `MarBasBuiltIns` - list of IDs of built-in Grains (subject to limited manipulation)
 
 	```javascript
