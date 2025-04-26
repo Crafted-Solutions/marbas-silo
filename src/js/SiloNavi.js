@@ -172,7 +172,7 @@ export class SiloNavi extends SiloTree {
 		const id = Object.keys(this.#clipboard)[0];
 		const op = this.#clipboard[id];
 
-		const taskName = `${'cut' == op ? "Copying" : "Moving"} grain`;
+		const taskName = `${'cut' == op ? "Moving" : "Copying"} grain`;
 		await Task.nowAsync(taskName, async () => {
 			let grain;
 			if ('cut' == op) {

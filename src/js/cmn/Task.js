@@ -270,6 +270,18 @@ export class TaskLayer {
 		return true;
 	}
 
+	#cleanUpTasks() {
+		for (const k in this.#tasks) {
+			if (!this.#tasks.isRunning) {
+				delete this.#tasks[k];
+				const elm = this.#element.querySelector(`#${k}`);
+				if (elm) {
+					elm.parentElement.removeChild(elm);
+				}
+			}
+		}
+	}
+
 	#completeTask(task) {
 		if (this.#tasks[task.id]) {
 			this.#showTaskMessage(task, 'success');
@@ -341,8 +353,12 @@ export class TaskLayer {
 				this.#abortTask(id);
 			}
 		}
-		if (prevent && evt) {
-			this.#finalizeEvent(evt);
+		if (prevent) {
+			if (evt) {
+				this.#finalizeEvent(evt);
+			}
+		} else {
+			this.#cleanUpTasks();
 		}
 		return !prevent;
 	}
