@@ -423,7 +423,14 @@ export class DataBrokerAPI {
 	}
 
 	getGrainTraits(grain) {
-		return this.#fetchGet(this.localizeUrl(`${this.baseUrl}/Grain/${grain.id || grain}/Traits`));
+		let url = `${this.baseUrl}/Grain/${grain.id || grain}/Traits`;
+		const lang = grain.culture || this.#lang;
+		if (lang) {
+			const params = new URLSearchParams();
+			params.set('lang', lang);
+			url += `?${params}`;
+		}
+		return this.#fetchGet(url);
 	}
 
 	getGrainLabels(grainOrId, langCodes = undefined) {
