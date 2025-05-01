@@ -494,6 +494,28 @@ export class DataBrokerAPI {
 		});
 	}
 
+	lookupGrainsByTrait(propDef, value, lang = null, revision = 1, sortOptions = null) {
+		const req = {
+			propDefId: propDef.id,
+			valueType: propDef.valueType,
+			value: value
+		};
+		req.culture = lang || this.#lang;
+		if (revision != 1) {
+			req.revision = revision;
+		}
+		if (sortOptions) {
+			req.sortOptions = sortOptions;
+		}
+		const result = this.#fetchSendJson(`${this.baseUrl}/Trait/LookupGrains`, req);
+		result.then(list => {
+			list.forEach(element => {
+				this.#addGrainToCache(element);
+			})
+		}).catch(NoOp);
+		return result;
+	}
+
 	resolveGrainType(grain) {
 		const typeRes = this.#resolvers[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
 		if (2 == grain._resolved || !typeRes) {
