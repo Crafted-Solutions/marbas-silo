@@ -1,14 +1,14 @@
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
-import { GrainNewDialog } from "./GrainNewDialog";
+import { GrainNewDialog } from "./cmn/GrainNewDialog";
 import { SiloTree } from "./SiloTree";
 import { BsContextDropdown } from "./BsContextDropdown";
-import { FileNewDialog } from "./FileNewDialog";
-import { InputDialog } from "./InputDialog";
-import { MsgBox } from "./MsgBox";
-import { GrainSecurityDialog } from "./GrainSecurityDialog";
-import { Task } from "./Task";
+import { FileNewDialog } from "./cmn/FileNewDialog";
+import { InputDialog } from "./cmn/InputDialog";
+import { MsgBox } from "./cmn/MsgBox";
+import { GrainSecurityDialog } from "./cmn/GrainSecurityDialog";
+import { Task } from "./cmn/Task";
 
 export class SiloNavi extends SiloTree {
 
@@ -172,7 +172,7 @@ export class SiloNavi extends SiloTree {
 		const id = Object.keys(this.#clipboard)[0];
 		const op = this.#clipboard[id];
 
-		const taskName = `${'cut' == op ? "Copying" : "Moving"} grain`;
+		const taskName = `${'cut' == op ? "Moving" : "Copying"} grain`;
 		await Task.nowAsync(taskName, async () => {
 			let grain;
 			if ('cut' == op) {

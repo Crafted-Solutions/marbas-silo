@@ -14,7 +14,6 @@ const ResolverAPI = Object.assign({}, ExtenderAPI, {
 });
 
 export class DataBrokerAPI {
-	#baseUrl;
 	#lang;
 	#authModule;
 	#grains = {};
@@ -31,7 +30,6 @@ export class DataBrokerAPI {
 
 	constructor(authModule, lang = null) {
 		this.#authModule = authModule;
-		this.#baseUrl = authModule.brokerUrl;
 		this.#lang = lang;
 	}
 
@@ -42,12 +40,24 @@ export class DataBrokerAPI {
 		}
 	}
 
+	get language() {
+		return this.#lang;
+	}
+
 	get baseUrl() {
-		return this.#baseUrl;
+		return this.#authModule.brokerUrl;
 	}
 
 	listLanguages() {
-		return this.#fetchGet(`${this.#baseUrl}/Language/List`);
+		return this.#fetchGet(`${this.baseUrl}/Language/List`);
+	}
+
+	createLanguage(isoCode) {
+		return this.#fetchSendJson(`${this.baseUrl}/Language?lang=${isoCode}`, null, true, 'PUT');
+	}
+
+	deleteLanguage(isoCode) {
+		return this.#fetchSendJson(`${this.baseUrl}/Language/${isoCode}`, null, false, 'DELETE');
 	}
 
 	getCurrentRoles() {
@@ -56,7 +66,7 @@ export class DataBrokerAPI {
 				resolve(this.#currentRoles.roles);
 			});
 		}
-		const result = this.#fetchGet(`${this.#baseUrl}/Role/Current`);
+		const result = this.#fetchGet(`${this.baseUrl}/Role/Current`);
 		result.then((roles) => {
 			this.#currentRoles.roles = roles;
 		}).catch(NoOp);
@@ -92,11 +102,11 @@ export class DataBrokerAPI {
 	}
 
 	listRoles() {
-		return this.#fetchGet(`${this.#baseUrl}/Role/List`);
+		return this.#fetchGet(`${this.baseUrl}/Role/List`);
 	}
 
 	getRole(roleId) {
-		return this.#fetchGet(`${this.#baseUrl}/Role/${roleId}`);
+		return this.#fetchGet(`${this.baseUrl}/Role/${roleId}`);
 	}
 
 	resolveGrainLabel(grainOrId) {
@@ -185,7 +195,7 @@ export class DataBrokerAPI {
 				resolve(this.#grains[effectiveId]);
 			});
 		}
-		const result = this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Grain/${effectiveId}`)
+		const result = this.#fetchGet(this.localizeUrl(`${this.baseUrl}/Grain/${effectiveId}`)
 			, (res) => {
 				// return fake root for GrainPicker
 				if (res.status == 404 && MarBasDefaults.ID_SCHEMA == effectiveId) {
@@ -219,7 +229,7 @@ export class DataBrokerAPI {
 				return;
 			}
 
-			this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Tree/${searchPath}`))
+			this.#fetchGet(this.localizeUrl(`${this.baseUrl}/Tree/${searchPath}`))
 				.then(grains => {
 					const grain = grains && grains.length ? this.#addGrainToCache(grains[0]) : null;
 					resolve(grain);
@@ -235,7 +245,7 @@ export class DataBrokerAPI {
 		if (this.#lang) {
 			grain.culture = this.#lang;
 		}
-		const result = this.#fetchSendJson(`${this.#baseUrl}/${ExtenderAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, grain, false);
+		const result = this.#fetchSendJson(`${this.baseUrl}/${ExtenderAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, grain, false);
 		result.then(_ => {
 			delete grain._siloAttrsMod;
 		}).catch(NoOp);
@@ -245,7 +255,7 @@ export class DataBrokerAPI {
 	deleteGrain(grain) {
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(grain, true);
-			fetch(`${this.#baseUrl}/Grain/${grain.id || grain}`, this.#applyStdFetchOptions({ method: 'DELETE' }))
+			fetch(`${this.baseUrl}/Grain/${grain.id || grain}`, this.applyStdFetchOptions({ method: 'DELETE' }))
 				.then(res => {
 					if (res.ok) {
 						return res.json();
@@ -277,7 +287,7 @@ export class DataBrokerAPI {
 				data.typeContainerId = data.parentId;
 			}
 
-			fetch(`${this.#baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, this.#applyStdFetchOptions({
+			fetch(`${this.baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, this.applyStdFetchOptions({
 				method: 'PUT',
 				headers: {
 					"Content-Type": "application/json"
@@ -307,7 +317,7 @@ export class DataBrokerAPI {
 		const id = grainOrId.id || grainOrId;
 		const parentId = newParentOrId.id || newParentOrId;
 
-		const result = this.#fetchSendJson(`${this.#baseUrl}/Grain/${id}/Move?newParentId=${parentId}`);
+		const result = this.#fetchSendJson(`${this.baseUrl}/Grain/${id}/Move?newParentId=${parentId}`);
 		result.then(grain => {
 			grain.path = null;
 			this.#addGrainToCache(grain);
@@ -317,7 +327,7 @@ export class DataBrokerAPI {
 
 	cloneGrain(grainOrId, newParentOrId = null, depth = 'Recursive') {
 		const id = grainOrId.id || grainOrId;
-		const result = this.#fetchSendJson(`${this.#baseUrl}/Grain/${id}/Clone`, {
+		const result = this.#fetchSendJson(`${this.baseUrl}/Grain/${id}/Clone`, {
 			depth: depth,
 			newParentId: newParentOrId.id || newParentOrId
 		});
@@ -398,8 +408,8 @@ export class DataBrokerAPI {
 		if (recursive) {
 			params.set('recursive', true);
 		}
-		this.#addLangParam(params);
-		const result = this.#fetchGet(`${this.#baseUrl}/Grain/${parentOrId.id || parentOrId}/List?${params}`);
+		this.addLangParam(params);
+		const result = this.#fetchGet(`${this.baseUrl}/Grain/${parentOrId.id || parentOrId}/List?${params}`);
 		result.then(list => {
 			list.forEach(element => {
 				this.#addGrainToCache(element);
@@ -413,11 +423,18 @@ export class DataBrokerAPI {
 	}
 
 	getGrainTraits(grain) {
-		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/Grain/${grain.id || grain}/Traits`));
+		let url = `${this.baseUrl}/Grain/${grain.id || grain}/Traits`;
+		const lang = grain.culture || this.#lang;
+		if (lang) {
+			const params = new URLSearchParams();
+			params.set('lang', lang);
+			url += `?${params}`;
+		}
+		return this.#fetchGet(url);
 	}
 
 	getGrainLabels(grainOrId, langCodes = undefined) {
-		let url = `${this.#baseUrl}/Grain/${grainOrId.id || grainOrId}/Labels`;
+		let url = `${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Labels`;
 		if (langCodes && langCodes.length) {
 			const params = new URLSearchParams();
 			langCodes.forEach((lang) => {
@@ -429,7 +446,7 @@ export class DataBrokerAPI {
 	}
 
 	getTypePropDefs(typeDefOrId) {
-		return this.#fetchGet(this.#localizeUrl(`${this.#baseUrl}/TypeDef/${(typeDefOrId || {}).id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
+		return this.#fetchGet(this.localizeUrl(`${this.baseUrl}/TypeDef/${(typeDefOrId || {}).id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
 	}
 
 	getTraitValues(grain, propDefOrId) {
@@ -449,9 +466,9 @@ export class DataBrokerAPI {
 					params.set('lang', langOverride || this.#lang || grain.culture);
 				}
 
-				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.#applyStdFetchOptions({ method: 'DELETE' }));
+				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.applyStdFetchOptions({ method: 'DELETE' }));
 			} else {
-				req = fetch(`${this.#baseUrl}/Trait/Values`, this.#applyStdFetchOptions({
+				req = fetch(`${this.baseUrl}/Trait/Values`, this.applyStdFetchOptions({
 					method: 'POST',
 					headers: {
 						"Content-Type": "application/json"
@@ -477,6 +494,28 @@ export class DataBrokerAPI {
 		});
 	}
 
+	lookupGrainsByTrait(propDef, value, lang = null, revision = 1, sortOptions = null) {
+		const req = {
+			propDefId: propDef.id,
+			valueType: propDef.valueType,
+			value: value
+		};
+		req.culture = lang || this.#lang;
+		if (revision != 1) {
+			req.revision = revision;
+		}
+		if (sortOptions) {
+			req.sortOptions = sortOptions;
+		}
+		const result = this.#fetchSendJson(`${this.baseUrl}/Trait/LookupGrains`, req);
+		result.then(list => {
+			list.forEach(element => {
+				this.#addGrainToCache(element);
+			})
+		}).catch(NoOp);
+		return result;
+	}
+
 	resolveGrainType(grain) {
 		const typeRes = this.#resolvers[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
 		if (2 == grain._resolved || !typeRes) {
@@ -485,7 +524,7 @@ export class DataBrokerAPI {
 		if (!typeRes[grain.id] || !typeRes[grain.id]._fulfilled) {
 			typeRes[grain.id] = new Promise((resolve, reject) => {
 				grain._resolved = 1;
-				this.#fetchGet(`${this.#baseUrl}/${ResolverAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || grain.typeName}/${grain.id}?lang=${this.#lang || grain.culture}`)
+				this.#fetchGet(`${this.baseUrl}/${ResolverAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || grain.typeName}/${grain.id}?lang=${this.#lang || grain.culture}`)
 					.then(value => {
 						value._resolved = 2;
 						if (value.mixInIds) {
@@ -534,7 +573,7 @@ export class DataBrokerAPI {
 					continue;
 				}
 			}
-			const resp = this.#fetchGet(`${this.#baseUrl}/Grain/${id}/InstanceOf/${base}`);
+			const resp = this.#fetchGet(`${this.baseUrl}/Grain/${id}/InstanceOf/${base}`);
 			pending.push(resp);
 			resp.then(value => {
 				if (value) {
@@ -567,23 +606,23 @@ export class DataBrokerAPI {
 	}
 
 	getGrainAcl(grainOrId) {
-		return this.#fetchGet(`${this.#baseUrl}/Grain/${grainOrId.id || grainOrId}/Acl`);
+		return this.#fetchGet(`${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Acl`);
 	}
 
 	storeAclEntry(entry) {
 		this.invalidateGrain(entry.grainId, true);
-		return this.#fetchSendJson(`${this.#baseUrl}/Acl`, entry);
+		return this.#fetchSendJson(`${this.baseUrl}/Acl`, entry);
 	}
 
 	createAclEntry(entry) {
 		this.invalidateGrain(entry.grainId, true);
-		return this.#fetchSendJson(`${this.#baseUrl}/Acl`, entry, true, 'PUT');
+		return this.#fetchSendJson(`${this.baseUrl}/Acl`, entry, true, 'PUT');
 	}
 
 	deleteAclEntry(grainId, roleId) {
 		const inv = this.invalidateGrain(grainId, true);
 		return new Promise((resolve, reject) => {
-			fetch(`${this.#baseUrl}/Acl/${roleId}/${grainId}`, this.#applyStdFetchOptions({ method: 'DELETE' }))
+			fetch(`${this.baseUrl}/Acl/${roleId}/${grainId}`, this.applyStdFetchOptions({ method: 'DELETE' }))
 				.then(res => {
 					if (res.ok) {
 						return res.json();
@@ -615,7 +654,7 @@ export class DataBrokerAPI {
 				grain = this.#grains[grain.parentId];
 			}
 
-			let url = `${this.#baseUrl}/Grain/${id}/Path`;
+			let url = `${this.baseUrl}/Grain/${id}/Path`;
 			if (includeSelf) {
 				url += `?includeSelf=true`
 			}
@@ -651,7 +690,7 @@ export class DataBrokerAPI {
 	getOrCreateTypeDefDefaults(typeDefOrId) {
 		const id = (typeDefOrId.id || typeDefOrId);
 		return new Promise((resolve, reject) => {
-			this.#fetchGet(`${this.#baseUrl}/TypeDef/${id}/Defaults`)
+			this.#fetchGet(`${this.baseUrl}/TypeDef/${id}/Defaults`)
 				.then(grain => {
 					const typeDef = this.#grains[id];
 					if (typeDef) {
@@ -704,7 +743,7 @@ export class DataBrokerAPI {
 		const parentId = formData.get('ParentId');
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(parentId, true);
-			fetch(`${this.baseUrl}/File`, this.#applyStdFetchOptions({
+			fetch(`${this.baseUrl}/File`, this.applyStdFetchOptions({
 				method: 'PUT',
 				body: formData
 			}))
@@ -732,7 +771,7 @@ export class DataBrokerAPI {
 		return new Promise((resolve, reject) => {
 			const data = new FormData();
 			data.append('File', file);
-			fetch(`${this.baseUrl}/File/${id}`, this.#applyStdFetchOptions({
+			fetch(`${this.baseUrl}/File/${id}`, this.applyStdFetchOptions({
 				method: 'POST',
 				body: data
 			}))
@@ -763,7 +802,7 @@ export class DataBrokerAPI {
 				reject(`Response from ${url} doesn't match criteria`);
 				return;
 			}
-			fetch(url, this.#applyStdFetchOptions())
+			fetch(url, this.applyStdFetchOptions())
 				.then(res => {
 					if (res.ok) {
 						const size = res.headers.get('Content-Length');
@@ -811,7 +850,7 @@ export class DataBrokerAPI {
 
 	#fetchGet(url, statusHandler = null) {
 		return new Promise((resolve, reject) => {
-			fetch(url, this.#applyStdFetchOptions())
+			fetch(url, this.applyStdFetchOptions())
 				.then(res => {
 					if (res.ok) {
 						return res.json();
@@ -846,7 +885,7 @@ export class DataBrokerAPI {
 			if (data) {
 				opts.body = JSON.stringify(data);
 			}
-			fetch(`${url}`, this.#applyStdFetchOptions(opts))
+			fetch(`${url}`, this.applyStdFetchOptions(opts))
 				.then(res => {
 					if (res.ok) {
 						return res.json();
@@ -872,7 +911,7 @@ export class DataBrokerAPI {
 		});
 	}
 
-	#applyStdFetchOptions(options) {
+	applyStdFetchOptions(options) {
 		let result = {
 			withCredentials: true,
 			credentials: 'include',
@@ -886,7 +925,7 @@ export class DataBrokerAPI {
 		return result;
 	}
 
-	#addLangParam(searchParams = null) {
+	addLangParam(searchParams = null) {
 		let result = searchParams;
 		if (this.#lang) {
 			if (!result) {
@@ -897,8 +936,8 @@ export class DataBrokerAPI {
 		return result;
 	}
 
-	#localizeUrl(url) {
-		const params = this.#addLangParam();
+	localizeUrl(url) {
+		const params = this.addLangParam();
 		if (params) {
 			url += `?${params}`;
 		}

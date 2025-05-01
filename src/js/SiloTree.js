@@ -7,8 +7,8 @@ import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/modu
 })();
 import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED } from "@jbtronics/bs-treeview";
 
-import { GrainXAttrs } from "./GrainXAttrs";
-import { Task } from "./Task";
+import { GrainXAttrs } from "./cmn/GrainXAttrs";
+import { Task } from "./cmn/Task";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 export class SiloTree {
@@ -19,6 +19,7 @@ export class SiloTree {
 	_options = {};
 
 	constructor(elementId, apiSvc, rootNodes, initCallback = null, options = null) {
+		this._initPromise = new Promise(resolve => this._initialized = resolve);
 		this._element = document.getElementById(elementId);
 		this._element.classList.add('silo-tree');
 		this._apiSvc = apiSvc;
@@ -51,17 +52,18 @@ export class SiloTree {
 			lazyLoad: async (node, renderer) => this._loadNodeChildren(node, renderer)
 		}, [BS5Theme]);
 
+		this._element.addEventListener(EVENT_INITIALIZED, (event) => {
+			if (initCallback) {
+				initCallback();
+			}
+			this._initialized(true);
+		});
+
 		for (const key in this._listeners) {
 			this._listeners[key].forEach(listener => {
 				this._element.addEventListener(key, listener);
 			});
 		}
-
-		this._element.addEventListener(EVENT_INITIALIZED, (event) => {
-			if (initCallback) {
-				initCallback();
-			}
-		});
 		this._element.addEventListener('focusin', (evt) => {
 			if (evt.target && evt.target.classList.contains(`node-${this._element.id}`)) {
 				this._focusedNode = evt.target;
@@ -78,6 +80,10 @@ export class SiloTree {
 		this._element.addEventListener('keydown', (evt) => {
 			this._onKeyDown(evt);
 		});
+	}
+
+	get initialized() {
+		return this._initPromise;
 	}
 
 	destroy() {

@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = (env) => {
-	const mode = env.WEBPACK_SERVE ? 'development' : 'production';
+	const mode = env.development || env.WEBPACK_SERVE ? 'development' : 'production';
 	// TODO configure something different for production
 	const authModule = 'AuthModuleBasic';
 

@@ -6,9 +6,9 @@ import { MarBasDefaults, DataBrokerAPI, MarBasTraitValueType } from "@crafted.so
 import { GrainEditor } from "./GrainEditor";
 import { SiloNavi } from "./SiloNavi";
 import { IconMaps } from "../conf/icons.conf";
-import { LangSelector } from "./LangSelector";
-import { Task, TaskLayer } from "./Task";
-import { MsgBox } from "./MsgBox";
+import { LangManager } from "./LangManager";
+import { Task, TaskLayer } from "./cmn/Task";
+import { MsgBox } from "./cmn/MsgBox";
 import { ExtensionLoader } from "./ExtensionLoader";
 
 global.NoOp = () => { };
@@ -39,11 +39,11 @@ const loadLoggedInState = () => {
 };
 
 const authModule = new AuthModule('silo-auth');
-const apiSvc = new DataBrokerAPI(authModule, LangSelector.activeLang);
+const apiSvc = new DataBrokerAPI(authModule, LangManager.activeLang);
 
-const langSelector = new LangSelector('silo-lang', apiSvc);
+const langManager = new LangManager('silo-lang', apiSvc);
 if (authModule.isLoggedIn) {
-	langSelector.populate();
+	langManager.reload();
 }
 
 const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
@@ -57,21 +57,29 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 	state: {
 		expanded: false
 	}
-}]);
-const editorMgr = new GrainEditor('grain-edit', apiSvc);
-await ExtensionLoader.installExtension('GrainEditor', {
-	Task: Task,
-	MarBasDefaults: MarBasDefaults,
-	MarBasTraitValueType: MarBasTraitValueType,
-	GrainEditor: GrainEditor,
-	instance: editorMgr
-});
-
-naviMgr.addEventListener(EVENT_INITIALIZED, () => {
+}], () => {
 	if (authModule.isLoggedIn) {
 		loadLoggedInState();
 	}
 });
+
+await ExtensionLoader.installExtension('GlobalInit', {
+	MarBasDefaults: MarBasDefaults,
+	auth: authModule,
+	api: apiSvc,
+	languages: langManager,
+	navi: naviMgr
+})
+
+const editorMgr = new GrainEditor('grain-edit', apiSvc);
+await ExtensionLoader.installExtension('GrainEditor', {
+	MarBasDefaults: MarBasDefaults,
+	MarBasTraitValueType: MarBasTraitValueType,
+	GrainEditor: GrainEditor,
+	navi: naviMgr,
+	instance: editorMgr
+});
+
 naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
 	const grainReq = ((event.detail.node || event.detail.data).dataAttr || {}).grain;
 	Task.now("Loading grain editor", (done, error) => {
@@ -106,7 +114,7 @@ editorMgr.addChangeListener((grain) => {
 });
 
 authModule.addEventListener('silo-auth:login', () => {
-	langSelector.populate();
+	langManager.reload();
 	loadLoggedInState();
 });
 authModule.addEventListener('silo-auth:logout', () => {
@@ -128,7 +136,7 @@ authModule.addEventListener('silo-auth:beforelogout', (evt) => {
 	}
 });
 
-langSelector.addChangeListener(() => {
-	apiSvc.language = LangSelector.activeLang;
+langManager.addChangeListener(() => {
+	apiSvc.language = LangManager.activeLang;
 	editorMgr.resetEditor();
 });
