@@ -6,8 +6,7 @@ export const EditorSchemaConfig = {
 		headerTemplate: "{{self.presentation.label}}{{self._sys.dirty}}",
 		type: 'object',
 		options: {
-			disable_collapse: true,
-			// disable_properties: false
+			disable_collapse: true
 		},
 		properties: {
 			meta: {
@@ -32,7 +31,6 @@ export const EditorSchemaConfig = {
 				}
 			},
 			_sys: {
-				hidden: true,
 				"$ref": '#/definitions/_sys'
 			}
 		},
@@ -55,34 +53,11 @@ export const EditorSchemaConfig = {
 						type: "string"
 					},
 					typeDefId: {
-						type: "string",
-						options: {
-							hidden: true,
-							titleHidden: true
-						}
-					},
-					typeName: {
-						type: "string",
-						options: {
-							hidden: true,
-							titleHidden: true
-						}
-					},
-					_type: {
 						title: "Type Definition",
 						type: "string",
-						template: "{{typeName}} ({{typeDefId}})",
-						watch: {
-							typeName: 'meta.typeName',
-							typeDefId: 'meta.typeDefId'
-						},
-						links: [
-							{
-								rel: "Go to definition",
-								href: "?grain={{typeDefId}}",
-								'class': 'mb-session-link'
-							}
-						]
+						format: "grain",
+						readonly: true,
+						default: MarBasDefaults.ID_TYPE_TYPEDEF
 					}
 				}
 			},
@@ -158,43 +133,17 @@ export const EditorSchemaConfig = {
 		format: 'date'
 	},
 	TRAIT_Grain: {
-		format: "string",
-		readonly: true,
+		format: "grain",
 		options: {
 			containerAttributes: {
-				'data-proptype': "grain",
-				'data-pickeropts': 'DEFAULT',
-				'class': 'mb-grain-resolvelabel'
+				'data-pickeropts': 'DEFAULT'
 			}
-		},
-		links: [
-			{
-				rel: "Go to grain",
-				href: "?grain={{self}}",
-				'class': 'mb-session-link'
-			}
-		]
+		}
 	},
 	TRAIT_File: {
-		format: "url",
-		readonly: true,
-		links: [{
-			href: '{{apiPfx}}/File/{{self}}/Inline',
-			rel: "Open (new window)",
-			download: true,
-			'class': 'mb-grain-file'
-		}, {
-			rel: "Go to file",
-			href: "?grain={{self}}",
-			'class': 'mb-session-link'
-		}],
-		watch: {
-			apiPfx: 'root._sys.api'
-		},
+		format: "grain",
 		options: {
 			containerAttributes: {
-				'class': 'mb-grain-resolvelabel',
-				'data-proptype': "grain",
 				'data-pickeropts': 'File'
 			}
 		}
@@ -210,6 +159,7 @@ export const EditorSchemaConfig = {
 		definitions: {
 			typeDef: {
 				type: 'object',
+				format: 'grid-strict',
 				properties: {
 					defaultInstanceId: {
 						required: false,
@@ -219,12 +169,29 @@ export const EditorSchemaConfig = {
 						options: {
 							button: {
 								action: 'showTypeDefDefaults',
-							}
+								icon: 'boxes'
+							},
+							containerAttributes: {
+								'class': 'mb-3'
+							},
+							grid_columns: 2
+						}
+					},
+					_defaultInstanceIdDesc: {
+						format: 'info',
+						title: '',
+						description: "Open Grain editor with default values for this type (create the Grain if necessary)",
+						options: {
+							grid_columns: 10,
+							grid_break: true
 						}
 					},
 					impl: {
 						title: 'Implementation',
-						type: 'string'
+						type: 'string',
+						options: {
+							grid_columns: 12
+						}
 					},
 					mixInIds: {
 						title: 'Type Mix-Ins',
@@ -233,28 +200,16 @@ export const EditorSchemaConfig = {
 						minItems: 0,
 						required: true,
 						options: {
+							grid_columns: 12,
 							containerAttributes: {
 								'data-pickeropts': 'TypeDef'
 							}
 						},
 						items: {
 							type: 'string',
-							id: 'mixin',
-							readonly: true,
+							format: 'grain',
 							options: {
-								containerAttributes: {
-									'class': `mb-grain-resolvelabel ${EnvConfig.panelClasses}`
-								}
-							},
-							links: [
-								{
-									rel: "Go to definition",
-									href: "?grain={{self}}",
-									'class': 'mb-session-link'
-								}
-							],
-							watch: {
-								id: "mixin"
+								compact: true
 							}
 						}
 					}
@@ -327,25 +282,15 @@ export const EditorSchemaConfig = {
 					},
 					valueConstraintId: {
 						title: 'Value Constraint',
-						_useTitle: 'Value Constraint',
 						type: 'string',
-						readonly: true,
+						format: 'grain',
+						required: false,
 						options: {
 							grid_columns: 12,
 							containerAttributes: {
-								'class': 'mb-grain-resolvelabel',
-								'data-proptype': "grain",
 								'data-pickeropts': 'DEFAULT'
 							}
-						},
-						links: [
-							{
-								rel: "Go to constraint",
-								href: "?grain={{self}}",
-								'class': 'mb-session-link'
-							}
-						]
-
+						}
 					},
 					_constraintParams: {
 						title: 'Value Constraint Parameters',
@@ -454,13 +399,13 @@ export const EditorGrainPickerConfig = {
 	File: {
 		title: 'Select File',
 		root: MarBasDefaults.ID_FILES,
-		typeFilter: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_CONTAINER],
+		typeFilter: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_FILE]
 	},
 	TypeDef: {
 		title: 'Select Type',
 		root: MarBasDefaults.ID_SCHEMA,
-		typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER],
+		typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_TYPEDEF]
 	}
 };
