@@ -1,5 +1,5 @@
 import "../scss/index.scss";
-import { EVENT_INITIALIZED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
+import { EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { AuthModule } from "AuthModule";
 import { MarBasDefaults, DataBrokerAPI, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
@@ -64,6 +64,7 @@ const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
 });
 
 await ExtensionLoader.installExtension('GlobalInit', {
+	version: _PACKAGE_VERSION_,
 	MarBasDefaults: MarBasDefaults,
 	auth: authModule,
 	api: apiSvc,
@@ -73,6 +74,7 @@ await ExtensionLoader.installExtension('GlobalInit', {
 
 const editorMgr = new GrainEditor('grain-edit', apiSvc);
 await ExtensionLoader.installExtension('GrainEditor', {
+	version: _PACKAGE_VERSION_,
 	MarBasDefaults: MarBasDefaults,
 	MarBasTraitValueType: MarBasTraitValueType,
 	GrainEditor: GrainEditor,
@@ -140,3 +142,5 @@ langManager.addChangeListener(() => {
 	apiSvc.language = LangManager.activeLang;
 	editorMgr.resetEditor();
 });
+
+document.querySelectorAll('#main h1, #top').forEach(elm => elm.classList.remove('d-none'));

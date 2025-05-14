@@ -796,7 +796,7 @@ export class DataBrokerAPI {
 		return this.loadBlob(`${this.baseUrl}/File/${grainOrId.id || grainOrId}/${disposition}`, acceptType, maxSize);
 	}
 
-	loadBlob(url, acceptType = /.*/, maxSize = 10 * 1024 * 1024) {
+	loadBlob(url, acceptType = /.*/, maxSize = 30 * 1024 * 1024) {
 		return new Promise((resolve, reject) => {
 			if (-1 < this.#rejects.indexOf(url)) {
 				reject(`Response from ${url} doesn't match criteria`);
@@ -809,7 +809,7 @@ export class DataBrokerAPI {
 						const type = res.headers.get('Content-Type');
 						if (size >= maxSize || !acceptType.test(type)) {
 							this.#rejects.push(url);
-							reject(`Response from ${url} doesn't match criteria`);
+							reject(`Response ${type} of ${size} bytes from ${url} doesn't match criteria`);
 							return null;
 						}
 						return res.blob();

@@ -28,12 +28,17 @@ export const GrainXAttrs = {
 		return attrVal;
 	},
 	getGrainIcon: function (grain) {
-		const icon = this.getAttr(grain, 'icon') || IconMaps.ById[grain.id] || IconMaps.ByType[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
-		grain.icon = icon || 'bi-file';
+		const icon = this.getAttr(grain, 'icon')
+			|| IconMaps.ById[grain.id] || IconMaps.ByMimeType[grain.mimeType] || IconMaps.ByType[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
+		grain.icon = icon || IconMaps.DEFAULT;
 		return grain.icon;
 	},
 	setGrainIcon(grain, icon) {
 		this.setAttr(grain, 'icon', icon);
 		return this.getGrainIcon(grain);
+	},
+	isDefaultGrainIcon(grain) {
+		return !grain.icon || IconMaps.ById[grain.id] == grain.icon || IconMaps.ByMimeType[grain.mimeType] == grain.icon
+			|| IconMaps.ByType[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] == grain.icon || IconMaps.DEFAULT == grain.icon;
 	}
 };

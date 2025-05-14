@@ -1,8 +1,11 @@
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+
+const { version } = require(path.resolve(__dirname, 'package.json'));
 
 module.exports = (env) => {
 	const mode = env.development || env.WEBPACK_SERVE ? 'development' : 'production';
@@ -97,6 +100,9 @@ module.exports = (env) => {
 			]
 		},
 		plugins: [
+			new webpack.DefinePlugin({
+				_PACKAGE_VERSION_: JSON.stringify(version)
+			}),
 			new HtmlWebpackPlugin({
 				title: 'MarBas Silo',
 				template: 'src/index.hbs',

@@ -428,6 +428,7 @@ export class SiloNavi extends SiloTree {
 				const grain = await this._apiSvc.getGrain(grainId);
 				const isRoot = MarBasDefaults.ID_ROOT == grainId;
 				const isContainer = isRoot || await this._apiSvc.isGrainInstanceOf(grain, MarBasDefaults.ID_TYPE_CONTAINER);
+				const isLink = !isContainer && await this._apiSvc.isGrainInstanceOf(grain, MarBasDefaults.ID_TYPE_LINK);
 				const isInSchema = !isRoot && (grain.id == MarBasDefaults.ID_SCHEMA || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_SCHEMA));
 				const isInFiles = !isRoot && !isInSchema && (grain.id == MarBasDefaults.ID_FILES || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_FILES));
 				const isInTrash = !isRoot && (grain.id == MarBasDefaults.ID_TRASH_CONTENT || grain.id == MarBasDefaults.ID_TRASH_SCHEMA
@@ -442,7 +443,7 @@ export class SiloNavi extends SiloTree {
 							enable = isContainer && isInSchema;
 						}
 						if (enable && 'cmdNewFile' == x) {
-							enable = isContainer && isInFiles;
+							enable = isInFiles && (isContainer || isLink);
 						}
 						if (enable && x.startsWith('cmdNew') && 'cmdNewContainer' != x) {
 							enable = !isInTrash;

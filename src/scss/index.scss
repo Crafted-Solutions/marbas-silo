@@ -22,6 +22,10 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 	writing-mode: vertical-lr;
 }
 
+.btn-group-rev > .btn {
+	margin-right: ($spacer * .25);
+}
+
 .silo-tree .list-group-item {
 	white-space: nowrap;
 }
@@ -60,6 +64,10 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 .mb-grain-file {
 	margin-right: 0.25rem !important;
 	vertical-align: top;
+}
+.mb-grain-file img, .mb-grain-file video {
+	max-width: 100%;
+	max-height: 200px;
 }
 
 .mb-session-link {
