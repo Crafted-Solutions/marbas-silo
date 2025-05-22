@@ -1,37 +1,68 @@
 import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
 
+const PATH_PRIMARY_GROUP = 'root._1.';
+const PATH_SECONDARY_GROUP = 'root._2.';
+
 export const EditorSchemaConfig = {
+	PATH_PRIMARY_GROUP: PATH_PRIMARY_GROUP,
+	PATH_SECONDARY_GROUP: PATH_SECONDARY_GROUP,
+	PATH_DEFAULT_GROUP: PATH_PRIMARY_GROUP,
+	PATH_SYS_OBJECT: `${PATH_PRIMARY_GROUP}_sys`,
+	DEPTH_DATA_CARRIER: 3,
 	BASIC: {
 		title: "Grain Editor",
-		headerTemplate: "{{self.presentation.label}}{{self._sys.dirty}}",
+		headerTemplate: '{{self._1.presentation.label}}{{self._1._sys.dirty}}',
 		type: 'object',
+		format: 'categories',
 		options: {
 			disable_collapse: true
 		},
 		properties: {
-			meta: {
-				title: "Metadata",
-				"$ref": '#/definitions/meta',
+			_1: {
+				title: 'Basic',
+				type: 'object',
 				propertyOrder: 0,
 				options: {
-					collapsed: true
+					disable_collapse: true,
+					titleHidden: true,
+					containerAttributes: {
+						'class': 'mb-tab-container'
+					}
+				},
+				properties: {
+					presentation: {
+						title: "Presentation",
+						"$ref": '#/definitions/presentation',
+						propertyOrder: 1000
+					},
+					_sys: {
+						"$ref": '#/definitions/_sys'
+					}
 				}
 			},
-			presentation: {
-				title: "Presentation",
-				"$ref": '#/definitions/presentation',
-				propertyOrder: 1000
-			},
-			stats: {
-				title: "Statistics",
-				"$ref": '#/definitions/stats',
+			_2: {
+				title: 'Advanced',
+				type: 'object',
 				propertyOrder: 2000,
 				options: {
-					collapsed: true
+					disable_collapse: true,
+					titleHidden: true,
+					containerAttributes: {
+						'class': 'mb-tab-container'
+					}
+				},
+				properties: {
+					meta: {
+						title: "Metadata",
+						"$ref": '#/definitions/meta',
+						propertyOrder: 1000
+					},
+					stats: {
+						title: "Statistics",
+						"$ref": '#/definitions/stats',
+						propertyOrder: 2000
+					}
 				}
-			},
-			_sys: {
-				"$ref": '#/definitions/_sys'
 			}
 		},
 		definitions: {
@@ -73,7 +104,7 @@ export const EditorSchemaConfig = {
 					icon: {
 						title: 'Icon',
 						type: 'string',
-						description: '<span class="bi-file mb-grain-icon">&nbsp;</span>'
+						format: 'icon'
 					},
 					sortKey: {
 						title: 'Sort Key',
@@ -150,10 +181,14 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_TYPEDEF]: {
 		properties: {
-			typeDef: {
-				title: 'Type Definition',
-				"$ref": '#/definitions/typeDef',
-				propertyOrder: 100
+			_1: {
+				properties: {
+					typeDef: {
+						title: 'Type Definition',
+						"$ref": '#/definitions/typeDef',
+						propertyOrder: 100
+					}
+				}
 			}
 		},
 		definitions: {
@@ -162,10 +197,10 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					defaultInstanceId: {
-						required: false,
 						title: 'Default Values',
 						type: 'string',
 						format: 'button',
+						required: false,
 						options: {
 							button: {
 								action: 'showTypeDefDefaults',
@@ -181,6 +216,7 @@ export const EditorSchemaConfig = {
 						format: 'info',
 						title: '',
 						description: "Open Grain editor with default values for this type (create the Grain if necessary)",
+						default: '42',
 						options: {
 							grid_columns: 10,
 							grid_break: true
@@ -189,6 +225,7 @@ export const EditorSchemaConfig = {
 					impl: {
 						title: 'Implementation',
 						type: 'string',
+						required: false,
 						options: {
 							grid_columns: 12
 						}
@@ -219,10 +256,14 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_PROPDEF]: {
 		properties: {
-			propDef: {
-				title: 'Property Definition',
-				"$ref": '#/definitions/propDef',
-				propertyOrder: 100
+			_1: {
+				properties: {
+					propDef: {
+						title: 'Property Definition',
+						"$ref": '#/definitions/propDef',
+						propertyOrder: 100
+					}
+				}
 			}
 		},
 		definitions: {
@@ -322,10 +363,14 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_FILE]: {
 		properties: {
-			file: {
-				title: "File",
-				"$ref": '#/definitions/file',
-				propertyOrder: 110
+			_1: {
+				properties: {
+					file: {
+						title: "File",
+						"$ref": '#/definitions/file',
+						propertyOrder: 110
+					}
+				}
 			}
 		},
 		definitions: {
@@ -345,8 +390,8 @@ export const EditorSchemaConfig = {
 							'class': 'mb-grain-file'
 						}],
 						watch: {
-							id: 'root.meta.id',
-							apiPfx: 'root._sys.api'
+							id: `${PATH_SECONDARY_GROUP}meta.id`,
+							apiPfx: `${PATH_PRIMARY_GROUP}_sys.api`
 						},
 						options: {
 							upload: {
@@ -369,7 +414,7 @@ export const EditorSchemaConfig = {
 						type: "integer",
 						template: "fileSizeFormatter",
 						watch: {
-							val: 'root.file.size'
+							val: `${PATH_PRIMARY_GROUP}file.size`
 						}
 					}
 				}

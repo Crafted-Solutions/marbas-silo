@@ -89,10 +89,14 @@ export class SiloNavi extends SiloTree {
 				defaultValue: oldName
 			});
 			if (newName && newName != oldName) {
-				await this._apiSvc.storeGrain({
+				const mod = {
 					id: (grainOrId.id || grainOrId),
 					name: newName
-				});
+				};
+				await this._apiSvc.storeGrain(mod, true);
+				document.dispatchEvent(new CustomEvent('mb-silo:grain-renamed', {
+					detail: mod
+				}));
 				await this.reloadNode(grainOrId, true);
 			}
 		}

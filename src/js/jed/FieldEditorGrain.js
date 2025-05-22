@@ -1,13 +1,24 @@
 import { JSONEditor } from "@json-editor/json-editor";
 import { GrainXAttrs } from "../cmn/GrainXAttrs";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
+import { GrainEditor } from "../GrainEditor";
 import clipboardCopy from "clipboard-copy";
+import { IconMaps } from "../../conf/icons.conf";
 
 export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	build() {
 		if (!this.jsoneditor._grainEditor) {
 			throw new Error("This editor is only usable as part of GrainEditor");
 		}
+		if (!this.options.iconClass) {
+			this.options.iconClass = 'input-group-text';
+		}
+		if (!this.options.defaultIcon) {
+			this.options.defaultIcon = 'bi-question-diamond';
+		}
+		this._lblEmpty = this.translateProperty('Empty');
+		this._lblType = this.translateProperty('Type');
+
 		if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
 		if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
 		if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
@@ -35,17 +46,17 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 		this.inputMod.setAttribute('readonly', 'readonly');
 
 		const buttons = [
-			this.#createFieldAction('GoToGrain', 'Go To Grain', 'bi-box-arrow-right'),
-			this.#createFieldAction('PickGrain', 'Select', 'bi-three-dots')
+			this.#createFieldAction('GoToGrain', this.translateProperty('Go To Grain'), 'bi-box-arrow-right'),
+			this.#createFieldAction('PickGrain', this.translateProperty('Select'), 'bi-three-dots')
 		];
 		if (!this.isRequired() && 'array' != this.parent.schema.type) {
-			buttons.push(this.#createFieldAction('DeleteGrain', 'Delete', 'bi-x'));
+			buttons.push(this.#createFieldAction('DeleteGrain', this.translateProperty('Delete'), 'bi-x'));
 		}
 		buttons.push(...this.#createMenuActions());
 		const group = this.theme.getInputGroup(this.inputMod, buttons);
 		this.icon = document.createElement('span');
-		this.icon.className = 'input-group-text bi-question-diamond';
-		this.icon.title = 'Empty';
+		this.icon.className = `${this.options.iconClass} ${this.options.defaultIcon}`;
+		this.icon.title = this._lblEmpty;
 		group.insertBefore(this.icon, this.inputMod);
 
 		if (this.schema.readOnly || this.schema.readonly || this.schema.template) {
@@ -75,17 +86,12 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			this.is_dirty = true;
 			this.inputMod.value = result.value;
 			this.inputMod.title = '';
-			this.icon.title = 'Empty';
-			this.icon.className = 'input-group-text bi-question-diamond';
+			this.icon.title = this._lblEmpty;
+			this.icon.className = `${this.options.iconClass} ${this.options.defaultIcon}`;
 			if (this.link_holder) {
 				this.link_holder.replaceChildren();
 			}
-			if (!result.value || MarBasDefaults.ID_TYPE_TYPEDEF == result.value) {
-				if (!initial && this.always_disabled)
-					this.theme.visuallyHidden(this.container);
-			} else {
-				this.#updateGrain(result.value);
-			}
+			this.#updateGrain(result.value);
 			this.#updateValueActions();
 		}
 		return result;
@@ -119,7 +125,7 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			if (picker.accepted) {
 				this.setValue(picker.selectedGrain);
 			}
-		}, this.jsoneditor._grainEditor.getGrainPickerOptions('array' == this.parent.schema.type ? this.parent.container : this.container));
+		}, GrainEditor.getGrainPickerOptions('array' == this.parent.schema.type ? this.parent.container : this.container));
 	}
 
 	onDeleteGrain() {
@@ -139,10 +145,11 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	}
 
 	#updateValueActions() {
-		this.btnGoToGrain.disabled = !this.value;
-		this.mnuActions.disabled = !this.value;
+		const isValid = FieldEditorGrain.isValidId(this.value);
+		this.btnGoToGrain.disabled = !isValid;
+		this.mnuActions.disabled = !isValid;
 		if (this.btnDeleteGrain) {
-			this.btnDeleteGrain.disabled = this.disabled || this.isRequired() || !this.value;
+			this.btnDeleteGrain.disabled = this.disabled || this.isRequired() || !isValid;
 		}
 	}
 
@@ -159,7 +166,7 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	}
 
 	#createMenuActions() {
-		const result = this.mnuActions = this.theme.getButton('', undefined, 'Other Options');
+		const result = this.mnuActions = this.theme.getButton('', undefined, this.translateProperty('Other Options'));
 		result.className = 'btn btn-outline-secondary dropdown-toggle';
 		result.setAttribute('data-bs-toggle', 'dropdown');
 		result.setAttribute('aria-expanded', 'false');
@@ -178,17 +185,17 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			list.appendChild(li);
 			return btn;
 		};
-		addActionBtn('Copy ID', () => {
+		addActionBtn(this.translateProperty('Copy ID'), () => {
 			if (this.grain) {
 				clipboardCopy(this.grain.id);
 			}
 		});
-		addActionBtn('Copy Path', () => {
+		addActionBtn(this.translateProperty('Copy Path'), () => {
 			if (this.grain) {
 				clipboardCopy(this.grain.path);
 			}
 		});
-		addActionBtn('Copy URL', () => {
+		addActionBtn(this.translateProperty('Copy URL'), () => {
 			if (this.grain) {
 				clipboardCopy(`${document.baseURI}?grain=${this.grain.id}`);
 			}
@@ -198,11 +205,16 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	}
 
 	async #updateGrain(id) {
-		if (!id) {
+		if (!FieldEditorGrain.isValidId(id)) {
 			delete this.grain;
+			if (MarBasDefaults.ID_TYPE_TYPEDEF == id) {
+				this.icon.className = `input-group-text ${IconMaps.ByType[id]}`;
+				this.icon.title = this._lblType;
+				this.inputMod.value = this.translateProperty('<Self>');
+			}
 			return;
 		}
-		if (MarBasDefaults.ID_TYPE_TYPEDEF != id && (!this.grain || this.grain.id != id)) {
+		if (!this.grain || this.grain.id != id) {
 			this.grain = await this.jsoneditor._grainEditor._apiSvc.getGrain(id);
 		}
 		const isInital = !this.grain;
@@ -210,12 +222,12 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			this.inputMod.value = this.grain.label || this.grain.name;
 			this.inputMod.title = this.grain.path;
 			this.icon.className = `input-group-text ${GrainXAttrs.getGrainIcon(this.grain)}`;
-			this.icon.title = this.grain.typeName || 'Type';
+			this.icon.title = this.grain.typeName || this._lblType;
 
 			if (await this.jsoneditor._grainEditor._apiSvc.isGrainInstanceOf(this.grain, MarBasDefaults.ID_TYPE_FILE)) {
 				const link = this.getLink({
 					href: `#`,
-					rel: "Open (new window)",
+					rel: this.translateProperty("Open (new window)"),
 					'class': 'mb-grain-file',
 					download: true
 				});
@@ -226,6 +238,10 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 				}
 			}
 		}
+	}
+
+	static isValidId(id) {
+		return !!id && MarBasDefaults.ID_TYPE_TYPEDEF != id;
 	}
 
 	static install() {
