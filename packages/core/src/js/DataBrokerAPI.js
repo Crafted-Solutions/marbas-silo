@@ -4,12 +4,12 @@ import { MbUtils } from "./MbUtils.js";
 
 const NoOp = () => { };
 
-const ExtenderAPI = {
+const TierAPI = {
 	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
 	[MarBasDefaults.ID_TYPE_TYPEDEF]: 'TypeDef'
 };
 
-const ResolverAPI = Object.assign({}, ExtenderAPI, {
+const ResolverAPI = Object.assign({}, TierAPI, {
 	[MarBasDefaults.ID_TYPE_FILE]: 'File'
 });
 
@@ -238,14 +238,15 @@ export class DataBrokerAPI {
 		});
 	}
 
-	storeGrain(grain) {
+	storeGrain(grain, useBasicTier = false) {
 		if (grain._siloAttrs && grain._siloAttrsMod) {
 			grain.xAttrs = Object.keys(grain._siloAttrs).length ? `"silo":${JSON.stringify(grain._siloAttrs)}` : null;
 		}
 		if (this.#lang) {
 			grain.culture = this.#lang;
 		}
-		const result = this.#fetchSendJson(`${this.baseUrl}/${ExtenderAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, grain, false);
+		let tier = useBasicTier ? 'Grain' : TierAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain';
+		const result = this.#fetchSendJson(`${this.baseUrl}/${tier}`, grain, false);
 		result.then(_ => {
 			delete grain._siloAttrsMod;
 		}).catch(NoOp);
@@ -516,7 +517,7 @@ export class DataBrokerAPI {
 		return result;
 	}
 
-	resolveGrainType(grain) {
+	resolveGrainTier(grain) {
 		const typeRes = this.#resolvers[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
 		if (2 == grain._resolved || !typeRes) {
 			return Promise.resolve(grain);

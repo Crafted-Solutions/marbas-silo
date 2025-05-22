@@ -11,6 +11,9 @@ export class BsContextDropdown {
 
 		["contextmenu", "long-press"].forEach((type) => {
 			this.#triggerElm.addEventListener(type, (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
 				this.#lastFocus = document.activeElement;
 				this.#menuEvt = evt;
 				document.body.setAttribute('data-bs-toggle', 'dropdown');
@@ -25,19 +28,14 @@ export class BsContextDropdown {
 				this.#menuElm.style.left = `${evt.pageX}px`;
 				this.#menuElm.style.top = `${evt.pageY}px`;
 				dd.update();
-				evt.preventDefault();
-				evt.stopPropagation();
-
 				dd.show();
 			});
 		});
 		const page = document.querySelector('html');
-		['mousedown'].forEach(type => {
-			page.addEventListener(type, (evt) => {
-				if (this.#menuElm != evt.target && !this.#menuElm.contains(evt.target)) {
-					this.hide();
-				}
-			});
+		page.addEventListener('mousedown', (evt) => {
+			if (this.#menuElm != evt.target && !this.#menuElm.contains(evt.target)) {
+				this.hide();
+			}
 		});
 		this.#menuElm.querySelectorAll('.dropdown-item:not(.dropdown-toggle)').forEach((elm) => {
 			elm.addEventListener('click', () => {
@@ -51,7 +49,9 @@ export class BsContextDropdown {
 	}
 
 	hide() {
-		Dropdown.getOrCreateInstance(this.#menuElm).hide();
+		if (this.#menuElm.classList.contains('show')) {
+			Dropdown.getOrCreateInstance(this.#menuElm).hide();
+		}
 	}
 
 	addEventListener(evtType, listener) {
