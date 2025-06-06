@@ -115,6 +115,21 @@ editorMgr.addChangeListener((grain) => {
 	naviMgr.updateNode(grain);
 });
 
+authModule.addEventListener('silo-auth:failure', (evt) => {
+	if (evt && evt.detail) {
+		let msg = evt.detail.message;
+		if (!msg) {
+			msg = evt.detail;
+		}
+		if (evt.detail.error) {
+			msg = `${msg} [${evt.detail.error}]`;
+		}
+		if (evt.detail.error_description) {
+			msg = `${msg} - ${evt.detail.error_description}`;
+		}
+		MsgBox.invokeErr(`Login error: ${msg}`);
+	}
+});
 authModule.addEventListener('silo-auth:login', () => {
 	langManager.reload();
 	loadLoggedInState();

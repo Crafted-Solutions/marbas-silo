@@ -9,8 +9,7 @@ const { version } = require(path.resolve(__dirname, 'package.json'));
 
 module.exports = (env) => {
 	const mode = env.development || env.WEBPACK_SERVE ? 'development' : 'production';
-	// TODO configure something different for production
-	const authModule = 'AuthModuleBasic';
+	const authModule = env.AuthModule || 'AuthModuleDynamic';
 
 	const resolveAlias = {
 		AuthModule: path.resolve(__dirname, `src/js/${authModule}.js`),
@@ -119,6 +118,20 @@ module.exports = (env) => {
 			path: path.resolve(__dirname, 'dist')
 		},
 		optimization: {
+			splitChunks: {
+				cacheGroups: {
+					panvaVendor: {
+						test: /[\\/]node_modules[\\/](oauth4webapi|jose)[\\/]/,
+						name: 'libs-panva',
+						chunks: 'all'
+					},
+					handlebarsVendor: {
+						test: /[\\/]node_modules[\\/](handlebars)[\\/]/,
+						name: 'libs-hb',
+						chunks: 'all'
+					}
+				}
+			},
 			minimizer: [
 				// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
 				`...`,

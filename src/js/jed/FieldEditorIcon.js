@@ -122,6 +122,6 @@ export class FieldEditorIcon extends JSONEditor.defaults.editors.string {
 
 }
 
-import('bootstrap-icons/font/bootstrap-icons.json').then(iconConfig => {
+import(/* webpackChunkName: "bi-conf" */'bootstrap-icons/font/bootstrap-icons.json').then(iconConfig => {
 	BsIconPicker.getDrowpdown({ bi: iconConfig });
 });

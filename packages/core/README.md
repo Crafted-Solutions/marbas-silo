@@ -23,14 +23,21 @@ Modules for Javascript clients for accessing [MarBas Databroker](/Crafted-Soluti
 	let permissions = 0x007;
 	console.log("permissions have MarBasGrainAccessFlag.Write set", Boolean(MarBasGrainAccessFlag.Write & permissions));
 	```
-1. `DataBrokerAPI` - wrapper function for communication with databroker
+1. `DataBrokerAPI` - wrapper functions for communication with databroker
 
 	```javascript
 	import { MarBasBuiltIns, DataBrokerAPI } from "@crafted.solutions/marbas-core";
 	let authModule = {
 		brokerUrl: 'https://localhost:7277/api/marbas',
-		authType: 'Basic',
-		authToken: 'dXNlcjpwYXNzd29yZA=='
+		// expected to return a Promise
+		authorizeRequest: function(request) {
+			const result = request || {};
+			if (!result.headers) {
+				result.headers = {};
+			}
+			result.headers.Authorization = 'Basic dXNlcjpwYXNzd29yZA==';
+			return Promise.resolve(result);
+		}
 	};
 	let api = new DataBrokerAPI(authModule);
 	let grain = await api.getGrain(MarBasBuiltIns.ID_CONTENT);
