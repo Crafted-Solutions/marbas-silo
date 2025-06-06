@@ -42,11 +42,11 @@ export async function publish() {
 
 	for (const [pkg, version] of Object.entries(newVersions)) {
 		if (remoteVersions[pkg] === version) {
-			console.log(`Skipping ${pkg}@${version} because it's already published`);
+			console.info(`Skipping ${pkg}@${version} because it's already published`);
 			continue;
 		}
 
-		console.log(`Publishing ${pkg}@${version}`);
+		console.info(`Publishing ${pkg}@${version}`);
 
 		await new Promise((resolve, reject) => {
 			const errHandler = (err) => {

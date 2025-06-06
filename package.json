@@ -31,8 +31,10 @@
 		"clipboard-copy": "^4.0.1",
 		"dompurify": "^3.2.5",
 		"jodit": "^4.6.2",
+		"jose": "^6.0.11",
 		"lodash.merge": "^4.6.2",
-		"lodash.startcase": "^4.4.0"
+		"lodash.startcase": "^4.4.0",
+		"oauth4webapi": "^3.5.1"
 	},
 	"devDependencies": {
 		"@types/json-editor": "^0.0.10",

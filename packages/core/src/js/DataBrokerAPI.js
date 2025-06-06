@@ -256,19 +256,21 @@ export class DataBrokerAPI {
 	deleteGrain(grain) {
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(grain, true);
-			fetch(`${this.baseUrl}/Grain/${grain.id || grain}`, this.applyStdFetchOptions({ method: 'DELETE' }))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					inv.then(() => {
-						resolve(json.success);
-					}).catch(() => resolve(false));
-				})
-				.catch(reject);
+			this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
+				fetch(`${this.baseUrl}/Grain/${grain.id || grain}`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						inv.then(() => {
+							resolve(json.success);
+						}).catch(() => resolve(false));
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -288,29 +290,33 @@ export class DataBrokerAPI {
 				data.typeContainerId = data.parentId;
 			}
 
-			fetch(`${this.baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, this.applyStdFetchOptions({
+			this.applyStdFetchOptions({
 				method: 'PUT',
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: JSON.stringify(data)
-			}))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					if (json.success) {
-						inv.then(() => {
-							resolve(this.#addGrainToCache(json.yield));
-						}).catch(() => resolve(json.yield));
-					} else {
-						reject("API returned failure");
-					}
-				})
-				.catch(reject);
+			}).then(opts => {
+				fetch(`${this.baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						if (json.success) {
+							inv.then(() => {
+								resolve(this.#addGrainToCache(json.yield));
+							}).catch(() => resolve(json.yield));
+						} else {
+							reject("API returned failure");
+						}
+					})
+					.catch(reject);
+
+			}).catch(reject);
+
 		});
 	}
 
@@ -466,10 +472,12 @@ export class DataBrokerAPI {
 				if (propDef.localizable) {
 					params.set('lang', langOverride || this.#lang || grain.culture);
 				}
+				this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
+					req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, opts);
+				}).catch(reject);
 
-				req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, this.applyStdFetchOptions({ method: 'DELETE' }));
 			} else {
-				req = fetch(`${this.baseUrl}/Trait/Values`, this.applyStdFetchOptions({
+				this.applyStdFetchOptions({
 					method: 'POST',
 					headers: {
 						"Content-Type": "application/json"
@@ -482,7 +490,9 @@ export class DataBrokerAPI {
 						revision: grain.revision,
 						values: values
 					})
-				}));
+				}).then(opts => {
+					req = fetch(`${this.baseUrl}/Trait/Values`, opts);
+				}).catch(reject);
 			}
 			req.then(res => {
 				if (res.ok) {
@@ -623,19 +633,21 @@ export class DataBrokerAPI {
 	deleteAclEntry(grainId, roleId) {
 		const inv = this.invalidateGrain(grainId, true);
 		return new Promise((resolve, reject) => {
-			fetch(`${this.baseUrl}/Acl/${roleId}/${grainId}`, this.applyStdFetchOptions({ method: 'DELETE' }))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					inv.then(() => {
-						resolve(json.success);
-					}).catch(() => resolve(false));
-				})
-				.catch(reject);
+			this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
+				fetch(`${this.baseUrl}/Acl/${roleId}/${grainId}`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						inv.then(() => {
+							resolve(json.success);
+						}).catch(() => resolve(false));
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -744,26 +756,28 @@ export class DataBrokerAPI {
 		const parentId = formData.get('ParentId');
 		return new Promise((resolve, reject) => {
 			const inv = this.invalidateGrain(parentId, true);
-			fetch(`${this.baseUrl}/File`, this.applyStdFetchOptions({
+			this.applyStdFetchOptions({
 				method: 'PUT',
 				body: formData
-			}))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					if (json.success) {
-						inv.then(() => {
-							resolve(this.#addGrainToCache(json.yield));
-						}).catch(() => resolve(json.yield));
-					} else {
-						reject("API reported failure");
-					}
-				})
-				.catch(reject);
+			}).then(opts => {
+				fetch(`${this.baseUrl}/File`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						if (json.success) {
+							inv.then(() => {
+								resolve(this.#addGrainToCache(json.yield));
+							}).catch(() => resolve(json.yield));
+						} else {
+							reject("API reported failure");
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -772,24 +786,26 @@ export class DataBrokerAPI {
 		return new Promise((resolve, reject) => {
 			const data = new FormData();
 			data.append('File', file);
-			fetch(`${this.baseUrl}/File/${id}`, this.applyStdFetchOptions({
+			this.applyStdFetchOptions({
 				method: 'POST',
 				body: data
-			}))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					if (json.success) {
-						resolve(json.yield);
-					} else {
-						reject("API reported failure");
-					}
-				})
-				.catch(reject);
+			}).then(opts => {
+				fetch(`${this.baseUrl}/File/${id}`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						if (json.success) {
+							resolve(json.yield);
+						} else {
+							reject("API reported failure");
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -803,28 +819,30 @@ export class DataBrokerAPI {
 				reject(`Response from ${url} doesn't match criteria`);
 				return;
 			}
-			fetch(url, this.applyStdFetchOptions())
-				.then(res => {
-					if (res.ok) {
-						const size = res.headers.get('Content-Length');
-						const type = res.headers.get('Content-Type');
-						if (size >= maxSize || !acceptType.test(type)) {
-							this.#rejects.push(url);
-							reject(`Response ${type} of ${size} bytes from ${url} doesn't match criteria`);
-							return null;
+			this.applyStdFetchOptions().then(opts => {
+				fetch(url, opts)
+					.then(res => {
+						if (res.ok) {
+							const size = res.headers.get('Content-Length');
+							const type = res.headers.get('Content-Type');
+							if (size >= maxSize || !acceptType.test(type)) {
+								this.#rejects.push(url);
+								reject(`Response ${type} of ${size} bytes from ${url} doesn't match criteria`);
+								return null;
+							}
+							return res.blob();
 						}
-						return res.blob();
-					}
 
-					reject(`Request to ${url} failed (${res.status} ${res.statusText})`);
-					return null;
-				})
-				.then(blob => {
-					if (blob) {
-						resolve(blob);
-					}
-				})
-				.catch(reject);
+						reject(`Request to ${url} failed (${res.status} ${res.statusText})`);
+						return null;
+					})
+					.then(blob => {
+						if (blob) {
+							resolve(blob);
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -851,27 +869,29 @@ export class DataBrokerAPI {
 
 	#fetchGet(url, statusHandler = null) {
 		return new Promise((resolve, reject) => {
-			fetch(url, this.applyStdFetchOptions())
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					if (statusHandler) {
-						const sim = statusHandler(res);
-						if (sim) {
-							return { success: true, yield: sim };
+			this.applyStdFetchOptions().then(opts => {
+				fetch(url, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
 						}
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					if (json.success) {
-						resolve(json.yield);
-					} else {
-						reject("API reported failure");
-					}
-				})
-				.catch(reject);
+						if (statusHandler) {
+							const sim = statusHandler(res);
+							if (sim) {
+								return { success: true, yield: sim };
+							}
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						if (json.success) {
+							resolve(json.yield);
+						} else {
+							reject("API reported failure");
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
@@ -886,44 +906,43 @@ export class DataBrokerAPI {
 			if (data) {
 				opts.body = JSON.stringify(data);
 			}
-			fetch(`${url}`, this.applyStdFetchOptions(opts))
-				.then(res => {
-					if (res.ok) {
-						return res.json();
-					}
-					if (statusHandler) {
-						const sim = statusHandler(res);
-						if (sim) {
-							return { success: true, yield: sim };
+			this.applyStdFetchOptions(opts).then(req => {
+				fetch(`${url}`, req)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
 						}
-					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
-				})
-				.then(json => {
-					if (!returnYield) {
-						resolve(json.success);
-					} else if (json.success) {
-						resolve(json.yield);
-					} else {
-						reject("API reported failure");
-					}
-				})
-				.catch(reject);
+						if (statusHandler) {
+							const sim = statusHandler(res);
+							if (sim) {
+								return { success: true, yield: sim };
+							}
+						}
+						reject(`Request failed (${res.status} ${res.statusText})`);
+					})
+					.then(json => {
+						if (!returnYield) {
+							resolve(json.success);
+						} else if (json.success) {
+							resolve(json.yield);
+						} else {
+							reject("API reported failure");
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
 		});
 	}
 
 	applyStdFetchOptions(options) {
 		let result = {
 			withCredentials: true,
-			credentials: 'include',
-			headers: {
-				Authorization: `${this.#authModule.authType} ${this.#authModule.authToken}`
-			}
+			credentials: 'include'
 		};
 		if (options) {
 			result = merge({}, result, options);
 		}
-		return result;
+		return this.#authModule.authorizeRequest(result);
 	}
 
 	addLangParam(searchParams = null) {

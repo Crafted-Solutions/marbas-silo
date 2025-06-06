@@ -1,0 +1,35 @@
+<div class="modal fade" id="login-dlg" tabindex="-1" aria-labelledby="login-dlg-title" data-bs-backdrop="static" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">
+					<span>Login Onto Broker</span>
+					<div class="fs-6" id="login-dlg-subtitle"></div>
+				</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+				<div class="mb-3">
+					<div>
+						<label class="form-label text-end" for="login-dlg-txt-user">User</label>
+						<input id="login-dlg-txt-user" type="text" class="form-control" aria-describedby="login-dlg-txt-user-fb" placeholder="Login user name" required>
+						<div id="login-dlg-txt-user-fb" class="invalid-feedback">
+							Please provide a valid user name
+						</div>
+					</div>
+					<div class="mt-2">
+						<label class="form-label text-end" for="login-dlg-txt-pwd">Password</label>
+						<input id="login-dlg-txt-pwd" type="password" class="form-control" aria-describedby="login-dlg-txt-pwd-fb" placeholder="Login password" required>
+						<div id="login-dlg-txt-pwd-fb" class="invalid-feedback">
+							Please provide a valid password
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" id="login-dlg-btn-ok">Ok</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cacnel</button>
+			</div>
+		</div>
+	</div>
+</div>
