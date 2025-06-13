@@ -114,7 +114,7 @@ export class DataBrokerAPI {
 			if (grainOrId.label) {
 				resolve(grainOrId.label);
 			} else {
-				this.getGrainLabels(grainOrId, [grainOrId.culture || this.#lang || MarBasDefaults.LANG])
+				this.getGrainLabels(grainOrId, [this.#lang || grainOrId.culture || MarBasDefaults.LANG])
 					.then(labels => resolve(labels && labels.length ? labels[0].label : '-'))
 					.catch(() => resolve('-'));
 			}
@@ -169,7 +169,7 @@ export class DataBrokerAPI {
 												typeDefId: link.typeDefId,
 												culture: label.culture,
 												label: label.label
-											}).catch(NoOp);
+											}, true, true).catch(NoOp);
 										}
 									});
 								})
@@ -238,11 +238,11 @@ export class DataBrokerAPI {
 		});
 	}
 
-	storeGrain(grain, useBasicTier = false) {
+	storeGrain(grain, useBasicTier = false, useGrainCulture = false) {
 		if (grain._siloAttrs && grain._siloAttrsMod) {
 			grain.xAttrs = Object.keys(grain._siloAttrs).length ? `"silo":${JSON.stringify(grain._siloAttrs)}` : null;
 		}
-		if (this.#lang) {
+		if ((!useGrainCulture || !grain.culture) && this.#lang) {
 			grain.culture = this.#lang;
 		}
 		let tier = useBasicTier ? 'Grain' : TierAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain';
@@ -431,7 +431,7 @@ export class DataBrokerAPI {
 
 	getGrainTraits(grain) {
 		let url = `${this.baseUrl}/Grain/${grain.id || grain}/Traits`;
-		const lang = grain.culture || this.#lang;
+		const lang = this.#lang || grain.culture;
 		if (lang) {
 			const params = new URLSearchParams();
 			params.set('lang', lang);
@@ -465,7 +465,16 @@ export class DataBrokerAPI {
 
 	storeTraitValues(grain, propDef, values, langOverride = null) {
 		return new Promise((resolve, reject) => {
-			let req;
+			let reqFinish = (req) => {
+				req.then(res => {
+					if (res.ok) {
+						return res.json();
+					}
+					reject(`Request failed (${res.status} ${res.statusText})`);
+				}).then(json => {
+					resolve(json.success);
+				}).catch(reject);
+			};
 			if (0 == values.length) {
 				const params = new URLSearchParams();
 				params.set('revision', grain.revision);
@@ -473,7 +482,8 @@ export class DataBrokerAPI {
 					params.set('lang', langOverride || this.#lang || grain.culture);
 				}
 				this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
-					req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, opts);
+					const req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, opts);
+					reqFinish(req);
 				}).catch(reject);
 
 			} else {
@@ -491,17 +501,10 @@ export class DataBrokerAPI {
 						values: values
 					})
 				}).then(opts => {
-					req = fetch(`${this.baseUrl}/Trait/Values`, opts);
+					const req = fetch(`${this.baseUrl}/Trait/Values`, opts);
+					reqFinish(req);
 				}).catch(reject);
 			}
-			req.then(res => {
-				if (res.ok) {
-					return res.json();
-				}
-				reject(`Request failed (${res.status} ${res.statusText})`);
-			}).then(json => {
-				resolve(json.success);
-			}).catch(reject);
 		});
 	}
 
