@@ -1,6 +1,6 @@
 export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.16',
-	MinAPIVersion: '0.1.18',
+	MinAPIVersion: '0.1.19',
 	LANG: 'en',
 	ID_DEFAULT: '00000000-0000-1000-a000-000000000000',
 	ID_ROOT: '00000000-0000-1000-a000-000000000001',
