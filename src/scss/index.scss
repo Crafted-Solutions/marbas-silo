@@ -6,6 +6,11 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 	visibility: hidden;
 }
 
+.dropdown-item:disabled * {
+	color: var(--bs-dropdown-link-disabled-color) !important;
+	background-color: transparent;
+}
+
 .sr-only[for="root-property-selector"] {
 	display: none;
 }
@@ -20,6 +25,10 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 	white-space: nowrap;
 	text-align: left;
 	writing-mode: vertical-lr;
+}
+
+.btn-group-rev > .btn {
+	margin-right: ($spacer * .25);
 }
 
 .silo-tree .list-group-item {
@@ -48,18 +57,74 @@ $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 	color: lightcoral;
 }
 
-.mb-grain-icon {
-	font-size: 2rem !important;
+.mb-jf-icon i {
+	scale: 1.2;
+	translate: 0 -0.1em;
+}
+.mb-jf-icon i[class=""]::before {
+	content: "\f507";
+	display: inline-block;
+	font-family: "bootstrap-icons" !important;
+	font-style: normal;
+	font-weight: normal !important;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: -0.125em;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-.dropdown-item:disabled * {
-	color: var(--bs-dropdown-link-disabled-color) !important;
-	background-color: transparent;
+.bip-drowpdown {
+	position: absolute;
+}
+.bip-drowpdown .dropdown-menu {
+	box-shadow: 0 0 28px rgba(0, 0, 0, 0.1);
+}
+.bip-drowpdown ul {
+	overflow-y: auto;
+	height: 30vh;
+	max-width: 50vw;
+	min-width: 30em;
+	margin-bottom: 0;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+}
+.bip-drowpdown li {
+	width: 40px;
+	height: 40px;
+	display: inline-block;
+	text-align: center;
+}
+.bip-drowpdown li a {
+	padding-left: 0;
+	padding-right: 0;
+}
+.bip-drowpdown .selected {
+	color:var(--bs-white);
+	background-color:var(--bs-primary);
+}
+.bip-drowpdown .selected:hover {
+	color:var(--bs-white);
+	background-color:var(--bs-primary);
+}  
+
+.mb-tab-container > .je-object__title, .mb-tab-container > .je-object__controls {
+	display: none !important;
+}
+.mb-tab-container > .card.my-3 {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 .mb-grain-file {
 	margin-right: 0.25rem !important;
 	vertical-align: top;
+}
+.mb-grain-file img, .mb-grain-file video {
+	max-width: 100%;
+	max-height: 200px;
 }
 
 .mb-session-link {

@@ -9,76 +9,17 @@ import { GrainPicker } from "./cmn/GrainPicker";
 import { MsgBox } from "./cmn/MsgBox";
 import { MbDomUtils } from "./cmn/MbDomUtils";
 import { ExtensionLoader } from "./ExtensionLoader";
+import { FieldEditorGrain } from "./jed/FieldEditorGrain";
+import { Bootstrap5RevTheme } from "./jed/Bootstrap5RevTheme";
+import { TraitUtils } from "./cmn/TraitUtils";
+import { FieldEditorIcon } from "./jed/FieldEditorIcon";
 
-JSONEditor.defaults.options.theme = 'bootstrap5';
-JSONEditor.defaults.options.iconlib = 'bootstrap';
-JSONEditor.defaults.options.disable_edit_json = true;
-JSONEditor.defaults.options.no_additional_properties = true;
-JSONEditor.defaults.options.remove_empty_properties = false;
-JSONEditor.defaults.options.disable_properties = true;
-JSONEditor.defaults.options.array_controls_top = false;
-JSONEditor.defaults.options.required_by_default = true;
-JSONEditor.defaults.options.display_required_only = false;
-JSONEditor.defaults.options.show_opt_in = true;
-JSONEditor.defaults.options.disable_array_delete_last_row = true;
-JSONEditor.defaults.callbacks.upload = {
-	uploadHandler: (jseditor, path, file, cbs) => {
-		jseditor.jsoneditor._grainEditor.uploadHandler(jseditor, path, file, cbs);
-	}
-};
-JSONEditor.defaults.callbacks.template = {
-	fileSizeFormatter: (_, e) => {
-		const baseT = Math.log(e.val) / Math.log(1024) | 0;
-		return `${(e.val / Math.pow(1024, baseT)).toFixed(2)} ${(baseT ? 'KMGTPEZY'[baseT - 1] + 'iB' : 'Bytes')}`;
-	}
-};
-JSONEditor.defaults.callbacks.button = {
-	showTypeDefDefaults: (jseditor, e) => {
-		jseditor.jsoneditor._grainEditor.onTypeDefDefaults(jseditor);
-	}
-};
-
-const FieldIcon = 'root.presentation.icon';
-const FieldValueType = 'root.propDef.valueType';
-const FieldRtf = 'root.propDef.isRtf';
-const FieldDateOnly = 'root.propDef.isDateOnly';
-const FieldConstrParams = 'root.propDef._constraintParams';
-const TraitPattern = /^root._trait_([^\.]+)\.([0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12})/i;
-
-const TraitUtils = {
-	isArray: function (prop) {
-		return 1 < prop.cardinalityMax || -1 == prop.cardinalityMax;
-	},
-	getContainerName: function (prop) {
-		const p = prop.path.split('/');
-		return 1 < p.length ? p[p.length - 2] : 'General';
-	},
-	getEditableValue: function (prop, trait) {
-		return this.isArray(prop) ? trait.map(val => this.convTraitValue(val.value, prop.valueType)) : this.convTraitValue(trait[0].value, prop.valueType);
-	},
-	convTraitValue: function (value, traitType) {
-		if (MarBasTraitValueType.DateTime == traitType) {
-			return (new Date(value)).getTime() / 1000;
-		}
-		return this.convIdentifiable(value);
-	},
-	convIdentifiable: function (obj) {
-		return obj.id ? obj.id : obj;
-	},
-	getStorableValues: function (editorVal, traitType) {
-		const arr = 'object' == typeof editorVal && 'function' == typeof editorVal.push ? editorVal : [editorVal];
-		return arr.reduce((result, curr) => {
-			const t = typeof (curr);
-			if ('number' == t || 'boolean' == t || curr) {
-				if (MarBasTraitValueType.DateTime == traitType) {
-					curr = new Date(curr * 1000).toISOString();
-				}
-				result.push(curr);
-			}
-			return result;
-		}, []);
-	}
-};
+const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
+const FieldValueType = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.valueType`;
+const FieldRtf = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isRtf`;
+const FieldDateOnly = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isDateOnly`;
+const FieldConstrParams = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef._constraintParams`;
+const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.([0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12})`, 'i');
 
 const PropValConstr = {
 	create: function (prop) {
@@ -142,16 +83,6 @@ const PropValConstr = {
 	}
 };
 
-await ExtensionLoader.installExtension('GrainEditorStatic', {
-	MarBasDefaults: MarBasDefaults,
-	MarBasGrainAccessFlag: MarBasGrainAccessFlag,
-	MarBasTraitValueType: MarBasTraitValueType,
-	EditorGrainPickerConfig: EditorGrainPickerConfig,
-	EditorSchemaConfig: EditorSchemaConfig,
-	JSONEditor: JSONEditor,
-	PropValConstr: PropValConstr
-});
-
 export class GrainEditor {
 	#readyCb;
 	#changeCb;
@@ -184,6 +115,62 @@ export class GrainEditor {
 				delete this.grain.defaultInstanceId;
 			}
 		});
+		document.addEventListener('mb-silo:grain-renamed', (evt) => {
+			if (this.editor && this.grain.id == evt.detail.id) {
+				this.grain.name = evt.detail.name;
+			}
+		});
+	}
+
+	static setup = async function setup() {
+		GrainEditor.setup = async function () { };
+
+		JSONEditor.defaults.options.theme = 'bootstrap5rev';
+		JSONEditor.defaults.options.iconlib = 'bootstrap';
+		JSONEditor.defaults.options.disable_edit_json = true;
+		JSONEditor.defaults.options.no_additional_properties = true;
+		JSONEditor.defaults.options.remove_empty_properties = false;
+		JSONEditor.defaults.options.disable_properties = true;
+		JSONEditor.defaults.options.array_controls_top = false;
+		JSONEditor.defaults.options.required_by_default = true;
+		JSONEditor.defaults.options.display_required_only = false;
+		JSONEditor.defaults.options.show_opt_in = true;
+		JSONEditor.defaults.options.disable_array_delete_last_row = true;
+		JSONEditor.defaults.callbacks.upload = {
+			uploadHandler: (jseditor, path, file, cbs) => {
+				jseditor.jsoneditor._grainEditor.uploadHandler(jseditor, path, file, cbs);
+			}
+		};
+		JSONEditor.defaults.callbacks.template = {
+			fileSizeFormatter: (_, e) => {
+				const baseT = Math.log(e.val) / Math.log(1024) | 0;
+				return `${(e.val / Math.pow(1024, baseT)).toFixed(2)} ${(baseT ? 'KMGTPEZY'[baseT - 1] + 'iB' : 'Bytes')}`;
+			}
+		};
+		JSONEditor.defaults.callbacks.button = {
+			showTypeDefDefaults: (jseditor, e) => {
+				jseditor.jsoneditor._grainEditor.onTypeDefDefaults(jseditor);
+			}
+		};
+
+		FieldEditorGrain.install();
+		FieldEditorIcon.install();
+		Bootstrap5RevTheme.install();
+
+		await ExtensionLoader.installExtension('GrainEditorStatic', {
+			version: _PACKAGE_VERSION_,
+			MarBasDefaults: MarBasDefaults,
+			MarBasGrainAccessFlag: MarBasGrainAccessFlag,
+			MarBasTraitValueType: MarBasTraitValueType,
+			EditorGrainPickerConfig: EditorGrainPickerConfig,
+			EditorSchemaConfig: EditorSchemaConfig,
+			JSONEditor: JSONEditor,
+			PropValConstr: PropValConstr
+		});
+	}
+
+	static get defaults() {
+		return EditorSchemaConfig;
 	}
 
 	async buildEditor(grainBase, forceReload = false, link = undefined) {
@@ -195,11 +182,13 @@ export class GrainEditor {
 		await this.unloadEditor();
 		this.grain = grainBase;
 		if (grainBase) {
-			this.grain = await this._apiSvc.resolveGrainType(grainBase);
-			if (!this.grain.icon) {
-				GrainXAttrs.getGrainIcon(this.grain);
+			this.grain = await this._apiSvc.resolveGrainTier(grainBase);
+			const prevIcon = this.grain.icon;
+			if (prevIcon != GrainXAttrs.getGrainIcon(this.grain)) {
+				this._notify();
 			}
 			delete this.grain._siloAttrsMod;
+
 			PropValConstr.init(this.grain);
 			this.customProps = {
 				def: await this._apiSvc.getGrainPropDefs(this.grain)
@@ -207,39 +196,51 @@ export class GrainEditor {
 			if (this.customProps.def.length) {
 				this.customProps.traits = await this._apiSvc.getGrainTraits(this.grain);
 			}
+			for (const key in this.grain) {
+				if (null == this.grain[key]) {
+					this.grain[key] = undefined;
+				}
+			}
 			const schema = this._getSchema(this.grain, this.customProps);
 			const startval = {
-				_sys: {
-					api: this._apiSvc.baseUrl
-				}
+				_1: {
+					_sys: {
+						api: this._apiSvc.baseUrl
+					}
+				},
+				_2: {}
 			};
-			for (const key in schema.properties) {
-				if (key.startsWith('_')) {
-					continue;
+			for (const rootkey in schema.properties) {
+				for (const key in schema.properties[rootkey].properties) {
+					if (key.startsWith('_')) {
+						continue;
+					}
+					startval[rootkey][key] = this.grain;
 				}
-				startval[key] = this.grain;
 			}
 
 			if (MarBasDefaults.ID_TYPE_PROPDEF == this.grain.typeDefId && EditorSchemaConfig[`PropDef_${this.grain.valueType}`]) {
 				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
 			}
+			const valGroup = startval._1;
 			if (this.grain.valueType == MarBasTraitValueType.DateTime) {
-				startval.propDef.isDateOnly = GrainXAttrs.getAttr(this.grain, 'propMod') == "dateonly";
+				valGroup.propDef.isDateOnly = GrainXAttrs.getAttr(this.grain, 'propMod') == "dateonly";
 			}
 			else if (this.grain.valueType == MarBasTraitValueType.Memo) {
-				startval.propDef.isRtf = GrainXAttrs.getAttr(this.grain, 'propMod') == "rtf";
+				valGroup.propDef.isRtf = GrainXAttrs.getAttr(this.grain, 'propMod') == "rtf";
 			}
 			if (this.customProps.def.length && this.customProps.traits) {
+				const schemaGroup = GrainEditor._getTraitSchemaGroup(schema);
 				this.customProps.def.forEach((prop) => {
 					const secKey = `_trait_${TraitUtils.getContainerName(prop)}`;
-					if (!startval[secKey]) {
-						startval[secKey] = {};
+					if (!valGroup[secKey]) {
+						valGroup[secKey] = {};
 					}
 					const trait = this.customProps.traits[prop.name];
 					if (trait && trait.length) {
-						startval[secKey][prop.id] = TraitUtils.getEditableValue(prop, trait);
+						valGroup[secKey][prop.id] = TraitUtils.getEditableValue(prop, trait);
 						if (trait[0].grainId != this.grain.id) {
-							schema.properties[secKey].properties[prop.id].title += " (Default Value)";
+							schemaGroup.properties[secKey].properties[prop.id].title += " (Default Value)";
 						}
 					}
 				});
@@ -270,7 +271,7 @@ export class GrainEditor {
 		const result = this.grain;
 		delete this.grain;
 		delete this.customProps;
-		this.#dateFields = ['root.stats.cTime', 'root.stats.mTime'];
+		this.#dateFields = [`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.cTime`, `${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`];
 		return result;
 	}
 
@@ -303,11 +304,9 @@ export class GrainEditor {
 	}
 
 	async save() {
-		const errors = this.editor.validate();
+		const errors = await this.validate();
 		if (errors.length) {
 			console.warn("editor.errors", errors);
-			this.editor.showValidationErrors(errors);
-			MsgBox.invokeErr("Please correct input errors first");
 			return this.grain;
 		}
 		this.#collectChanges();
@@ -329,13 +328,46 @@ export class GrainEditor {
 			}
 		}
 		if (await this._apiSvc.storeGrain(this.grain)) {
-			const sub = this.editor.getEditor('root.stats.mTime');
+			const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
 			if (sub) {
 				sub.setValueToInputField((new Date()).toLocaleString());
 			}
 			this._setDirty(false);
 		}
 		return this.grain;
+	}
+
+	async validate(showMessage = true, focusError = true) {
+		const result = this.editor.validate();
+		let actGroupPath = focusError ? this._getActiveGroup().getAttribute('data-schemapath') : undefined;
+		let invalidPath;
+		for (let i = result.length - 1; i >= 0; i--) {
+			const sub = this.editor.getEditor(result[i].path);
+			// WA for json-editor bug in Validator._validateV3Required
+			if (sub && 'info' == sub.schema.format) {
+				result.splice(i, 1);
+			} else if (actGroupPath && !result[i].path.startsWith(actGroupPath)) {
+				invalidPath = result[i].path;
+				actGroupPath = undefined;
+			}
+		}
+		if (result.length) {
+			this.editor.showValidationErrors(result);
+			if (showMessage) {
+				await MsgBox.invokeErr("Please correct input errors first");
+			}
+			if (invalidPath) {
+				const tabId = this._getGroupByPath(invalidPath).closest('.tab-pane').id;
+				const trigger = this._element.querySelector(`[data-toggle="tab"][href="#${tabId}"]`);
+				//Tab.getInstance(trigger).show(); // NO AVAIL
+				trigger.click();
+				const label = this._element.querySelector(`[data-schemapath="${invalidPath}"] label`);
+				if (label) {
+					label.click();
+				}
+			}
+		}
+		return result;
 	}
 
 	get dirty() {
@@ -399,8 +431,7 @@ export class GrainEditor {
 					editor.setValue(this.#grainPicker.selectedGrain);
 					makeDirty = true;
 					this.#markTraitChange(editor.path);
-					this.#resolveEditorLabel(editor);
-					this.#checkEmbeddedMedia(editor);
+					this._checkEmbeddedMedia(editor);
 					this.#updateSessionLinks();
 				} else {
 					editor.parent.setValue(editor.parent.getValue().filter(val => !!val));
@@ -408,7 +439,7 @@ export class GrainEditor {
 				if (!this.editor.was_dirty) {
 					this._setDirty(makeDirty);
 				}
-			}, this.#getGrainPickerOptions(editor.parent.container));
+			}, GrainEditor.getGrainPickerOptions(editor.parent.container));
 		}
 	}
 
@@ -422,28 +453,29 @@ export class GrainEditor {
 			});
 			this._createActions();
 
-			Object.keys(this.editor.editors).forEach(key => {
-				const sub = this.editor.getEditor(key);
+			for (const key in this.editor.editors) {
+				const sub = this.editor.editors[key];
 				if (!sub) {
-					return;
+					continue;
 				}
-				const pathLen = (key.match(/\./g) || []).length;
-				if (2 > pathLen && sub.schema.readonly) {
-					// WA for JE bug ignoring readonly on objects
-					sub.disable();
-				} else if (2 == pathLen && !key.startsWith('root._sys')) {
+				if (sub.schema.readonly) {
+					if ('object' == sub.schema.type) {
+						// WA for JE bug ignoring readonly on objects
+						sub.disable();
+					}
+				} else if (!key.startsWith(EditorSchemaConfig.PATH_SYS_OBJECT) && EditorSchemaConfig.DEPTH_DATA_CARRIER + 1 == key.split('.').length) {
 					this._addEditorListener(key);
 				}
-			});
+			}
 
 			this.editor.on('change', this.#changeCb);
 			this.editor.on('addRow', this.#addRowCb);
 
-			this.updateIcon();
+			this.updateIcon(false);
 
 			this.#createFieldActions();
-			this.#resolveSchemaLabels(this.editor.schema);
-			this.#checkEmbeddedMedia();
+			this.#resolveSchemaLabels(GrainEditor._getTraitSchemaGroup(this.editor.schema));
+			this._checkEmbeddedMedia();
 			this.#resolveGlobalLabels();
 			this.#renderFieldComments();
 
@@ -455,14 +487,12 @@ export class GrainEditor {
 		}
 	}
 
-	updateIcon() {
+	updateIcon(modified = true) {
 		const sub = this.editor.getEditor(FieldIcon);
-		if (sub) {
-			const icon = GrainXAttrs.setGrainIcon(this.grain, sub.getValue());
-			const elm = sub.container.querySelector('.mb-grain-icon');
-			if (elm) {
-				elm.className = `mb-grain-icon ${icon}`;
-			}
+		if (sub && modified) {
+			GrainXAttrs.setGrainIcon(this.grain, sub.getValue());
+		} else {
+			GrainXAttrs.getGrainIcon(this.grain);
 		}
 	}
 
@@ -476,7 +506,7 @@ export class GrainEditor {
 		await this._apiSvc.uploadFile(id, file);
 		callbacks.updateProgress(100);
 		callbacks.success(isTrait ? id : `${this._apiSvc.baseUrl}/File/${id}/Inline`);
-		this.#checkEmbeddedMedia(editor);
+		this._checkEmbeddedMedia(editor);
 		editor.preview.innerHTML = "";
 		editor.fileDisplay.value = "No file selected";
 		editor.input.value = '';
@@ -496,7 +526,7 @@ export class GrainEditor {
 
 	_setDirty(dirty = true) {
 		this.editor.was_dirty = this.editor.is_dirty;
-		const sub = this.editor.getEditor('root._sys.dirty');
+		const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SYS_OBJECT}.dirty`);
 		if (sub) {
 			sub.setValue(dirty ? '*' : '');
 		}
@@ -528,8 +558,19 @@ export class GrainEditor {
 		if (!this.#grainPicker) {
 			this.#grainPicker = new GrainPicker('grain-picker', this._apiSvc);
 		}
-		this.#grainPicker.addEventListener('hidden.bs.modal', closeCallback, { once: true });
+		this.#grainPicker.addEventListener('hidden.bs.modal', () => {
+			closeCallback(this.#grainPicker);
+		}, { once: true });
 		this.#grainPicker.show(pickerOptions);
+	}
+
+	_getActiveGroup() {
+		return this._element.querySelector('.tab-pane.active .mb-tab-container');
+	}
+
+	_getGroupByPath(path) {
+		const groupPath = path.substring(0, EditorSchemaConfig.PATH_DEFAULT_GROUP.length - 1);
+		return this._element.querySelector(`[data-schemapath="${groupPath}"]`);
 	}
 
 	async _createActions() {
@@ -585,57 +626,7 @@ export class GrainEditor {
 	}
 
 	#createFieldActions() {
-		const fields = this.editor.element.querySelectorAll('[data-proptype="grain"]');
-		fields.forEach(field => {
-			const schemaPath = field.getAttribute('data-schemapath');
-			const sub = this.editor.getEditor(schemaPath);
-			if (!sub || sub.schema._fieldReadonly) {
-				return;
-			}
-			const lbl = field.querySelector('label');
-			if (lbl) {
-				let btn = document.createElement('button');
-				if ('array' != sub.parent.schema.type) {
-					btn.title = "Delete";
-					btn.innerHTML = '<span class="bi-x"></span>';
-					btn.className = "btn btn-sm btn-outline-secondary me-2";
-					btn.onclick = () => {
-						const prev = sub.getValue();
-						sub.setValue("");
-						sub.onChange(true);
-						if (prev) {
-							this._setDirty();
-							this.#markTraitChange(schemaPath);
-						}
-						MbDomUtils.updateSessionLinks(sub.element);
-						this.#resolveEditorLabel(sub);
-					};
-					lbl.insertBefore(btn, lbl.firstChild);
-
-					btn = document.createElement('button');
-				}
-
-				btn.title = "Select";
-				btn.innerHTML = '<span class="bi-three-dots"></span>';
-				btn.className = "btn btn-sm btn-outline-secondary me-2";
-				btn.onclick = () => {
-					this._showGrainPicker(() => {
-						if (this.#grainPicker.accepted) {
-							const prev = sub.getValue();
-							sub.setValue(this.#grainPicker.selectedGrain);
-							if (prev != this.#grainPicker.selectedGrain) {
-								this._setDirty();
-								this.#markTraitChange(schemaPath);
-							}
-							MbDomUtils.updateSessionLinks(sub.element);
-							this.#resolveEditorLabel(sub);
-							this.#checkEmbeddedMedia(sub);
-						}
-					}, this.#getGrainPickerOptions(field));
-				};
-				lbl.insertBefore(btn, lbl.firstChild);
-			}
-		});
+		// nothing yet
 	}
 
 	#renderFieldComments() {
@@ -645,15 +636,11 @@ export class GrainEditor {
 					if (comments && comments.length && comments[0].value) {
 						const lbl = this.editor.element.querySelector(
 							1 == prop.cardinalityMax
-								? `[data-schemapath="root._trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] label`
-								: `[data-schemapath="root._trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] .card-title`
+								? `[data-schemapath="${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] label`
+								: `[data-schemapath="${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] .card-title`
 						);
 						if (lbl) {
 							const elm = this.editor.theme.getInfoButton(comments[0].value);
-							// const elm = document.createElement('button');
-							// elm.className = "btn btn-sm btn-outline-secondary rounded-circle align-baseline lh-1 ms-2";
-							// elm.setAttribute('role', 'button');
-							// elm.setAttribute('type', 'button');
 							elm.title = "Field Info";
 							elm.setAttribute('data-bs-content', comments[0].value);
 							elm.removeAttribute('data-toggle');
@@ -671,23 +658,27 @@ export class GrainEditor {
 		}
 	}
 
-	#checkEmbeddedMedia(editor) {
+	_checkEmbeddedMedia(editor) {
 		const cont = editor ? editor.container : this.editor.element;
 		const media = cont.querySelectorAll('.mb-grain-file');
 		media.forEach((anchor) => {
 			if (anchor.href && anchor.href.startsWith(this._apiSvc.baseUrl)) {
 				this._apiSvc.loadBlob(anchor.href, /^(image|video|audio)\/.*/)
 					.then(blob => {
+						let elm;
 						if (blob.type.startsWith('image/')) {
-							const elm = document.createElement('img');
-							elm.setAttribute('style', "max-width: 100%; max-height: 100px;");
-							elm.onload = () => URL.revokeObjectURL(objUrl);
-							anchor.setAttribute('title', anchor.textContent);
-							anchor.innerHTML = '';
-							anchor.appendChild(elm);
-							const objUrl = URL.createObjectURL(blob);
-							elm.src = objUrl;
+							elm = document.createElement('img');
+						} else {
+							elm = document.createElement(blob.type.startsWith('video/') ? 'video' : 'audio');
+							elm.setAttribute('controls', 'controls');
+							elm.classList.add('je-media');
 						}
+						anchor.setAttribute('title', anchor.textContent);
+						anchor.innerHTML = '';
+						const objUrl = URL.createObjectURL(blob);
+						elm.onload = () => URL.revokeObjectURL(objUrl);
+						elm.src = objUrl;
+						anchor.appendChild(elm);
 					})
 					.catch(console.warn);
 			}
@@ -696,11 +687,6 @@ export class GrainEditor {
 
 	_getSchema(grain, customProps) {
 		let result = EditorSchemaConfig.BASIC;
-		if (!grain.typeDefId) {
-			result = structuredClone(result);
-			result.definitions.meta.properties._type.template = 'Type';
-			delete result.definitions.meta.properties._type.links;
-		}
 		if (EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]) {
 			result = merge({}, result, EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]);
 		}
@@ -753,6 +739,15 @@ export class GrainEditor {
 			if (EditorSchemaConfig[configKey]) {
 				merge(propSchema, EditorSchemaConfig[configKey]);
 			}
+			const setRequiredProp = (itemSchema) => {
+				itemSchema.required = 0 < prop.cardinalityMin;
+				if (itemSchema.required
+					&& (MarBasTraitValueType.Text == prop.valueType || MarBasTraitValueType.Memo == prop.valueType
+						|| MarBasTraitValueType.Grain == prop.valueType || MarBasTraitValueType.File == prop.valueType
+					)) {
+					itemSchema.minLength = 1;
+				}
+			};
 			if (TraitUtils.isArray(prop)) {
 				propSchema = {
 					type: 'array',
@@ -761,7 +756,12 @@ export class GrainEditor {
 					},
 					items: propSchema
 				};
-				if (propSchema.items.options && propSchema.items.options.containerAttributes) {
+				setRequiredProp(propSchema.items);
+				if (!propSchema.items.options) {
+					propSchema.items.options = {};
+				}
+				propSchema.items.options.compact = true;
+				if (propSchema.items.options.containerAttributes) {
 					propSchema.options = {
 						containerAttributes: {}
 					};
@@ -782,19 +782,12 @@ export class GrainEditor {
 				}
 			} else {
 				propSchema._useTitle = prop.label;
-				propSchema.required = 0 < prop.cardinalityMin;
-				if (propSchema.required
-					&& (MarBasTraitValueType.Text == prop.valueType || MarBasTraitValueType.Memo == prop.valueType
-						|| MarBasTraitValueType.Grain == prop.valueType || MarBasTraitValueType.File == prop.valueType
-					)) {
-					propSchema.minLength = 1;
-				}
+				setRequiredProp(propSchema);
 			}
 			propSchema._origType = prop.valueType;
 			propSchema._localizable = prop.localizable;
 			propSchema.title = prop.label;
-			// propSchema.required = true;
-			propSchema.propertyOrder = this.#makeOrderKey(prop.sortKey, prop.name);
+			propSchema.propertyOrder = GrainEditor.makeOrderKey(prop.sortKey, prop.name);
 
 			const valConstr = PropValConstr.create(prop);
 			if (valConstr) {
@@ -805,7 +798,7 @@ export class GrainEditor {
 			const disableProp = () => {
 				propSchema.readonly = true;
 				propSchema._fieldReadonly = true;
-				const sub = this.editor.getEditor(`root.${secKey}.${prop.id}`);
+				const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}${secKey}.${prop.id}`);
 				if (sub) {
 					sub.disable();
 				}
@@ -822,10 +815,16 @@ export class GrainEditor {
 				});
 		});
 		// console.log('sections', sections);
-		result.properties = merge({}, result.properties, sections);
-		this.#resolveSchemaLabels(result);
+
+		const group = GrainEditor._getTraitSchemaGroup(result);
+		group.properties = merge({}, group.properties, sections);
+		this.#resolveSchemaLabels(group);
 
 		return result;
+	}
+
+	static _getTraitSchemaGroup(schema) {
+		return schema.properties._1;
 	}
 
 	#updatePropDefEditorByValueType(valueType) {
@@ -862,22 +861,22 @@ export class GrainEditor {
 	}
 
 	#resolveSchemaLabels(schema) {
-		for (const r in this.#labelResolvers) {
-			this.#labelResolvers[r]
+		for (const traitKey in this.#labelResolvers) {
+			this.#labelResolvers[traitKey]
 				.then(label => {
 					let text = label;
 					if (schema._useTitle) {
 						text = text ? `${schema._useTitle} (${text})` : schema._useTitle;
 					}
 					if (text) {
-						schema.properties[r].title = text;
+						schema.properties[traitKey].title = text;
 						if (this.editor.ready) {
-							const sub = this.editor.getEditor(`root.${r}`);
+							const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}${traitKey}`);
 							if (sub) {
 								//sub.schema.title = label;
 								sub.header_text = text;
 								sub.updateHeaderText();
-								delete this.#labelResolvers[r];
+								delete this.#labelResolvers[traitKey];
 							}
 						}
 					}
@@ -943,7 +942,7 @@ export class GrainEditor {
 	}
 
 	#markTraitChange(sourceKey) {
-		if (sourceKey && sourceKey.startsWith('root._trait_')) {
+		if (sourceKey && sourceKey.startsWith(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_`)) {
 			const editorKey = TraitPattern.exec(sourceKey)[0];
 			const sub = this.editor.getEditor(editorKey);
 			if (sub) {
@@ -956,18 +955,20 @@ export class GrainEditor {
 		return false;
 	}
 
-	#makeOrderKey(sortKey, name) {
+	static makeOrderKey(sortKey, name) {
 		if (null != sortKey && !isNaN(sortKey)) {
 			return Number(sortKey);
 		}
 		return Array.from(sortKey || name).reduce((res, curr, i) => res + (10 ** 16) / ((257 - (curr.charCodeAt(0) % 256)) * (256 ** (i + 1))), 0);
 	}
 
-	#getGrainPickerOptions(elm) {
+	static getGrainPickerOptions(elm) {
 		const opts = elm.getAttribute('data-pickeropts');
 		if (opts) {
 			return opts.startsWith('{') ? JSON.parse(opts) : EditorGrainPickerConfig[opts || 'DEFAULT'];
 		}
 		return {};
 	}
-} 
+}
+
+await GrainEditor.setup();

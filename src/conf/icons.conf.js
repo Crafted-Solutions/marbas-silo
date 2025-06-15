@@ -1,6 +1,7 @@
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 export const IconMaps = {
+	DEFAULT: 'bi-file',
 	ById: {
 		[MarBasDefaults.ID_ROOT]: 'bi-database',
 		[MarBasDefaults.ID_SCHEMA]: 'bi-gear',
@@ -14,6 +15,8 @@ export const IconMaps = {
 		[MarBasDefaults.ID_TYPE_TRASH]: 'bi-trash3'
 	},
 	ByMimeType: {
-		'image/png': 'bi-filetype-png'
+		'image/png': 'bi-filetype-png',
+		'image/jpeg': 'bi-filetype-jpg',
+		'video/mp4': 'bi-filetype-mp4'
 	}
 };

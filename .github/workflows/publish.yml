@@ -61,6 +61,10 @@ jobs:
 
         tar czvf "marbas-silo-drop-in-${VERSION}.tar.gz" -C "./dist/" .
 
+        npm run build --if-present -- --env AuthModule=AuthModuleBasic
+
+        tar czvf "marbas-silo-drop-in-basic-${VERSION}.tar.gz" -C "./dist/" .
+
     - name: Publish drop-in to GitHub
       uses: softprops/action-gh-release@v2
       with:

@@ -11,6 +11,9 @@ export class BsContextDropdown {
 
 		["contextmenu", "long-press"].forEach((type) => {
 			this.#triggerElm.addEventListener(type, (evt) => {
+				evt.preventDefault();
+				evt.stopPropagation();
+
 				this.#lastFocus = document.activeElement;
 				this.#menuEvt = evt;
 				document.body.setAttribute('data-bs-toggle', 'dropdown');
@@ -25,20 +28,30 @@ export class BsContextDropdown {
 				this.#menuElm.style.left = `${evt.pageX}px`;
 				this.#menuElm.style.top = `${evt.pageY}px`;
 				dd.update();
-				evt.preventDefault();
-				evt.stopPropagation();
-
 				dd.show();
 			});
 		});
 		const page = document.querySelector('html');
-		['mousedown'].forEach(type => {
-			page.addEventListener(type, (evt) => {
-				if (this.#menuElm != evt.target && !this.#menuElm.contains(evt.target)) {
-					Dropdown.getOrCreateInstance(this.#menuElm).hide();
-				}
+		page.addEventListener('mousedown', (evt) => {
+			if (this.#menuElm != evt.target && !this.#menuElm.contains(evt.target)) {
+				this.hide();
+			}
+		});
+		this.#menuElm.querySelectorAll('.dropdown-item:not(.dropdown-toggle)').forEach((elm) => {
+			elm.addEventListener('click', () => {
+				this.hide();
 			});
 		});
+	}
+
+	show() {
+		Dropdown.getOrCreateInstance(this.#menuElm).show();
+	}
+
+	hide() {
+		if (this.#menuElm.classList.contains('show')) {
+			Dropdown.getOrCreateInstance(this.#menuElm).hide();
+		}
 	}
 
 	addEventListener(evtType, listener) {
@@ -68,23 +81,26 @@ export class BsContextDropdown {
 		return elm && !elm.disabled;
 	}
 
-	addCmd(options, beforeCmd, skipSeparator, listener) {
+	addCmd(options, beforeCmd, skipSeparator, subMenu = `${this.#menuElm.id}`) {
 		const btn = document.createElement('button');
 		btn.type = 'button';
 		btn.id = options.id;
 		btn.className = 'dropdown-item';
 		btn.textContent = options.title;
+		btn.addEventListener('click', () => {
+			this.hide();
+		});
 
-		if (listener) {
+		if (options.listener) {
 			btn.addEventListener('click', (evt) => {
-				listener(this.#menuEvt || evt);
+				options.listener(this.#menuEvt || evt);
 			});
 		}
 
 		const item = document.createElement('li');
 		item.appendChild(btn);
 
-		const mnu = this.#menuElm.querySelector('ul.dropdown-menu');
+		const mnu = this.#menuElm.querySelector(`ul.dropdown-menu[aria-labelledby="${subMenu}-trigger"]`);
 		if (beforeCmd) {
 			let nextItem = (this.#menuElm.querySelector(`#${beforeCmd}`) || {}).parentElement;
 			if (nextItem && skipSeparator && nextItem.querySelector('.dropdown-divider')) {
@@ -95,7 +111,7 @@ export class BsContextDropdown {
 		return mnu.appendChild(item);
 	}
 
-	addSeparator(beforeCmd) {
+	addSeparator(beforeCmd, subMenu = `${this.#menuElm.id}`) {
 		let nextItem = (this.#menuElm.querySelector(`#${beforeCmd}`) || {}).parentElement;
 		if (nextItem) {
 			const hr = document.createElement('hr');
@@ -104,7 +120,7 @@ export class BsContextDropdown {
 			const item = document.createElement('li');
 			item.appendChild(hr);
 
-			return this.#menuElm.querySelector('ul.dropdown-menu').insertBefore(item, nextItem);
+			return this.#menuElm.querySelector(`ul.dropdown-menu[aria-labelledby="${subMenu}-trigger"]`).insertBefore(item, nextItem);
 		}
 	}
 }

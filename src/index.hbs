@@ -18,9 +18,9 @@
 
 <body>
 	<article id="main" class="container-fluid py-4 px-3 d-flex flex-column vh-100 overflow-hidden">
-		<h1>{{title}}</h1>
+		<h1 class="d-none">{{title}}</h1>
 
-		<section id="top" class="border border-1 rounded navbar py-2 px-3 my-2 bg-light flex-shrink-0">
+		<section id="top" class="d-none border border-1 rounded navbar py-2 px-3 my-2 bg-light flex-shrink-0">
 			<div class="row row-cols-2 flex-grow-1">
 				{{> partials/LangManager}}
 				{{> partials/AuthModule}}
