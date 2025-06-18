@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-silo",
-	"version": "0.1.15",
+	"version": "0.1.15-1",
 	"description": "Manages grain silo via marbas-databroker",
 	"private": true,
 	"repository": {
