@@ -33,6 +33,7 @@ export class OAuthAuthenticator {
 			AuthStorage.state = oauth.generateRandomState();
 			authUrl.searchParams.set('state', AuthStorage.state);
 		}
+
 		window.location.href = authUrl.href;
 	}
 
@@ -42,9 +43,9 @@ export class OAuthAuthenticator {
 			const client = {
 				client_id: config.clientId
 			};
-			const params = oauth.validateAuthResponse(this.#oauthMeta, client, new URLSearchParams(window.location.search), config.pkce ? oauth.expectNoState : AuthStorage.state);
+			const params = oauth.validateAuthResponse(this.#oauthMeta, client, new URLSearchParams(window.location.search), config.pkce ? oauth.skipStateCheck : AuthStorage.state);
 
-			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, AuthStorage.state);
+			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, AuthStorage.state, this.#getTokenRequestOptions(config));
 			const result = await oauth.processAuthorizationCodeResponse(this.#oauthMeta, client, resp);
 
 			const claims = this.#getTokenClaims(result);
@@ -72,7 +73,7 @@ export class OAuthAuthenticator {
 			const client = {
 				client_id: config.clientId
 			};
-			const resp = await oauth.refreshTokenGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), AuthStorage.refreshToken);
+			const resp = await oauth.refreshTokenGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), AuthStorage.refreshToken, this.#getTokenRequestOptions(config));
 			const result = await oauth.processRefreshTokenResponse(this.#oauthMeta, client, resp);
 
 			const claims = this.#getTokenClaims(result);
@@ -120,6 +121,15 @@ export class OAuthAuthenticator {
 		result.search = '';
 		result.hash = '';
 		return result;
+	}
+
+	#getTokenRequestOptions(config) {
+		if (!config) {
+			config = config = this.#module.config;
+		}
+		return {
+			[oauth.allowInsecureRequests]: 'development' == EnvConfig.mode && config.tokenUrl.startsWith('http:')
+		};
 	}
 
 	#clientAuth(config) {

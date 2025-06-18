@@ -105,6 +105,7 @@ module.exports = (env) => {
 					title: 'MarBas Silo',
 					apiBaseUrl: 'https://localhost:7277/api/marbas',
 					panelClasses: 'card card-body my-3 bg-light',
+					mode: mode,
 					extensionPoint: extensionPoint
 				},
 				meta: {
