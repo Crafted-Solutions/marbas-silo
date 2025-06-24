@@ -21,7 +21,7 @@ export class AuthModule extends AbstractAuthModule {
 				if (!result.headers) {
 					result.headers = {};
 				}
-				result.headers.Authorization = `${this.#helper.authType} ${AuthStorage.accessToken}`;
+				result.headers.Authorization = `${this.#helper.authType} ${this.#helper.token}`;
 			}
 		}
 		if (!isLoggedIn) {
@@ -35,9 +35,12 @@ export class AuthModule extends AbstractAuthModule {
 			return false;
 		}
 		await this.#configure();
-		await this.#helper.logout();
+		const redirected = await this.#helper.logout();
 		this._clearStorage();
 		this._updateUI();
+		if (!redirected) {
+			this.#showForm();
+		}
 		this._triggerEvent('silo-auth:logout');
 	}
 

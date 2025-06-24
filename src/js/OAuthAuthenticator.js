@@ -15,6 +15,10 @@ export class OAuthAuthenticator {
 		return 'Bearer';
 	}
 
+	get token() {
+		return this.#useIdTokenAsBearer() ? AuthStorage.idToken : AuthStorage.accessToken;
+	}
+
 	async authorize() {
 		const config = this.#module.config;
 
@@ -45,7 +49,7 @@ export class OAuthAuthenticator {
 			};
 			const params = oauth.validateAuthResponse(this.#oauthMeta, client, new URLSearchParams(window.location.search), config.pkce ? oauth.skipStateCheck : AuthStorage.state);
 
-			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, AuthStorage.state, this.#getTokenRequestOptions(config));
+			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, config.pkce ? AuthStorage.state : oauth.nopkce, this.#getTokenRequestOptions(config));
 			const result = await oauth.processAuthorizationCodeResponse(this.#oauthMeta, client, resp);
 
 			const claims = this.#getTokenClaims(result);
@@ -53,7 +57,7 @@ export class OAuthAuthenticator {
 
 			this.#module.loginComplete(claims.name || claims.preferred_username || claims.sub);
 
-			return !!result.access_token;
+			return !!result[this.#useIdTokenAsBearer(config) ? 'id_token' : 'access_token'];
 
 		} catch (e) {
 			this.#module.reportError(e, true);
@@ -79,7 +83,7 @@ export class OAuthAuthenticator {
 			const claims = this.#getTokenClaims(result);
 			this.#storeResults(result, claims);
 
-			return !!result.access_token;
+			return !!result[this.#useIdTokenAsBearer(config) ? 'id_token' : 'access_token'];
 
 		} catch (e) {
 			this.#module.reportError(e);
@@ -88,9 +92,11 @@ export class OAuthAuthenticator {
 	}
 
 	async logout() {
+		let result = false;
 		try {
 			const config = this.#module.config;
 			if (config.logoutUrl) {
+				result = true;
 				const url = new URL(config.logoutUrl);
 				if (AuthStorage.idToken) {
 					url.searchParams.set('id_token_hint', AuthStorage.idToken);
@@ -108,6 +114,7 @@ export class OAuthAuthenticator {
 		} finally {
 			this.clearStorage();
 		}
+		return Promise.resolve(result);
 	}
 
 	clearStorage() {
@@ -130,6 +137,10 @@ export class OAuthAuthenticator {
 		return {
 			[oauth.allowInsecureRequests]: 'development' == EnvConfig.mode && config.tokenUrl.startsWith('http:')
 		};
+	}
+
+	#useIdTokenAsBearer(config) {
+		return 'id_token' == (config || this.#module.config).bearerTokenName;
 	}
 
 	#clientAuth(config) {

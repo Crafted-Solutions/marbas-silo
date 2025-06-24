@@ -33,6 +33,10 @@ export class BasicAuthenticator {
 		return 'Basic';
 	}
 
+	get token() {
+		return AuthStorage.accessToken;
+	}
+
 	async authorize() {
 		this.#dialog.show({
 			brokerUrl: this.#module.brokerUrl
@@ -49,7 +53,7 @@ export class BasicAuthenticator {
 
 	async logout() {
 		this.clearStorage();
-		return Promise.resolve();
+		return Promise.resolve(false);
 	}
 
 	clearStorage() {
