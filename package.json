@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-silo",
-	"version": "0.1.15-1",
+	"version": "0.1.16",
 	"description": "Manages grain silo via marbas-databroker",
 	"private": true,
 	"repository": {
@@ -26,7 +26,7 @@
 		"@jbtronics/bs-treeview": "github:hatelamers/bs-treeview",
 		"@json-editor/json-editor": "^2.15.2",
 		"@popperjs/core": "^2.11.8",
-		"bootstrap": "^5.3.6",
+		"bootstrap": "^5.3.7",
 		"bootstrap-icons": "^1.13.1",
 		"clipboard-copy": "^4.0.1",
 		"dompurify": "^3.2.6",
@@ -34,7 +34,7 @@
 		"jose": "^6.0.11",
 		"lodash.merge": "^4.6.2",
 		"lodash.startcase": "^4.4.0",
-		"oauth4webapi": "^3.5.2"
+		"oauth4webapi": "^3.5.3"
 	},
 	"devDependencies": {
 		"@types/json-editor": "^0.0.10",
