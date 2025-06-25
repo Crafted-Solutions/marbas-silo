@@ -38,7 +38,7 @@ export class AbstractAuthModule {
 
 	async loginComplete(user) {
 		const info = await this._fetchSysInfo();
-		if (!info || !this._validateBackend(info)) {
+		if (!info || !this._validateBackend(info) || !(await this._checkUserRoles())) {
 			return;
 		}
 		this._writeStorage(this._urlInput, user, info);
@@ -94,9 +94,9 @@ export class AbstractAuthModule {
 				withCredentials: true,
 				credentials: 'include'
 			});
-			return await fetch(`${this._urlInput}/SysInfo`, opts).then(res => {
+			return await fetch(`${this._urlInput}/SysInfo`, opts).then(async res => {
 				if (res.ok) {
-					return res.json();
+					return await res.json();
 				}
 				const err = new Error(404 == res.status ? "Invalid URL" : "Invalid user or password");
 				err.error_description = `Request failed (${res.status} ${res.statusText})`;
@@ -120,6 +120,27 @@ export class AbstractAuthModule {
 			return false;
 		}
 		return true;
+	}
+
+	async _checkUserRoles() {
+		try {
+			const opts = await this.authorizeRequest({
+				withCredentials: true,
+				credentials: 'include'
+			});
+			return await fetch(`${this._urlInput}/Role/Current`, opts).then(async res => {
+				if (res.ok) {
+					const resp = await res.json();
+					if (resp.success && resp.yield && resp.yield.length) {
+						return true;
+					}
+				}
+				throw new Error("Invalid user or password");
+			});
+		} catch (e) {
+			this.reportError(e, true);
+		}
+		return false;
 	}
 
 	_writeStorage(url, user, sysinfo) {
