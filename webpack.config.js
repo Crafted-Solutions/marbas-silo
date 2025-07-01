@@ -23,6 +23,7 @@ module.exports = (env) => {
 
 	const extensionPoint = './marbas-silo.ext';
 	if (env.WEBPACK_SERVE) {
+		fs.mkdirSync(path.resolve(__dirname, 'dist'), { recursive: true });
 		['js', 'css'].forEach(ext => {
 			const xpfile = path.resolve(__dirname, 'dist', `${extensionPoint}.${ext}`);
 			if (!fs.existsSync(xpfile)) {
