@@ -11,7 +11,6 @@ const useSameWindowForRedirects = false;
 export class OAuthAuthenticator {
 	#module;
 	#oauthMeta;
-	#worker;
 	#loginGuard;
 
 	constructor(authModule) {
@@ -49,6 +48,7 @@ export class OAuthAuthenticator {
 		if (this.#module.isLoggedIn) {
 			return;
 		}
+		this.#closeWorker();
 		const config = this.#module.config;
 
 		const authUrl = new URL(config.authorizationUrl);
@@ -71,7 +71,12 @@ export class OAuthAuthenticator {
 			window.location.href = authUrl.href;
 		} else {
 			this.#loginGuard.acquire(180000);
-			this.#worker = window.open(authUrl.href, WORKER_TARGET, WORKER_ATTRS);
+			this._worker = window.open(authUrl.href, WORKER_TARGET, WORKER_ATTRS);
+			if (this.#isWorkerBlocked()) {
+				AuthStorage.state = null;
+				this.#loginGuard.release();
+				throw new Error(`Your browser is blocking popups, please allow them for ${window.location.protocol}//${window.location.host} and try again`);
+			}
 			this.#watchLoginWorker();
 			try {
 				await this.#loginGuard.promise;
@@ -124,8 +129,8 @@ export class OAuthAuthenticator {
 				if (useSameWindowForRedirects) {
 					window.location.href = url.href;
 				} else {
-					this.#worker = window.open(url.href, WORKER_TARGET, WORKER_ATTRS);
-					setTimeout(() => {
+					this._worker = window.open(url.href, WORKER_TARGET, WORKER_ATTRS);
+					this._logoutWatch = setTimeout(() => {
 						this.#closeWorker();
 					}, 5000);
 				}
@@ -280,28 +285,41 @@ export class OAuthAuthenticator {
 		return this.#oauthMeta;
 	}
 
+	#isWorkerBlocked() {
+		return !this._worker || typeof this._worker.outerHeight === "undefined" || parseInt(this._worker.outerHeight) < 10;
+	}
+
 	#closeWorker() {
+		if (useSameWindowForRedirects) {
+			return;
+		}
+		if (this._logoutWatch) {
+			clearTimeout(this._logoutWatch);
+			delete this._logoutWatch;
+		}
 		if (this._workerWatch) {
 			clearInterval(this._workerWatch);
 			delete this._workerWatch;
 		}
-		if (this.#worker && !this.#worker.closed) {
-			this.#worker.close();
-			this.#worker = null;
+		if (this._worker && !this._worker.closed) {
+			this._worker.close();
+			delete this._worker;
 		}
 	}
 
 	#watchLoginWorker() {
-		if (this.#worker && !this.#worker.closed) {
-			this._workerWatch = setInterval(() => {
-				if (this.#worker && this.#worker.closed) {
+		if (this._worker && !this._worker.closed) {
+			const watch = this._workerWatch = setInterval(() => {
+				let clear = false;
+				if (this._worker && this._worker.closed) {
 					console.warn("Login processor was closed unexpectedly");
 					AuthStorage.state = null;
 					this.#loginGuard.release();
-					this.#worker == null;
+					delete this._worker;
+					clear = true;
 				}
-				if (!this.#worker) {
-					clearInterval(this._workerWatch);
+				if (clear || !this._worker) {
+					clearInterval(watch);
 					delete this._workerWatch;
 				}
 			}, 1000);
