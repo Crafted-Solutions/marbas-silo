@@ -4,6 +4,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const HtmlWebpackSkipAssetsPlugin = require('html-webpack-skip-assets-plugin').HtmlWebpackSkipAssetsPlugin;
+const SiftChunksPlugin = require('sift-chunks-webpack-plugin');
 
 const { version } = require(path.resolve(__dirname, 'package.json'));
 
@@ -20,7 +22,7 @@ module.exports = (env) => {
 	}
 
 	const extensionPoint = './marbas-silo.ext';
-	if ('development' == mode) {
+	if (env.WEBPACK_SERVE) {
 		['js', 'css'].forEach(ext => {
 			const xpfile = path.resolve(__dirname, 'dist', `${extensionPoint}.${ext}`);
 			if (!fs.existsSync(xpfile)) {
@@ -29,12 +31,48 @@ module.exports = (env) => {
 		});
 	}
 
+	const chunks = {
+		index: './src/js/index.js',
+		libs: './src/js/libs.js',
+		bs: './src/scss/bootstrap.scss'
+	};
+
+	const commonPageParams = {
+		title: 'MarBas Silo',
+		apiBaseUrl: 'https://localhost:7277/api/marbas',
+		panelClasses: 'card card-body my-3 bg-light',
+		mode: mode,
+		extensionPoint: extensionPoint
+	};
+	const pageOptions = [{
+		filename: 'index.html',
+		template: 'src/index.hbs',
+		chunks: ['bs', 'index', 'libs'],
+		chunksSortMode: 'manual',
+		excludeAssets: [/bs.*.js/],
+		templateParameters: commonPageParams,
+		meta: {
+			viewport: 'width=device-width,initial-scale=1'
+		}
+	},];
+	if ('AuthModuleDynamic' == authModule) {
+		chunks.login = './src/js/login.js';
+		pageOptions.push({
+			filename: 'login.html',
+			template: 'src/login.hbs',
+			chunks: ['bs', 'login'],
+			chunksSortMode: 'manual',
+			excludeAssets: [/bs.*.js/],
+			templateParameters: commonPageParams,
+			meta: {
+				viewport: 'width=device-width,initial-scale=1'
+			}
+		});
+	}
+
 	return {
 		mode: mode,
-		entry: {
-			index: './src/js/index.js',
-			libs: './src/js/libs.js'
-		},
+		entry: chunks,
 		devServer: {
 			static: {
 				directory: './dist'
@@ -52,6 +90,10 @@ module.exports = (env) => {
 					test: /\.hbs$/,
 					loader: 'handlebars-loader',
 					options: {
+						extensions: ['.hbs'],
+						helperDirs: [
+							path.resolve(__dirname, 'src/hbhelpers')
+						],
 						partialResolver: (partial, callback) => {
 							partial = partial.replace(/\/AuthModule$/, `/${authModule}`);
 							callback(null, path.resolve(__dirname, `src/${partial}.hbs`));
@@ -98,21 +140,15 @@ module.exports = (env) => {
 			new webpack.DefinePlugin({
 				_PACKAGE_VERSION_: JSON.stringify(version)
 			}),
-			new HtmlWebpackPlugin({
-				title: 'MarBas Silo',
-				template: 'src/index.hbs',
-				templateParameters: {
-					title: 'MarBas Silo',
-					apiBaseUrl: 'https://localhost:7277/api/marbas',
-					panelClasses: 'card card-body my-3 bg-light',
-					mode: mode,
-					extensionPoint: extensionPoint
-				},
-				meta: {
-					viewport: 'width=device-width,initial-scale=1'
-				}
+			...pageOptions.map((opts) => {
+				return new HtmlWebpackPlugin(opts);
 			}),
-			new MiniCssExtractPlugin()
+			new HtmlWebpackSkipAssetsPlugin(),
+			new MiniCssExtractPlugin(),
+			new SiftChunksPlugin({
+				removeUnnamed: true,
+				skip: 'bs'
+			})
 		],
 		output: {
 			filename: '[name].bundle.js',
@@ -120,6 +156,7 @@ module.exports = (env) => {
 			clean: true
 		},
 		optimization: {
+			removeEmptyChunks: true,
 			splitChunks: {
 				cacheGroups: {
 					panvaVendor: {

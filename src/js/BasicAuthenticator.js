@@ -26,6 +26,7 @@ export class BasicAuthenticator {
 
 	constructor(authModule) {
 		this.#module = authModule;
+		this.#module.form.target = '';
 		this.#buildUI();
 	}
 
@@ -58,6 +59,10 @@ export class BasicAuthenticator {
 
 	clearStorage() {
 		AuthStorage.accessToken = null;
+	}
+
+	updateUIState(isLoggedIn) {
+		// NOOP
 	}
 
 	#buildUI() {

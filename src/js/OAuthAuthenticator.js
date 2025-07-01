@@ -1,14 +1,37 @@
 import * as oauth from 'oauth4webapi';
 import * as jose from 'jose';
 import { AuthStorage } from './AuthStorage';
+import { AsyncLock } from './cmn/AsyncLock';
+
+const WORKER_TARGET = 'silo-login';
+const WORKER_ATTRS = 'width=800,height=640';
+
+const useSameWindowForRedirects = false;
 
 export class OAuthAuthenticator {
 	#module;
 	#oauthMeta;
+	#worker;
+	#loginGuard;
 
 	constructor(authModule) {
 		this.#module = authModule;
+		this.#module.form.target = WORKER_TARGET;
 		this.#configure();
+		if (!useSameWindowForRedirects) {
+			AuthStorage.state = null;
+			this.#loginGuard = new AsyncLock();
+			window.addEventListener('message', async (evt) => {
+				this.#closeWorker();
+				if (AuthStorage.state && evt.data.params) {
+					try {
+						await this.#processProviderCallback(new URLSearchParams(evt.data.params));
+					} finally {
+						this.#loginGuard.release();
+					}
+				}
+			});
+		}
 	}
 
 	get authType() {
@@ -20,6 +43,12 @@ export class OAuthAuthenticator {
 	}
 
 	async authorize() {
+		try {
+			await this.#loginGuard.promise;
+		} catch (_) { }
+		if (this.#module.isLoggedIn) {
+			return;
+		}
 		const config = this.#module.config;
 
 		const authUrl = new URL(config.authorizationUrl);
@@ -38,32 +67,27 @@ export class OAuthAuthenticator {
 			authUrl.searchParams.set('state', AuthStorage.state);
 		}
 
-		window.location.href = authUrl.href;
+		if (useSameWindowForRedirects) {
+			window.location.href = authUrl.href;
+		} else {
+			this.#loginGuard.acquire(180000);
+			this.#worker = window.open(authUrl.href, WORKER_TARGET, WORKER_ATTRS);
+			this.#watchLoginWorker();
+			try {
+				await this.#loginGuard.promise;
+			} catch (_) {
+				AuthStorage.state = null;
+				this.#closeWorker();
+				throw new Error("Timeout attempting authorization");
+			}
+		}
 	}
 
 	async processState() {
-		try {
-			const config = this.#module.config;
-			const client = {
-				client_id: config.clientId
-			};
-			const params = oauth.validateAuthResponse(this.#oauthMeta, client, new URLSearchParams(window.location.search), config.pkce ? oauth.skipStateCheck : AuthStorage.state);
-
-			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, config.pkce ? AuthStorage.state : oauth.nopkce, this.#getTokenRequestOptions(config));
-			const result = await oauth.processAuthorizationCodeResponse(this.#oauthMeta, client, resp);
-
-			const claims = this.#getTokenClaims(result);
-			this.#storeResults(result, claims);
-
-			this.#module.loginComplete(claims.name || claims.preferred_username || claims.sub);
-
-			return !!result[this.#useIdTokenAsBearer(config) ? 'id_token' : 'access_token'];
-
-		} catch (e) {
-			this.#module.reportError(e, true);
-		} finally {
-			AuthStorage.state = null;
+		if (useSameWindowForRedirects) {
+			const result = this.#processProviderCallback(new URLSearchParams(window.location.search));
 			OAuthAuthenticator.cleanLocation();
+			return result;
 		}
 		return false;
 	}
@@ -86,7 +110,7 @@ export class OAuthAuthenticator {
 			return !!result[this.#useIdTokenAsBearer(config) ? 'id_token' : 'access_token'];
 
 		} catch (e) {
-			this.#module.reportError(e);
+			console.error(e);
 		}
 		return false;
 	}
@@ -94,27 +118,24 @@ export class OAuthAuthenticator {
 	async logout() {
 		let result = false;
 		try {
-			const config = this.#module.config;
-			if (config.logoutUrl) {
-				result = true;
-				const url = new URL(config.logoutUrl);
-				if (AuthStorage.idToken) {
-					url.searchParams.set('id_token_hint', AuthStorage.idToken);
+			const url = this.#getLogoutUrl();
+			if (url) {
+				result = useSameWindowForRedirects;
+				if (useSameWindowForRedirects) {
+					window.location.href = url.href;
+				} else {
+					this.#worker = window.open(url.href, WORKER_TARGET, WORKER_ATTRS);
+					setTimeout(() => {
+						this.#closeWorker();
+					}, 5000);
 				}
-				if (AuthStorage.loginHint) {
-					url.searchParams.set('logout_hint', AuthStorage.loginHint);
-				}
-				url.searchParams.set('client_id', config.clientId);
-				url.searchParams.set('post_logout_redirect_uri', this.redirecUrl.href);
-
-				window.location.href = url.href;
 			}
 		} catch (e) {
 			this.#module.reportError(e);
 		} finally {
 			this.clearStorage();
 		}
-		return Promise.resolve(result);
+		return result;
 	}
 
 	clearStorage() {
@@ -123,11 +144,79 @@ export class OAuthAuthenticator {
 		});
 	}
 
+	updateUIState(isLoggedIn) {
+		if (useSameWindowForRedirects) {
+			return;
+		}
+		let reset = true;
+		const logoutBtn = this.#module.logoutButton;
+		if (isLoggedIn) {
+			const url = this.#getLogoutUrl();
+			if (url) {
+				logoutBtn.href = url.href;
+				logoutBtn.target = WORKER_TARGET;
+				reset = false;
+			}
+		}
+		if (reset) {
+			logoutBtn.href = '#main';
+			logoutBtn.target = '';
+		}
+	}
+
 	get redirecUrl() {
-		const result = new URL(window.location.href);
-		result.search = '';
-		result.hash = '';
-		return result;
+		if (useSameWindowForRedirects) {
+			const result = new URL(window.location.href);
+			result.search = '';
+			result.hash = '';
+			return result;
+		}
+		return new URL('login.html', window.location.href);
+	}
+
+	async #processProviderCallback(cbParams) {
+		try {
+			const config = this.#module.config;
+			const client = {
+				client_id: config.clientId
+			};
+			const params = oauth.validateAuthResponse(this.#oauthMeta, client, cbParams, config.pkce ? oauth.skipStateCheck : AuthStorage.state);
+
+			const resp = await oauth.authorizationCodeGrantRequest(this.#oauthMeta, client, this.#clientAuth(config), params, this.redirecUrl.href, config.pkce ? AuthStorage.state : oauth.nopkce, this.#getTokenRequestOptions(config));
+			const result = await oauth.processAuthorizationCodeResponse(this.#oauthMeta, client, resp);
+
+			const claims = this.#getTokenClaims(result);
+			this.#storeResults(result, claims);
+
+			this.#module.loginComplete(claims.name || claims.preferred_username || claims.sub);
+
+			return !!result[this.#useIdTokenAsBearer(config) ? 'id_token' : 'access_token'];
+
+		} catch (e) {
+			this.#module.reportError(e, true);
+		} finally {
+			AuthStorage.state = null;
+		}
+		return false;
+	}
+
+	#getLogoutUrl(config) {
+		if (!config) {
+			config = config = this.#module.config;
+		}
+		if (config.logoutUrl) {
+			const result = new URL(config.logoutUrl);
+			if (AuthStorage.idToken) {
+				result.searchParams.set('id_token_hint', AuthStorage.idToken);
+			}
+			if (AuthStorage.loginHint) {
+				result.searchParams.set('logout_hint', AuthStorage.loginHint);
+			}
+			result.searchParams.set('client_id', config.clientId);
+			result.searchParams.set('post_logout_redirect_uri', this.redirecUrl.href);
+			return result;
+		}
+		return null;
 	}
 
 	#getTokenRequestOptions(config) {
@@ -189,6 +278,34 @@ export class OAuthAuthenticator {
 			}
 		}
 		return this.#oauthMeta;
+	}
+
+	#closeWorker() {
+		if (this._workerWatch) {
+			clearInterval(this._workerWatch);
+			delete this._workerWatch;
+		}
+		if (this.#worker && !this.#worker.closed) {
+			this.#worker.close();
+			this.#worker = null;
+		}
+	}
+
+	#watchLoginWorker() {
+		if (this.#worker && !this.#worker.closed) {
+			this._workerWatch = setInterval(() => {
+				if (this.#worker && this.#worker.closed) {
+					console.warn("Login processor was closed unexpectedly");
+					AuthStorage.state = null;
+					this.#loginGuard.release();
+					this.#worker == null;
+				}
+				if (!this.#worker) {
+					clearInterval(this._workerWatch);
+					delete this._workerWatch;
+				}
+			}, 1000);
+		}
 	}
 
 	static get #stripCbUrlParams() {

@@ -5,14 +5,32 @@ import { MbDomUtils } from './cmn/MbDomUtils';
 export class AbstractAuthModule {
 	_element;
 	_config;
+	_loginButton;
+	_logoutButton;
+
 	constructor(element) {
 		this._element = document.getElementById(element);
-		this._element.querySelector('#silo-auth-btn-login').onclick = () => {
+		this._loginButton = this._element.querySelector('#silo-auth-btn-login');
+		this._loginButton.onclick = () => {
 			return this._validateAndLogin();
 		};
-		document.querySelector('#silo-auth-btn-logout').onclick = () => {
-			return this.logout();
+		this._logoutButton = document.querySelector('#silo-auth-btn-logout');
+		this._logoutButton.onclick = () => {
+			this.logout();
+			return false;
 		};
+	}
+
+	get loginButton() {
+		return this._loginButton;
+	}
+
+	get logoutButton() {
+		return this._logoutButton;
+	}
+
+	get form() {
+		return this._element.querySelector('form');
 	}
 
 	addEventListener(evtType, listener) {
@@ -79,7 +97,7 @@ export class AbstractAuthModule {
 	}
 
 	_validateForm() {
-		const form = this._element.querySelector('form');
+		const form = this.form;
 		form.classList.toggle('was-validated', true);
 		if (!form.checkValidity()) {
 			this._triggerEvent('silo-auth:failure');
