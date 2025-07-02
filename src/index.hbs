@@ -4,14 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>{{title}}</title>
-	<script type="text/javascript">
-		const EnvConfig = {
-			apiBaseUrl: "{{apiBaseUrl}}",
-			panelClasses: '{{panelClasses}}',
-			extensionPoint: '{{extensionPoint}}',
-			mode: '{{mode}}'
-		};
-	</script>
+	{{setupEnv}}
 	{{#if extensionPoint}}
 	<link href="{{extensionPoint}}.css" type="text/css" rel="stylesheet">
 	{{/if}}
@@ -27,7 +20,8 @@
 				{{> partials/AuthModule}}
 				<div class="silo-auth text-end col-8 d-none" aria-hidden="true">
 					Connected to <span id="silo-auth-info-system"></span> as <span id="silo-auth-info-user"></span>
-					<button id="silo-auth-btn-logout" type="button" class="btn btn-outline-primary">Logout</button>
+					{{!-- <button id="silo-auth-btn-logout" type="button" class="btn btn-outline-primary">Logout</button> --}}
+					<a id="silo-auth-btn-logout" href="#main" class="btn btn-outline-primary">Logout</a>
 				</div>
 			</div>
 		</section>

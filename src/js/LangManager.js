@@ -3,6 +3,7 @@ import { MbDomUtils } from "./cmn/MbDomUtils";
 import { MarBasDefaults } from "../../packages/core/src/conf/marbas.conf";
 import { InputDialog } from "./cmn/InputDialog";
 import { MsgBox } from "./cmn/MsgBox";
+import { StorageUtils } from "./cmn/StorageUtils";
 
 export class LangManager {
 	#element;
@@ -36,7 +37,7 @@ export class LangManager {
 			hasSelection = this.#addToList(element)._selected || hasSelection;
 		});
 		if (!hasSelection) {
-			sessionStorage.removeItem('mbSiloLang');
+			LangManager.#activeLang = null;
 		}
 		this.#selector.addEventListener('change', this.#changeCb);
 		this.#listeners.forEach(listener => this.#selector.addEventListener('change', listener));
@@ -47,7 +48,11 @@ export class LangManager {
 	}
 
 	static get activeLang() {
-		return sessionStorage.getItem('mbSiloLang');
+		return StorageUtils.read('mbSiloLang');
+	}
+
+	static set #activeLang(value) {
+		StorageUtils.write('mbSiloLang', value);
 	}
 
 	static isDefaultLang(lang) {
@@ -60,7 +65,7 @@ export class LangManager {
 	}
 
 	onChange() {
-		sessionStorage.setItem('mbSiloLang', this.#selector.value);
+		LangManager.#activeLang = this.#selector.value;
 		this.#element.querySelector('#cmdDeleteLang').disabled = LangManager.isDefaultLang(LangManager.activeLang);
 	}
 

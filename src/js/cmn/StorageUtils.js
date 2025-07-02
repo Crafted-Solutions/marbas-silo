@@ -1,13 +1,40 @@
+const staticStorage = {};
+
 export const StorageUtils = {
+	checkAccess: function () {
+		try {
+			sessionStorage.getItem('test');
+			return true;
+		} catch (e) { }
+		return false;
+	},
 	write: function write(key, value) {
-		if (null == value) {
-			sessionStorage.removeItem(key);
-		} else {
-			sessionStorage.setItem(key, 'object' == typeof value ? JSON.stringify(value) : value);
+		try {
+			if (null == value) {
+				sessionStorage.removeItem(key);
+			} else {
+				sessionStorage.setItem(key, 'object' == typeof value ? JSON.stringify(value) : value);
+			}
+		} catch (e) {
+			console.warn(e);
+			if (null == value) {
+				delete staticStorage[key];
+			} else {
+				staticStorage[key] = value;
+			}
 		}
 	},
 	read: function read(key, asJson = false, defaultVal = undefined) {
-		const result = sessionStorage.getItem(key);
-		return null == result ? defaultVal : asJson ? JSON.parse(result) : result;
+		let result;
+		try {
+			result = sessionStorage.getItem(key);
+			if (asJson && result) {
+				result = JSON.parse(result);
+			}
+		} catch (e) {
+			console.warn(e);
+			result = staticStorage[key];
+		}
+		return null == result ? defaultVal : result;
 	}
 };

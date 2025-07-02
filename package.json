@@ -44,6 +44,7 @@
 		"css-minimizer-webpack-plugin": "^7.0.2",
 		"handlebars-loader": "^1.7.3",
 		"html-webpack-plugin": "^5.6.3",
+		"html-webpack-skip-assets-plugin": "^1.0.4",
 		"json-loader": "^0.5.7",
 		"mini-css-extract-plugin": "^2.9.2",
 		"postcss-loader": "^8.1.1",

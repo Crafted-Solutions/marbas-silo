@@ -10,8 +10,13 @@ import { LangManager } from "./LangManager";
 import { Task, TaskLayer } from "./cmn/Task";
 import { MsgBox } from "./cmn/MsgBox";
 import { ExtensionLoader } from "./ExtensionLoader";
+import { StorageUtils } from "./cmn/StorageUtils";
 
 global.NoOp = () => { };
+
+if (!StorageUtils.checkAccess()) {
+	MsgBox.invokeErr(`This app requires access to session storage, configure your browser to accept cookies for ${window.location.protocol}//${window.location.host}`);
+}
 
 const taskLayer = new TaskLayer((evt) => {
 	if (!evt.defaultPrevented) {
@@ -39,6 +44,21 @@ const loadLoggedInState = () => {
 };
 
 const authModule = new AuthModule('silo-auth');
+authModule.addEventListener('silo-auth:failure', (evt) => {
+	if (evt && evt.detail) {
+		let msg = evt.detail.message;
+		if (!msg) {
+			msg = evt.detail;
+		}
+		if (evt.detail.error) {
+			msg = `${msg} [${evt.detail.error}]`;
+		}
+		if (evt.detail.error_description) {
+			msg = `${msg} - ${evt.detail.error_description}`;
+		}
+		MsgBox.invokeErr(`Login error: ${msg}`);
+	}
+});
 const apiSvc = new DataBrokerAPI(authModule, LangManager.activeLang);
 
 const langManager = new LangManager('silo-lang', apiSvc);
@@ -113,22 +133,6 @@ naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
 
 editorMgr.addChangeListener((grain) => {
 	naviMgr.updateNode(grain);
-});
-
-authModule.addEventListener('silo-auth:failure', (evt) => {
-	if (evt && evt.detail) {
-		let msg = evt.detail.message;
-		if (!msg) {
-			msg = evt.detail;
-		}
-		if (evt.detail.error) {
-			msg = `${msg} [${evt.detail.error}]`;
-		}
-		if (evt.detail.error_description) {
-			msg = `${msg} - ${evt.detail.error_description}`;
-		}
-		MsgBox.invokeErr(`Login error: ${msg}`);
-	}
 });
 authModule.addEventListener('silo-auth:login', () => {
 	langManager.reload();
