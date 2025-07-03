@@ -22,6 +22,9 @@
 		"test": "echo \"No test specified yet\" && exit 0",
 		"prepack": "npm run build"
 	},
+	"engines": {
+		"node": ">=20"
+	},
 	"dependencies": {
 		"@jbtronics/bs-treeview": "github:hatelamers/bs-treeview",
 		"@json-editor/json-editor": "^2.15.2",
@@ -34,12 +37,12 @@
 		"jose": "^6.0.11",
 		"lodash.merge": "^4.6.2",
 		"lodash.startcase": "^4.4.0",
-		"oauth4webapi": "^3.5.3"
+		"oauth4webapi": "^3.5.5"
 	},
 	"devDependencies": {
 		"@types/json-editor": "^0.0.10",
 		"autoprefixer": "^10.4.21",
-		"concurrently": "^9.1.2",
+		"concurrently": "^9.2.0",
 		"css-loader": "^7.1.2",
 		"css-minimizer-webpack-plugin": "^7.0.2",
 		"handlebars-loader": "^1.7.3",

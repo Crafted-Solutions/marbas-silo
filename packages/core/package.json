@@ -26,7 +26,7 @@
 		"require": "./dist/index.cjs"
 	},
 	"scripts": {
-		"build": "rollup ./src/js/index.js --file ./dist/index.cjs --format cjs && rollup ./src/js/index.js --file ./dist/index.js --format esm",
+		"build": "rollup ./src/js/index.js --file ./dist/index.cjs --format cjs --external lodash.merge && rollup ./src/js/index.js --file ./dist/index.js --format esm --external lodash.merge",
 		"watch": "rollup ./src/js/index.js --file ./dist/index.js --format esm --watch",
 		"prepack": "npm run build"
 	},
@@ -34,6 +34,6 @@
 		"lodash.merge": "^4.6.2"
 	},
 	"devDependencies": {
-		"rollup": "^4.44.0"
+		"rollup": "^4.44.1"
 	}
 }
