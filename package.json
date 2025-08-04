@@ -19,11 +19,20 @@
 		"watch": "webpack watch --mode development --env=development",
 		"start": "webpack serve --mode development --open",
 		"start-jed-debug": "webpack serve --mode development --env=DEBUG_JSONEDITOR --open",
+		"po-update-static": "node scripts/po-helpers/po-update-static.js",
+		"po-update-dynamic": "node scripts/po-helpers/po-update-dynamic.js",
 		"test": "echo \"No test specified yet\" && exit 0",
 		"prepack": "npm run build"
 	},
 	"engines": {
 		"node": ">=20"
+	},
+	"config": {
+		"locales": [
+			"en",
+			"de"
+		],
+		"defaultLocale": "en"
 	},
 	"dependencies": {
 		"@jbtronics/bs-treeview": "github:hatelamers/bs-treeview",
@@ -34,10 +43,11 @@
 		"clipboard-copy": "^4.0.1",
 		"dompurify": "^3.2.6",
 		"jodit": "^4.6.2",
-		"jose": "^6.0.11",
+		"jose": "^6.0.12",
 		"lodash.merge": "^4.6.2",
 		"lodash.startcase": "^4.4.0",
-		"oauth4webapi": "^3.5.5"
+		"oauth4webapi": "^3.6.0",
+		"ttag": "^1.8.12"
 	},
 	"devDependencies": {
 		"@types/json-editor": "^0.0.10",
@@ -54,7 +64,7 @@
 		"sass": "^1.89.2",
 		"sass-loader": "^16.0.5",
 		"style-loader": "^4.0.0",
-		"webpack": "^5.99.9",
+		"webpack": "^5.100.2",
 		"webpack-cli": "^6.0.1",
 		"webpack-dev-server": "^5.2.2"
 	}

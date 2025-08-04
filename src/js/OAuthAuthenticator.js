@@ -1,3 +1,4 @@
+import { t } from "ttag";
 import * as oauth from 'oauth4webapi';
 import * as jose from 'jose';
 import { AuthStorage } from './AuthStorage';
@@ -75,7 +76,7 @@ export class OAuthAuthenticator {
 			if (this.#isWorkerBlocked()) {
 				AuthStorage.state = null;
 				this.#loginGuard.release();
-				throw new Error(`Your browser is blocking popups, please allow them for ${window.location.protocol}//${window.location.host} and try again`);
+				throw new Error(t`Your browser is blocking popups, please allow them for ${window.location.protocol}//${window.location.host} and try again`);
 			}
 			this.#watchLoginWorker();
 			try {
@@ -83,7 +84,7 @@ export class OAuthAuthenticator {
 			} catch (_) {
 				AuthStorage.state = null;
 				this.#closeWorker();
-				throw new Error("Timeout attempting authorization");
+				throw new Error(t`Timeout attempting authorization`);
 			}
 		}
 	}

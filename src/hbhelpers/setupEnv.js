@@ -1,6 +1,6 @@
 const Handlebars = require('handlebars');
 
-const knownKeys = ['mode', 'apiBaseUrl', 'panelClasses', 'extensionPoint'];
+const knownKeys = ['mode', 'apiBaseUrl', 'panelClasses', 'extensionPoint', 'defaultLocale', 'locales'];
 
 module.exports = function () {
 	const env = {};

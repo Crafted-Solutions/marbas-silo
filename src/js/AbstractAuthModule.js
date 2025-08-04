@@ -1,6 +1,7 @@
 import { MarBasDefaults } from '@crafted.solutions/marbas-core';
 import { AuthStorage } from './AuthStorage';
 import { MbDomUtils } from './cmn/MbDomUtils';
+import { t } from 'ttag';
 
 export class AbstractAuthModule {
 	_element;
@@ -38,7 +39,7 @@ export class AbstractAuthModule {
 	}
 
 	get brokerUrl() {
-		return AuthStorage.url || this._urlInput || EnvConfig.apiBaseUrl;
+		return AuthStorage.subjetUrl || this._urlInput || EnvConfig.apiBaseUrl;
 	}
 
 	get isLoggedIn() {
@@ -88,9 +89,10 @@ export class AbstractAuthModule {
 	_updateUI() {
 		const loggedIn = this.isLoggedIn;
 		if (loggedIn) {
-			const info = AuthStorage.info;
-			document.getElementById('silo-auth-info-system').textContent = `${info.brokerName || '??'} ${info.brokerVersion || ''}`;
-			document.getElementById('silo-auth-info-user').textContent = info.user;
+			const info = { brokerName: '??', brokerVersion: '', ...AuthStorage.info };
+			document.getElementById('silo-auth-info').textContent = t`Connected to ${info.brokerName} ${info.brokerVersion} as ${info.user}`;
+		} else {
+			document.getElementById('silo-auth-info').textContent = '';
 		}
 		document.querySelectorAll('.silo-auth').forEach(x => MbDomUtils.hideNode(x, !loggedIn));
 		document.querySelectorAll('.silo-noauth').forEach(x => MbDomUtils.hideNode(x, loggedIn));
@@ -116,8 +118,8 @@ export class AbstractAuthModule {
 				if (res.ok) {
 					return await res.json();
 				}
-				const err = new Error(404 == res.status ? "Invalid URL" : "Invalid user or password");
-				err.error_description = `Request failed (${res.status} ${res.statusText})`;
+				const err = new Error(404 == res.status ? t`Invalid URL` : t`Invalid user or password`);
+				err.error_description = t`Request failed (${res.status} ${res.statusText})`;
 				throw err;
 			});
 		} catch (e) {
@@ -130,11 +132,11 @@ export class AbstractAuthModule {
 			return false;
 		}
 		if (0 < MarBasDefaults.MinSchemaVersion.localeCompare(info.schemaVersion, undefined, { numeric: true, sensitivity: 'base' })) {
-			this.reportError(`Incompatible schema version: ${info.schemaVersion} (${MarBasDefaults.MinSchemaVersion} is expected)`);
+			this.reportError(t`Incompatible schema version: ${info.schemaVersion} (${MarBasDefaults.MinSchemaVersion} is expected)`);
 			return false;
 		}
 		if (0 < MarBasDefaults.MinAPIVersion.localeCompare(info.version, undefined, { numeric: true, sensitivity: 'base' })) {
-			this.reportError(`Incompatible API version: ${info.version} (${MarBasDefaults.MinAPIVersion} is expected)`);
+			this.reportError(t`Incompatible API version: ${info.version} (${MarBasDefaults.MinAPIVersion} is expected)`);
 			return false;
 		}
 		return true;
@@ -153,7 +155,7 @@ export class AbstractAuthModule {
 						return true;
 					}
 				}
-				throw new Error("Invalid user or password");
+				throw new Error(t`Invalid user or password`);
 			});
 		} catch (e) {
 			this.reportError(e, true);
@@ -162,7 +164,7 @@ export class AbstractAuthModule {
 	}
 
 	_writeStorage(url, user, sysinfo) {
-		AuthStorage.url = url;
+		AuthStorage.subjetUrl = url;
 		const info = {
 			user: user
 		};

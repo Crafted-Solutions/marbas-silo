@@ -1,5 +1,8 @@
 import "../scss/index.scss";
 import { EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
+import { t } from "ttag";
+
+const redirected = await UILocale.init();
 
 import { AuthModule } from "AuthModule";
 import { MarBasDefaults, DataBrokerAPI, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
@@ -11,155 +14,161 @@ import { Task, TaskLayer } from "./cmn/Task";
 import { MsgBox } from "./cmn/MsgBox";
 import { ExtensionLoader } from "./ExtensionLoader";
 import { StorageUtils } from "./cmn/StorageUtils";
+import { UILocale } from "./UILocale";
 
 global.NoOp = () => { };
 
-if (!StorageUtils.checkAccess()) {
-	MsgBox.invokeErr(`This app requires access to session storage, configure your browser to accept cookies for ${window.location.protocol}//${window.location.host}`);
-}
+if (!redirected) {
 
-const taskLayer = new TaskLayer((evt) => {
-	if (!evt.defaultPrevented) {
-		MsgBox.invokeErr(`Unexpected error occured in task "${evt.detail.task.name}": ${evt.detail.payload}`);
+	if (!StorageUtils.checkAccess()) {
+		MsgBox.invokeErr(t`This app requires access to session storage, configure your browser to accept cookies for ${location.protocol}//${location.host}`);
 	}
-});
 
-const processParameters = () => {
-	if (window.location.search) {
-		const params = new URLSearchParams(window.location.search);
-		if (params.get('grain')) {
-			window.history.replaceState({}, document.title, "/");
-			const evt = new CustomEvent('mb-silo:navigate', { detail: params.get('grain') });
-			document.dispatchEvent(evt);
+	const taskLayer = new TaskLayer((evt) => {
+		if (!evt.defaultPrevented) {
+			MsgBox.invokeErr(t`Unexpected error occured in task "${evt.detail.task.name}": ${evt.detail.payload}`);
 		}
-	}
-};
+	});
 
-const loadLoggedInState = () => {
-	Task.now("Initializing", (done) => {
-		naviMgr.tree.expandAll();
-		processParameters();
-		done();
-	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-};
+	await ExtensionLoader.installExtension('AppConfig', {
+		version: _PACKAGE_VERSION_,
+		MarBasDefaults: MarBasDefaults
+	});
 
-const authModule = new AuthModule('silo-auth');
-authModule.addEventListener('silo-auth:failure', (evt) => {
-	if (evt && evt.detail) {
-		let msg = evt.detail.message;
-		if (!msg) {
-			msg = evt.detail;
+	const processParameters = () => {
+		if (window.location.search) {
+			const params = new URLSearchParams(window.location.search);
+			if (params.get('grain')) {
+				window.history.replaceState({}, document.title, "/");
+				const evt = new CustomEvent('mb-silo:navigate', { detail: params.get('grain') });
+				document.dispatchEvent(evt);
+			}
 		}
-		if (evt.detail.error) {
-			msg = `${msg} [${evt.detail.error}]`;
-		}
-		if (evt.detail.error_description) {
-			msg = `${msg} - ${evt.detail.error_description}`;
-		}
-		MsgBox.invokeErr(`Login error: ${msg}`);
-	}
-});
-const apiSvc = new DataBrokerAPI(authModule, LangManager.activeLang);
+	};
 
-const langManager = new LangManager('silo-lang', apiSvc);
-if (authModule.isLoggedIn) {
-	langManager.reload();
-}
+	const loadLoggedInState = () => {
+		Task.now("Initializing", (done) => {
+			langManager.reload();
+			naviMgr.tree.expandAll();
+			processParameters();
+			done();
+		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+	};
 
-const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
-	text: "marbas",
-	lazyLoad: true,
-	icon: IconMaps.ById[MarBasDefaults.ID_ROOT],
-	id: `n-${MarBasDefaults.ID_ROOT}`,
-	dataAttr: {
-		grain: MarBasDefaults.ID_ROOT
-	},
-	state: {
-		expanded: false
-	}
-}], () => {
-	if (authModule.isLoggedIn) {
+	const authModule = new AuthModule('silo-auth');
+	authModule.addEventListener('silo-auth:failure', (evt) => {
+		if (evt && evt.detail) {
+			let msg = evt.detail.message;
+			if (!msg) {
+				msg = evt.detail;
+			}
+			if (evt.detail.error) {
+				msg = `${msg} [${evt.detail.error}]`;
+			}
+			if (evt.detail.error_description) {
+				msg = `${msg} - ${evt.detail.error_description}`;
+			}
+			MsgBox.invokeErr(`Login error: ${msg}`);
+		}
+	});
+	const apiSvc = new DataBrokerAPI(authModule, LangManager.activeLang);
+
+	const langManager = new LangManager('silo-lang', apiSvc);
+
+	const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
+		text: "marbas",
+		lazyLoad: true,
+		icon: IconMaps.ById[MarBasDefaults.ID_ROOT],
+		id: `n-${MarBasDefaults.ID_ROOT}`,
+		dataAttr: {
+			grain: MarBasDefaults.ID_ROOT
+		},
+		state: {
+			expanded: false
+		}
+	}], () => {
+		if (authModule.isLoggedIn) {
+			loadLoggedInState();
+		}
+	});
+
+	await ExtensionLoader.installExtension('GlobalInit', {
+		version: _PACKAGE_VERSION_,
+		MarBasDefaults: MarBasDefaults,
+		auth: authModule,
+		api: apiSvc,
+		languages: langManager,
+		navi: naviMgr
+	});
+
+	const editorMgr = new GrainEditor('grain-edit', apiSvc);
+	await ExtensionLoader.installExtension('GrainEditor', {
+		version: _PACKAGE_VERSION_,
+		MarBasDefaults: MarBasDefaults,
+		MarBasTraitValueType: MarBasTraitValueType,
+		GrainEditor: GrainEditor,
+		navi: naviMgr,
+		instance: editorMgr
+	});
+
+	naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
+		const grainReq = ((event.detail.node || event.detail.data).dataAttr || {}).grain;
+		Task.now("Loading grain editor", (done, error) => {
+			apiSvc.isGrainInstanceOf(grainReq, MarBasDefaults.ID_TYPE_LINK)
+				.then(isLink => {
+					const builder = (grain, link, hasErrors) => {
+						editorMgr.buildEditor(grain, false, link)
+							.then(hasErrors ? NoOp : done)
+							.catch(error);
+					};
+
+					if (isLink) {
+						apiSvc.resolveGrainLink(grainReq).then((grain) => {
+							const linkId = grainReq.id || grainReq;
+							builder(grain, linkId == grain.id ? undefined : linkId);
+						}).catch(reason => {
+							error(reason);
+							apiSvc.getGrain(grainReq).then((resp) => {
+								builder(resp, undefined, true);
+							}).catch(error);
+						});
+					} else {
+						apiSvc.getGrain(grainReq).then(builder).catch(error);
+					}
+				})
+				.catch(error);
+		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+	});
+
+	editorMgr.addChangeListener((grain) => {
+		naviMgr.updateNode(grain);
+	});
+	authModule.addEventListener('silo-auth:login', () => {
 		loadLoggedInState();
-	}
-});
+	});
+	authModule.addEventListener('silo-auth:logout', () => {
+		apiSvc.invalidateCurrentRoles();
+		editorMgr.unloadEditor();
+		naviMgr.reset();
+	});
+	authModule.addEventListener('silo-auth:beforelogout', (evt) => {
+		if (editorMgr.dirty) {
+			evt.preventDefault();
+			evt.returnValue = false;
+			const doLogout = () => {
+				authModule.logout();
+			};
+			editorMgr.unloadEditor().then(doLogout).catch(reason => {
+				console.warn(reason);
+				doLogout();
+			});
+		}
+	});
 
-await ExtensionLoader.installExtension('GlobalInit', {
-	version: _PACKAGE_VERSION_,
-	MarBasDefaults: MarBasDefaults,
-	auth: authModule,
-	api: apiSvc,
-	languages: langManager,
-	navi: naviMgr
-})
+	langManager.addChangeListener(() => {
+		apiSvc.language = LangManager.activeLang;
+		editorMgr.resetEditor();
+	});
 
-const editorMgr = new GrainEditor('grain-edit', apiSvc);
-await ExtensionLoader.installExtension('GrainEditor', {
-	version: _PACKAGE_VERSION_,
-	MarBasDefaults: MarBasDefaults,
-	MarBasTraitValueType: MarBasTraitValueType,
-	GrainEditor: GrainEditor,
-	navi: naviMgr,
-	instance: editorMgr
-});
-
-naviMgr.addEventListener(EVENT_NODE_SELECTED, (event) => {
-	const grainReq = ((event.detail.node || event.detail.data).dataAttr || {}).grain;
-	Task.now("Loading grain editor", (done, error) => {
-		apiSvc.isGrainInstanceOf(grainReq, MarBasDefaults.ID_TYPE_LINK)
-			.then(isLink => {
-				const builder = (grain, link, hasErrors) => {
-					editorMgr.buildEditor(grain, false, link)
-						.then(hasErrors ? NoOp : done)
-						.catch(error);
-				};
-
-				if (isLink) {
-					apiSvc.resolveGrainLink(grainReq).then((grain) => {
-						const linkId = grainReq.id || grainReq;
-						builder(grain, linkId == grain.id ? undefined : linkId);
-					}).catch(reason => {
-						error(reason);
-						apiSvc.getGrain(grainReq).then((resp) => {
-							builder(resp, undefined, true);
-						}).catch(error);
-					});
-				} else {
-					apiSvc.getGrain(grainReq).then(builder).catch(error);
-				}
-			})
-			.catch(error);
-	}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-});
-
-editorMgr.addChangeListener((grain) => {
-	naviMgr.updateNode(grain);
-});
-authModule.addEventListener('silo-auth:login', () => {
-	langManager.reload();
-	loadLoggedInState();
-});
-authModule.addEventListener('silo-auth:logout', () => {
-	apiSvc.invalidateCurrentRoles();
-	editorMgr.unloadEditor();
-	naviMgr.reset();
-});
-authModule.addEventListener('silo-auth:beforelogout', (evt) => {
-	if (editorMgr.dirty) {
-		evt.preventDefault();
-		evt.returnValue = false;
-		const doLogout = () => {
-			authModule.logout();
-		};
-		editorMgr.unloadEditor().then(doLogout).catch(reason => {
-			console.warn(reason);
-			doLogout();
-		});
-	}
-});
-
-langManager.addChangeListener(() => {
-	apiSvc.language = LangManager.activeLang;
-	editorMgr.resetEditor();
-});
-
-document.querySelectorAll('#main h1, #top').forEach(elm => elm.classList.remove('d-none'));
+	document.querySelectorAll('#main h1, #top').forEach(elm => elm.classList.remove('d-none'));
+}

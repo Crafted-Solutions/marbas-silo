@@ -1,0 +1,10 @@
+{
+	"private": true,
+	"name": "po-helpers",
+	"description": "Helper scripts for PO file",
+	"version": "0.0.1",
+	"scripts": {
+		"build": "exit 0",
+		"test": "exit 0"
+	}
+}
