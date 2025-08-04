@@ -1,165 +1,111 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-#: src/partials/_DialogFooter.hbs:2
-#: src/partials/MsgBox.hbs:13
-msgid "Ok"
-msgstr ""
-
-#: src/partials/_DialogFooter.hbs:3
-msgid "Cacnel"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:1
-#: src/partials/_ButtonReload.hbs:1
-msgid "Reload"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:2
-msgid "Of Type..."
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:3
-msgid "Container"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:4
-#: src/partials/FileNewDialog.hbs:18
-msgid "File"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:5
-#: src/partials/GrainNewDialog.hbs:23
-msgid "Type"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:6
-msgid "Rename"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:7
-msgid "Cut"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:8
-msgid "Copy"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:9
-msgid "Paste"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:10
-msgid "Paste Link"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:11
-msgid "Clear Clipboard"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:12
-msgid "Delete"
-msgstr ""
-
-#: src/partials/_SiloNaviButton.hbs:13
-msgid "Security"
-msgstr ""
-
 #: src/index.hbs:25
 msgid "Logout"
 msgstr ""
 
-#: src/partials/_DialogClose.hbs:1
-#: src/partials/TaskLayer.hbs:4
-#: src/partials/MsgBox.hbs:12
-msgid "Close"
+#: src/partials/AuthModuleBasic.hbs:3
+#: src/partials/AuthModuleDynamic.hbs:4
+msgid "Connection"
 msgstr ""
 
-#: src/partials/SiloNaviMenu.hbs:3
-msgid "Navi Menu"
+#: src/partials/AuthModuleBasic.hbs:5
+msgid "User"
 msgstr ""
 
-#: src/partials/SiloNaviMenu.hbs:7
-msgid "New"
+#: src/partials/AuthModuleBasic.hbs:7
+msgid "Login user name"
 msgstr ""
 
-#: src/partials/TaskLayer.hbs:3
-msgid "In Progress"
+#: src/partials/AuthModuleBasic.hbs:9
+msgid "Please provide a valid user name"
 msgstr ""
 
-#: src/partials/TaskLayer.hbs:14
-#: src/partials/MsgBox.hbs:16
-msgid "Abort"
+#: src/partials/AuthModuleBasic.hbs:12
+msgid "Password"
 msgstr ""
 
-#: src/partials/TaskLayer.hbs:20
-msgid "Failed"
+#: src/partials/AuthModuleBasic.hbs:14
+msgid "Login password"
 msgstr ""
 
-#: src/partials/TaskLayer.hbs:26
-msgid "Complete"
+#: src/partials/AuthModuleBasic.hbs:16
+msgid "Please provide a valid password"
 msgstr ""
 
-#: src/partials/TaskLayer.hbs:32
-msgid "Aborted"
+#: src/partials/AuthModuleBasic.hbs:21
+#: src/partials/AuthModuleDynamic.hbs:6
+msgid "Broker URL"
 msgstr ""
 
-#: src/partials/MsgBox.hbs:14
-msgid "Yes"
+#: src/partials/AuthModuleBasic.hbs:25
+#: src/partials/AuthModuleDynamic.hbs:10
+msgid "Please provide data broker URL"
 msgstr ""
 
-#: src/partials/MsgBox.hbs:15
-msgid "No"
+#: src/partials/AuthModuleBasic.hbs:30
+#: src/partials/AuthModuleDynamic.hbs:15
+msgid "Connect"
 msgstr ""
 
-#: src/partials/MsgBox.hbs:17
-msgid "Cancel"
+#: src/partials/AuthModuleBasic.hbs:33
+msgid "Invalid user or password"
 msgstr ""
 
-#: src/partials/LocaleSwitch.hbs:3
-msgid "Deutch (de)"
+#: src/partials/AuthModuleDynamic.hbs:2
+msgid "Loading..."
 msgstr ""
 
-#: src/partials/LocaleSwitch.hbs:4
-#: src/partials/LangManager.hbs:4
-msgid "English (en)"
+#: src/partials/FileNewDialog.hbs:6
+msgid "New File"
 msgstr ""
 
-#: src/partials/LocaleSwitch.hbs:6
-msgid "UI Language"
+#: src/partials/FileNewDialog.hbs:14
+#: src/partials/GrainNewDialog.hbs:15
+msgid "Name"
 msgstr ""
 
-#: src/partials/LocaleSwitch.hbs:11
-msgid "Switch Language"
+#: src/partials/FileNewDialog.hbs:15
+msgid "(Optional) name for the new grain"
 msgstr ""
 
-#: src/partials/LangManager.hbs:2
-#: src/partials/LangManager.hbs:3
-msgid "Content Language"
+#: src/partials/FileNewDialog.hbs:18
+#: src/partials/_SiloNaviButton.hbs:4
+msgid "File"
 msgstr ""
 
-#: src/partials/LangManager.hbs:6
-msgid "Manage languages"
+#: src/partials/FileNewDialog.hbs:21
+msgid "Please provide a file"
 msgstr ""
 
-#: src/partials/LangManager.hbs:7
-msgid "Add Language"
+#: src/partials/GrainNewDialog.hbs:6
+msgid "New Grain"
 msgstr ""
 
-#: src/partials/LangManager.hbs:8
-msgid "Delete Selected Language"
+#: src/partials/GrainNewDialog.hbs:7
+msgid "New Grain Type"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:6
-msgid "Input Request"
+#: src/partials/GrainNewDialog.hbs:8
+msgid "New Container"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:13
-msgid "Input"
+#: src/partials/GrainNewDialog.hbs:16
+msgid "Name for the new element"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:16
-msgid "Value is required"
+#: src/partials/GrainNewDialog.hbs:18
+msgid "Please provide a name for the element"
+msgstr ""
+
+#: src/partials/GrainNewDialog.hbs:23
+#: src/partials/_SiloNaviButton.hbs:5
+msgid "Type"
+msgstr ""
+
+#: src/partials/GrainPicker.hbs:6
+msgid "Select Grain"
 msgstr ""
 
 #: src/partials/GrainSecurityDialog.hbs:6
@@ -213,95 +159,149 @@ msgstr ""
 msgid "Restrict"
 msgstr ""
 
-#: src/partials/GrainPicker.hbs:6
-msgid "Select Grain"
+#: src/partials/InputDialog.hbs:6
+msgid "Input Request"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:6
-msgid "New Grain"
+#: src/partials/InputDialog.hbs:13
+msgid "Input"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:7
-msgid "New Grain Type"
+#: src/partials/InputDialog.hbs:16
+msgid "Value is required"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:8
-msgid "New Container"
+#: src/partials/LangManager.hbs:2
+#: src/partials/LangManager.hbs:3
+msgid "Content Language"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:15
-#: src/partials/FileNewDialog.hbs:14
-msgid "Name"
+#: src/partials/LangManager.hbs:4
+#: src/partials/LocaleSwitch.hbs:4
+msgid "English (en)"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:16
-msgid "Name for the new element"
+#: src/partials/LangManager.hbs:6
+msgid "Manage languages"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:18
-msgid "Please provide a name for the element"
+#: src/partials/LangManager.hbs:7
+msgid "Add Language"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:3
-#: src/partials/AuthModuleDynamic.hbs:4
-msgid "Connection"
+#: src/partials/LangManager.hbs:8
+msgid "Delete Selected Language"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:5
-msgid "User"
+#: src/partials/LocaleSwitch.hbs:3
+msgid "Deutch (de)"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:7
-msgid "Login user name"
+#: src/partials/LocaleSwitch.hbs:6
+msgid "UI Language"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:9
-msgid "Please provide a valid user name"
+#: src/partials/LocaleSwitch.hbs:11
+msgid "Switch Language"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:12
-msgid "Password"
+#: src/partials/MsgBox.hbs:12
+#: src/partials/TaskLayer.hbs:4
+#: src/partials/_DialogClose.hbs:1
+msgid "Close"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:14
-msgid "Login password"
+#: src/partials/MsgBox.hbs:13
+#: src/partials/_DialogFooter.hbs:2
+msgid "Ok"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:16
-msgid "Please provide a valid password"
+#: src/partials/MsgBox.hbs:14
+msgid "Yes"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:21
-#: src/partials/AuthModuleDynamic.hbs:6
-msgid "Broker URL"
+#: src/partials/MsgBox.hbs:15
+msgid "No"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:25
-#: src/partials/AuthModuleDynamic.hbs:10
-msgid "Please provide data broker URL"
+#: src/partials/MsgBox.hbs:16
+#: src/partials/TaskLayer.hbs:14
+msgid "Abort"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:30
-#: src/partials/AuthModuleDynamic.hbs:15
-msgid "Connect"
+#: src/partials/MsgBox.hbs:17
+msgid "Cancel"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:33
-msgid "Invalid user or password"
+#: src/partials/SiloNaviMenu.hbs:3
+msgid "Navi Menu"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:6
-msgid "New File"
+#: src/partials/SiloNaviMenu.hbs:7
+msgid "New"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:15
-msgid "(Optional) name for the new grain"
+#: src/partials/TaskLayer.hbs:3
+msgid "In Progress"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:21
-msgid "Please provide a file"
+#: src/partials/TaskLayer.hbs:20
+msgid "Failed"
 msgstr ""
 
-#: src/partials/AuthModuleDynamic.hbs:2
-msgid "Loading..."
+#: src/partials/TaskLayer.hbs:26
+msgid "Complete"
+msgstr ""
+
+#: src/partials/TaskLayer.hbs:32
+msgid "Aborted"
+msgstr ""
+
+#: src/partials/_ButtonReload.hbs:1
+#: src/partials/_SiloNaviButton.hbs:1
+msgid "Reload"
+msgstr ""
+
+#: src/partials/_DialogFooter.hbs:3
+msgid "Cacnel"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:2
+msgid "Of Type..."
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:3
+msgid "Container"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:6
+msgid "Rename"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:7
+msgid "Cut"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:8
+msgid "Copy"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:9
+msgid "Paste"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:10
+msgid "Paste Link"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:11
+msgid "Clear Clipboard"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:12
+msgid "Delete"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:13
+msgid "Security"
 msgstr ""

@@ -3,13 +3,13 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const { glob } = require('glob');
+const { glob } = require('fast-glob');
 
 const execAsync = promisify(exec);
 const writeAsync = promisify(fs.writeFile);
 module.exports = {
 	xgtHandlebarsPot: async function xgtHandlebarsPot(inputDir, output, options = {}) {
-		const hbs = await glob(`${inputDir}/**/*.hbs`, { cwd: `${inputDir}/`, nodir: true });
+		const hbs = await glob(`**/*.hbs`, { cwd: `${inputDir}/`, nodir: true });
 
 		let cwdBack;
 		try {
