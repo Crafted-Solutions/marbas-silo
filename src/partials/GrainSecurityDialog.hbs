@@ -3,29 +3,29 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="grain-security-title">
-					<span>Security Options</span>
-					<span id="grain-security-mod" class="d-none" aria-hidden="true" title="Modified">*</span>
+					<span>{{_ 'Security Options'}}</span>
+					<span id="grain-security-mod" class="d-none" aria-hidden="true" title="{{_ 'Modified'}}">*</span>
 					<div class="fs-6" id="grain-security-subtitle"></div>
 				</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				{{> partials/_DialogClose}}
 			</div>
 			<form class="modal-body table-responsive needs-validation" action="#" onsubmit="return false;" novalidate>
 				<table id="grain-security-acl" class="table table-bordered table-sm table-striped">
-					<caption class="d-none">Access Control List</caption>
+					<caption class="d-none">{{_ 'Access Control List'}}</caption>
 					<thead>
 						<tr>
 							<th scope="col" rowspan="2">
 								<div class="btn-group dropend me-2 d-none" id="grain-security-add" aria-hidden="true">
-									<button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle bi-plus" title="Add entry" data-bs-toggle="dropdown" aria-expanded="false">
-										<span class="d-none" id="grain-security-add-label">Add entry</span>
+									<button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle bi-plus" title="{{_ 'Add entry'}}" data-bs-toggle="dropdown" aria-expanded="false">
+										<span class="d-none" id="grain-security-add-label">{{_ 'Add entry'}}</span>
 									</button>
 									<ul class="dropdown-menu" aria-labelledby="grain-security-add-label"></ul>
 								</div>
-								Role
+								{{_ 'Role'}}
 							</th>
-							<th colspan="9">Access Control</th>
-							<th scope="col" rowspan="2">Iherit</th>
-							<th scope="col" rowspan="2">Source</th>
+							<th colspan="9">{{_ 'Access Control'}}</th>
+							<th scope="col" rowspan="2">{{_ 'Iherit'}}</th>
+							<th scope="col" rowspan="2">{{_ 'Source'}}</th>
 						</tr>
 						<tr id="grain-security-aclhead" class="th-rotate">
 						</tr>
@@ -33,27 +33,26 @@
 					<tbody></tbody>
 				</table>
 			</form>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" id="grain-security-btn-ok">Ok</button>
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cacnel</button>
-			</div>
+			{{> partials/_DialogFooter dlgScope='grain-security'}}
 		</div>
 		<template id="grain-security-tpl-addentry">
 			<li><button type="button" class="dropdown-item"></button></li>
 		</template>
 		<template id="grain-security-tpl-aclhead">
-			<th scope="col"><div class="th-content"></div></th>
+			<th scope="col">
+				<div class="th-content"></div>
+			</th>
 		</template>
 		<template id="grain-security-tpl-aclentry">
 			<tr>
 				<td class="grain-security-role">
-					<button type="button" class="btn btn-sm btn-outline-danger bi-x d-none" title="Delete entry" aria-hidden="true"><span class="d-none">Delete entry</span></button>
+					<button type="button" class="btn btn-sm btn-outline-danger bi-x d-none" title="{{_ 'Delete entry'}}" aria-hidden="true"><span class="d-none">{{_ 'Delete entry'}}</span></button>
 					<span class="mb-val"></span>
 				</td>
-				<td class="grain-security-inherit" title="Inhert to children">
+				<td class="grain-security-inherit" title="{{_ 'Inhert to children'}}">
 					<div class="form-check d-none" aria-hidden="true">
 						<input class="form-check-input" type="checkbox" value="1" id="grain-security-chk-inherit">
-						<label class="form-check-label d-none" for="grain-security-chk-inherit">Inhert to children</label>
+						<label class="form-check-label d-none" for="grain-security-chk-inherit">{{_ 'Inhert to children'}}</label>
 					</div>
 					<span class="mb-val d-none"></span>
 				</td>
@@ -70,11 +69,11 @@
 			<td class="text-nowrap">
 				<span class="mb-perm-flag text-nowrap text-primary">
 					<input class="btn-check" type="checkbox" value="" id="grain-security-chk-perm">
-					<label class="btn btn-sm btn-outline-primary bi-hand-thumbs-up-fill" for="grain-security-chk-perm" title="Permit"></label>
+					<label class="btn btn-sm btn-outline-primary bi-hand-thumbs-up-fill" for="grain-security-chk-perm" title="{{_ 'Permit'}}"></label>
 				</span>
 				<span class="mb-restr-flag text-nowrap text-danger">
 					<input class="btn-check" type="checkbox" value="" id="grain-security-chk-restr">
-					<label class="btn btn-sm btn-outline-danger bi-hand-thumbs-down-fill" for="grain-security-chk-restr" title="Restrict"></label>
+					<label class="btn btn-sm btn-outline-danger bi-hand-thumbs-down-fill" for="grain-security-chk-restr" title="{{_ 'Restrict'}}"></label>
 				</span>
 			</td>
 		</template>

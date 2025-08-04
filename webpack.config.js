@@ -6,10 +6,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackSkipAssetsPlugin = require('html-webpack-skip-assets-plugin').HtmlWebpackSkipAssetsPlugin;
 const SiftChunksPlugin = require('sift-chunks-webpack-plugin');
+const { xgtHandlebarsPot, xgtMergePo, xgtGetJson, xgtUpdatePo } = require('xgettext-helpers');
 
 const { version } = require(path.resolve(__dirname, 'package.json'));
+const { config } = require(path.resolve(__dirname, 'package.json')) || {};
 
-module.exports = (env) => {
+module.exports = async (env) => {
 	const mode = env.development || env.WEBPACK_SERVE ? 'development' : 'production';
 	const authModule = env.AuthModule || 'AuthModuleDynamic';
 
@@ -21,52 +23,108 @@ module.exports = (env) => {
 		resolveAlias['@json-editor/json-editor'] = path.resolve(__dirname, "node_modules/@json-editor/json-editor/dist/nonmin/jsoneditor.js");
 	}
 
+	const locales = config.locales && config.locales.length ? config.locales.filter((val => val != config.defaultLocale)) : [];
+
 	const extensionPoint = './marbas-silo.ext';
 	if (env.WEBPACK_SERVE) {
 		fs.mkdirSync(path.resolve(__dirname, 'dist'), { recursive: true });
-		['js', 'css'].forEach(ext => {
-			const xpfile = path.resolve(__dirname, 'dist', `${extensionPoint}.${ext}`);
+		const checkXpFile = (fname) => {
+			const xpfile = path.resolve(__dirname, 'dist', fname);
 			if (!fs.existsSync(xpfile)) {
 				fs.closeSync(fs.openSync(xpfile, 'a'));
+			}
+		};
+		['js', 'css'].forEach(ext => {
+			checkXpFile(`${extensionPoint}.${ext}`);
+			if ('js' == ext && locales.length) {
+				locales.forEach((loc) => {
+					checkXpFile(`${extensionPoint}.${loc}.${ext}`);
+				});
 			}
 		});
 	}
 
+	if (locales.length) {
+		const srcDir = path.resolve(__dirname, 'src');
+		const i18nDir = path.resolve(__dirname, 'i18n');
+		if (!fs.existsSync(i18nDir)) {
+			fs.mkdirSync(i18nDir);
+		}
+
+		await xgtUpdatePo(srcDir, i18nDir, locales, 'index');
+
+		const staticPot = path.resolve(__dirname, 'i18n/static.pot');
+		await xgtHandlebarsPot(srcDir, staticPot, {
+			cwd: __dirname,
+		});
+		await xgtMergePo(staticPot, i18nDir, locales);
+	}
+
+
 	const chunks = {
-		index: './src/js/index.js',
+		index: { import: './src/js/index.js', dependOn: 'shared' },
 		libs: './src/js/libs.js',
-		bs: './src/scss/bootstrap.scss'
+		bs: './src/scss/bootstrap.scss',
+		shared: 'ttag'
 	};
 
+	const pageBase = {
+		chunksSortMode: 'manual',
+		excludeAssets: [/bs.*.js/],
+		meta: {
+			viewport: 'width=device-width,initial-scale=1'
+		}
+	};
 	const commonPageParams = {
 		title: 'MarBas Silo',
 		apiBaseUrl: 'https://localhost:7277/api/marbas',
 		panelClasses: 'card card-body my-3 bg-light',
 		mode: mode,
-		extensionPoint: extensionPoint
+		extensionPoint: extensionPoint,
+		locale: config.defaultLocale,
+		defaultLocale: config.defaultLocale,
+		locales: config.locales || []
 	};
 	const pageOptions = [{
-		filename: 'index.html',
-		template: 'src/index.hbs',
-		chunks: ['bs', 'index', 'libs'],
-		chunksSortMode: 'manual',
-		excludeAssets: [/bs.*.js/],
-		templateParameters: commonPageParams,
-		meta: {
-			viewport: 'width=device-width,initial-scale=1'
+		...pageBase,
+		templateParameters: Object.assign({}, commonPageParams),
+		...{
+			filename: 'index.html',
+			template: 'src/index.hbs',
+			chunks: ['bs', 'shared', 'index', 'libs']
 		}
-	},];
+	}];
+	if (locales.length) {
+		for (const loc of locales) {
+			const poFile = path.resolve(__dirname, `i18n/static.${loc}.po`);
+			if (!fs.existsSync(poFile)) {
+				continue;
+			}
+			const data = await xgtGetJson(poFile);
+			const page = {
+				...pageBase,
+				templateParameters: Object.assign({}, commonPageParams, {
+					locale: loc,
+					localeData: data
+				}),
+				...{
+					filename: `index.${loc}.html`,
+					template: 'src/index.hbs',
+					chunks: ['bs', 'shared', 'index', 'libs']
+				}
+			};
+			pageOptions.push(page);
+		}
+	}
 	if ('AuthModuleDynamic' == authModule) {
-		chunks.login = './src/js/login.js';
+		chunks.login = { import: './src/js/login.js', dependOn: 'shared' };
 		pageOptions.push({
-			filename: 'login.html',
-			template: 'src/login.hbs',
-			chunks: ['bs', 'login'],
-			chunksSortMode: 'manual',
-			excludeAssets: [/bs.*.js/],
-			templateParameters: commonPageParams,
-			meta: {
-				viewport: 'width=device-width,initial-scale=1'
+			...pageBase,
+			templateParameters: Object.assign({}, commonPageParams),
+			...{
+				filename: 'login.html',
+				template: 'src/login.hbs',
+				chunks: ['bs', 'shared', 'login']
 			}
 		});
 	}
@@ -134,12 +192,17 @@ module.exports = (env) => {
 							}
 						}
 					]
+				},
+				{
+					test: /\.po$/,
+					loader: 'webpack-po-loader'
 				}
 			]
 		},
 		plugins: [
 			new webpack.DefinePlugin({
-				_PACKAGE_VERSION_: JSON.stringify(version)
+				_PACKAGE_VERSION_: JSON.stringify(version),
+				_DEVELOPMENT_: JSON.stringify('development' == mode)
 			}),
 			...pageOptions.map((opts) => {
 				return new HtmlWebpackPlugin(opts);

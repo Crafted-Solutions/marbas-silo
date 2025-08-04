@@ -1,0 +1,13 @@
+{
+	"private": true,
+	"name": "webpack-po-loader",
+	"description": "Webpack loader for PO (GNU gettext Portable Object) files",
+	"version": "0.1.0",
+	"author": "hatelamers",
+	"license": "MIT",
+	"main": "./index.js",
+	"scripts": {
+		"build": "exit 0",
+		"test": "exit 0"
+	}
+}

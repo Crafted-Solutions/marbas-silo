@@ -1,3 +1,4 @@
+import { t } from "ttag";
 import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
 
 const PATH_PRIMARY_GROUP = 'root._1.';
@@ -10,7 +11,7 @@ export const EditorSchemaConfig = {
 	PATH_SYS_OBJECT: `${PATH_PRIMARY_GROUP}_sys`,
 	DEPTH_DATA_CARRIER: 3,
 	BASIC: {
-		title: "Grain Editor",
+		get title() { return t`Grain Editor`; },
 		headerTemplate: '{{self._1.presentation.label}}{{self._1._sys.dirty}}',
 		type: 'object',
 		format: 'categories',
@@ -19,7 +20,7 @@ export const EditorSchemaConfig = {
 		},
 		properties: {
 			_1: {
-				title: 'Basic',
+				get title() { return t`Basic`; },
 				type: 'object',
 				propertyOrder: 0,
 				options: {
@@ -31,7 +32,7 @@ export const EditorSchemaConfig = {
 				},
 				properties: {
 					presentation: {
-						title: "Presentation",
+						get title() { return t`Presentation`; },
 						"$ref": '#/definitions/presentation',
 						propertyOrder: 1000
 					},
@@ -41,7 +42,7 @@ export const EditorSchemaConfig = {
 				}
 			},
 			_2: {
-				title: 'Advanced',
+				get title() { return t`Advanced`; },
 				type: 'object',
 				propertyOrder: 2000,
 				options: {
@@ -53,12 +54,12 @@ export const EditorSchemaConfig = {
 				},
 				properties: {
 					meta: {
-						title: "Metadata",
+						get title() { return t`Metadata`; },
 						"$ref": '#/definitions/meta',
 						propertyOrder: 1000
 					},
 					stats: {
-						title: "Statistics",
+						get title() { return t`Statistics`; },
 						"$ref": '#/definitions/stats',
 						propertyOrder: 2000
 					}
@@ -72,19 +73,19 @@ export const EditorSchemaConfig = {
 				readonly: true,
 				properties: {
 					id: {
-						title: "Id",
+						get title() { return t`ID`; },
 						type: "string"
 					},
 					name: {
-						title: "Name",
+						get title() { return t`Name`; },
 						type: "string"
 					},
 					path: {
-						title: "Path",
+						get title() { return t`Path`; },
 						type: "string"
 					},
 					typeDefId: {
-						title: "Type Definition",
+						get title() { return t`Type Definition`; },
 						type: "string",
 						format: "grain",
 						readonly: true,
@@ -97,17 +98,17 @@ export const EditorSchemaConfig = {
 				id: 'presentation',
 				properties: {
 					label: {
-						title: "Label",
+						get title() { return t`Label`; },
 						type: "string",
 						minLength: 1
 					},
 					icon: {
-						title: 'Icon',
+						get title() { return t`Icon`; },
 						type: 'string',
 						format: 'icon'
 					},
 					sortKey: {
-						title: 'Sort Key',
+						get title() { return t`Sort Key`; },
 						type: 'string'
 					}
 				}
@@ -118,19 +119,19 @@ export const EditorSchemaConfig = {
 				readonly: true,
 				properties: {
 					revision: {
-						title: "Revision",
+						get title() { return t`Revision`; },
 						type: "integer"
 					},
 					cTime: {
-						title: "Created",
+						get title() { return t`Created`; },
 						type: "string"
 					},
 					mTime: {
-						title: "Modified",
+						get title() { return t`Modified`; },
 						type: "string"
 					},
 					owner: {
-						title: "Owner",
+						get title() { return t`Owner`; },
 						type: "string"
 					},
 				}
@@ -184,7 +185,7 @@ export const EditorSchemaConfig = {
 			_1: {
 				properties: {
 					typeDef: {
-						title: 'Type Definition',
+						get title() { return t`Type Definition`; },
 						"$ref": '#/definitions/typeDef',
 						propertyOrder: 100
 					}
@@ -197,7 +198,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					defaultInstanceId: {
-						title: 'Default Values',
+						get title() { return t`Default Values`; },
 						type: 'string',
 						format: 'button',
 						required: false,
@@ -215,7 +216,7 @@ export const EditorSchemaConfig = {
 					_defaultInstanceIdDesc: {
 						format: 'info',
 						title: '',
-						description: "Open Grain editor with default values for this type (create the Grain if necessary)",
+						get description() { return t`Open Grain editor with default values for this type (create the Grain if necessary)`; },
 						default: '42',
 						options: {
 							grid_columns: 10,
@@ -223,7 +224,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					impl: {
-						title: 'Implementation',
+						get title() { return t`Implementation`; },
 						type: 'string',
 						required: false,
 						options: {
@@ -231,7 +232,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					mixInIds: {
-						title: 'Type Mix-Ins',
+						get title() { return t`Type Mix-Ins`; },
 						type: 'array',
 						uniqueItems: true,
 						minItems: 0,
@@ -259,7 +260,7 @@ export const EditorSchemaConfig = {
 			_1: {
 				properties: {
 					propDef: {
-						title: 'Property Definition',
+						get title() { return `Property Definition`; },
 						"$ref": '#/definitions/propDef',
 						propertyOrder: 100
 					}
@@ -272,7 +273,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					valueType: {
-						title: 'Value Type',
+						get title() { return t`Value Type`; },
 						type: 'string',
 						enum: MarBasTraitValueTypes,
 						options: {
@@ -281,7 +282,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMin: {
-						title: 'Min. Number of Values',
+						get title() { return t`Min. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
 						default: 1,
@@ -292,7 +293,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMax: {
-						title: 'Max. Number of Values',
+						get title() { return t`Max. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
 						default: 1,
@@ -305,7 +306,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					versionable: {
-						title: 'Versionable',
+						get title() { return t`Versionable`; },
 						type: 'boolean',
 						format: 'checkbox',
 						options: {
@@ -313,7 +314,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					localizable: {
-						title: 'Localizable',
+						get title() { return t`Localizable`; },
 						type: 'boolean',
 						format: 'checkbox',
 						options: {
@@ -322,7 +323,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					valueConstraintId: {
-						title: 'Value Constraint',
+						get title() { return t`Value Constraint`; },
 						type: 'string',
 						format: 'grain',
 						required: false,
@@ -334,7 +335,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					_constraintParams: {
-						title: 'Value Constraint Parameters',
+						get title() { return t`Value Constraint Parameters`; },
 						required: true,
 						type: 'string',
 						options: {
@@ -346,11 +347,11 @@ export const EditorSchemaConfig = {
 							source: [
 								{
 									value: '',
-									title: "None"
+									get title() { return t`None`; }
 								},
 								{
 									value: 'PickerConfig',
-									title: "Configure grain picker"
+									get title() { return t`Configure grain picker`; }
 								}
 							],
 							title: "{{item.title}}",
@@ -366,7 +367,7 @@ export const EditorSchemaConfig = {
 			_1: {
 				properties: {
 					file: {
-						title: "File",
+						get title() { return t`File`; },
 						"$ref": '#/definitions/file',
 						propertyOrder: 110
 					}
@@ -379,7 +380,7 @@ export const EditorSchemaConfig = {
 				type: 'object',
 				properties: {
 					content: {
-						title: "Content",
+						get title() { return t`Content`; },
 						type: "string",
 						format: "url",
 						template: '{{apiPfx}}/File/{{id}}/Inline',
@@ -400,7 +401,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					mimeType: {
-						title: "Content Type",
+						get title() { return t`Content Type`; },
 						type: "string",
 						readonly: true
 					},
@@ -410,7 +411,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					_size: {
-						title: "Size",
+						get title() { return t`Size`; },
 						type: "integer",
 						template: "fileSizeFormatter",
 						watch: {
@@ -425,14 +426,14 @@ export const EditorSchemaConfig = {
 		isDateOnly: {
 			type: "boolean",
 			format: "checkbox",
-			title: "Date Only"
+			get title() { return t`Date Only`; }
 		}
 	},
 	PropDef_Memo: {
 		isRtf: {
 			type: "boolean",
 			format: "checkbox",
-			title: "Rich Text"
+			get title() { return t`Rich Text`; }
 		}
 	}
 };
@@ -442,13 +443,13 @@ export const EditorGrainPickerConfig = {
 		root: MarBasDefaults.ID_ROOT
 	},
 	File: {
-		title: 'Select File',
+		get title() { return t`Select File`; },
 		root: MarBasDefaults.ID_FILES,
 		typeFilter: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_FILE]
 	},
 	TypeDef: {
-		title: 'Select Type',
+		get title() { return t`Select Type`; },
 		root: MarBasDefaults.ID_SCHEMA,
 		typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_TYPEDEF]

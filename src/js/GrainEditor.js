@@ -1,6 +1,7 @@
 import { JSONEditor } from "@json-editor/json-editor";
 import merge from "lodash.merge";
 import { Popover } from "bootstrap";
+import { t } from "ttag";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
 import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
@@ -13,6 +14,7 @@ import { FieldEditorGrain } from "./jed/FieldEditorGrain";
 import { Bootstrap5RevTheme } from "./jed/Bootstrap5RevTheme";
 import { TraitUtils } from "./cmn/TraitUtils";
 import { FieldEditorIcon } from "./jed/FieldEditorIcon";
+import { UILocale } from "./UILocale";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldValueType = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.valueType`;
@@ -107,7 +109,7 @@ export class GrainEditor {
 		window.addEventListener('beforeunload', (evt) => {
 			if (this.dirty) {
 				evt.preventDefault();
-				evt.returnValue = "Grain was modified, really leave?";
+				evt.returnValue = t`Grain was modified, close anyway?`;
 			}
 		});
 		document.addEventListener('mb-silo:grain-deleted', (evt) => {
@@ -136,6 +138,31 @@ export class GrainEditor {
 		JSONEditor.defaults.options.display_required_only = false;
 		JSONEditor.defaults.options.show_opt_in = true;
 		JSONEditor.defaults.options.disable_array_delete_last_row = true;
+		// JSONEditor.defaults.translateProperty = function (txt) {
+		// 	if (_DEVELOPMENT_) {
+		// 		return UILocale.tranlsate(txt, undefined, "JSONEditor.translateProperty");
+		// 	}
+		// 	return UILocale.tranlsate(txt);
+		// };
+		JSONEditor.defaults.translate = function (key, variables, schema) {
+			let schemaMessages = {};
+			if (schema && schema.options && schema.options.error_messages && schema.options.error_messages[JSONEditor.defaults.language]) {
+				schemaMessages = schema.options.error_messages[JSONEditor.defaults.language];
+			}
+			const lang = JSONEditor.defaults.languages[JSONEditor.defaults.language] || EnvConfig.defaultLocale;
+			let result = schemaMessages[key] || lang[key] || JSONEditor.defaults.languages[EnvConfig.defaultLocale][key] || key;
+			if (_DEVELOPMENT_) {
+				result = UILocale.tranlsate(result, undefined, "JSONEditor.translate");
+			} else {
+				result = UILocale.tranlsate(result);
+			}
+			if (variables) {
+				for (let i = 0; i < variables.length; i++) {
+					result = result.replace(new RegExp(`\\{\\{${i}}}`, 'g'), variables[i]);
+				}
+			}
+			return result;
+		}
 		JSONEditor.defaults.callbacks.upload = {
 			uploadHandler: (jseditor, path, file, cbs) => {
 				jseditor.jsoneditor._grainEditor.uploadHandler(jseditor, path, file, cbs);
@@ -174,6 +201,7 @@ export class GrainEditor {
 	}
 
 	async buildEditor(grainBase, forceReload = false, link = undefined) {
+		await GrainEditor.setup();
 		if (!forceReload && this.grain && grainBase && this.grain.id == grainBase.id && this.grain._ts >= grainBase._ts && this._link == link) {
 			return;
 		}
@@ -240,7 +268,7 @@ export class GrainEditor {
 					if (trait && trait.length) {
 						valGroup[secKey][prop.id] = TraitUtils.getEditableValue(prop, trait);
 						if (trait[0].grainId != this.grain.id) {
-							schemaGroup.properties[secKey].properties[prop.id].title += " (Default Value)";
+							schemaGroup.properties[secKey].properties[prop.id].title += t` (Default Value)`;
 						}
 					}
 				});
@@ -286,7 +314,7 @@ export class GrainEditor {
 
 	async verifySaved(disposing = false) {
 		if (this.dirty) {
-			if ('yes' == await MsgBox.invoke("Grain was modified, save?", { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
+			if ('yes' == await MsgBox.invoke(t`Grain was modified, save?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
 				await this.save();
 				return true;
 			}
@@ -354,7 +382,7 @@ export class GrainEditor {
 		if (result.length) {
 			this.editor.showValidationErrors(result);
 			if (showMessage) {
-				await MsgBox.invokeErr("Please correct input errors first");
+				await MsgBox.invokeErr(t`Please correct input errors first`);
 			}
 			if (invalidPath) {
 				const tabId = this._getGroupByPath(invalidPath).closest('.tab-pane').id;
@@ -508,7 +536,7 @@ export class GrainEditor {
 		callbacks.success(isTrait ? id : `${this._apiSvc.baseUrl}/File/${id}/Inline`);
 		this._checkEmbeddedMedia(editor);
 		editor.preview.innerHTML = "";
-		editor.fileDisplay.value = "No file selected";
+		editor.fileDisplay.value = t`No file selected`;
 		editor.input.value = '';
 		// this.#apiSvc.invalidateGrain(this.grain);
 		// await this.resetEditor();
@@ -576,7 +604,7 @@ export class GrainEditor {
 	async _createActions() {
 		if (this.editor) {
 			const btnHolder = this.editor.root.theme.getHeaderButtonHolder();
-
+			// button labels are translated via GrainEditor.translate
 			let btn = this.editor.root.getButton('', 'arrows', 'Select in the navigation');
 			btn.classList.add('btn-outline-secondary');
 			btn.classList.remove('btn-secondary', 'btn-sm');
@@ -641,7 +669,7 @@ export class GrainEditor {
 						);
 						if (lbl) {
 							const elm = this.editor.theme.getInfoButton(comments[0].value);
-							elm.title = "Field Info";
+							elm.title = t`Field Info`;
 							elm.setAttribute('data-bs-content', comments[0].value);
 							elm.removeAttribute('data-toggle');
 							elm.setAttribute('data-bs-toggle', 'popover');
@@ -970,5 +998,3 @@ export class GrainEditor {
 		return {};
 	}
 }
-
-await GrainEditor.setup();
