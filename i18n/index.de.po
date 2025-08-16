@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src\js\AbstractAuthModule.js:93
+#: src\js\AbstractAuthModule.js:102
 #, javascript-format
 msgid "Connected to ${ info.brokerName } ${ info.brokerVersion } as ${ info.user }"
 msgstr "Verbunden mit ${ info.brokerName } ${ info.brokerVersion } als ${ info.user }"
@@ -102,7 +102,7 @@ msgstr "URL kopieren"
 msgid "<Self>"
 msgstr "<Dieses Objekt>"
 
-#: src\js\jed\FieldEditorGrain.js:231
+#: src\js\jed\FieldEditorGrain.js:240
 msgid "Open (new window)"
 msgstr "Öffnen (im neuen Fenster)"
 
@@ -364,26 +364,25 @@ msgstr "Eigenschaft ist erforderlich"
 msgid "Value required"
 msgstr "Wert erforderlich"
 
-#: src\js\AbstractAuthModule.js:121
+#: src\js\AbstractAuthModule.js:7
 msgid "Invalid URL"
 msgstr "Ungültige URL"
 
-#: src\js\AbstractAuthModule.js:121
-#: src\js\AbstractAuthModule.js:158
+#: src\js\AbstractAuthModule.js:11
 msgid "Invalid user or password"
 msgstr "Nutzername oder Passwort ungültig"
 
-#: src\js\AbstractAuthModule.js:122
+#: src\js\AbstractAuthModule.js:132
 #, javascript-format
 msgid "Request failed (${ res.status } ${ res.statusText })"
 msgstr "Anfrage fehlgeschlagen (${ res.status } ${ res.statusText })"
 
-#: src\js\AbstractAuthModule.js:135
+#: src\js\AbstractAuthModule.js:145
 #, javascript-format
 msgid "Incompatible schema version: ${ info.schemaVersion } (${ MarBasDefaults.MinSchemaVersion } is expected)"
 msgstr "Inkompatible Schemaversion: ${ info.schemaVersion } (${ MarBasDefaults.MinSchemaVersion } erwartet)"
 
-#: src\js\AbstractAuthModule.js:139
+#: src\js\AbstractAuthModule.js:149
 #, javascript-format
 msgid "Incompatible API version: ${ info.version } (${ MarBasDefaults.MinAPIVersion } is expected)"
 msgstr "Inkompatible API-Version: ${ info.version } (${ MarBasDefaults.MinAPIVersion } erwartet)"
@@ -406,21 +405,21 @@ msgstr "Sprache '${ isoCode }' - ${ option.textContent } existiert bereits"
 msgid "Deleting language '${ _LangManager.activeLang }' would also delete all data associated with it. Are you sure?"
 msgstr "Wenn Sprache '${ _LangManager.activeLang }' gelöscht wird, werden auch alle damit verknüpften Daten gelöscht. Trotzdem löschen?"
 
-#: src\js\login.js:14
+#: src\js\login.js:22
 msgid "Processing authorization provider response..."
 msgstr "Antwort vom Authorisierungs-Provider wird verarbeitet..."
 
-#: src\js\login.js:16
+#: src\js\login.js:24
 #, javascript-format
 msgid "${ title[0] } - Authorization Receiver"
 msgstr "${ title[0] } - Authorisierungsempfänger"
 
-#: src\js\OAuthAuthenticator.js:79
+#: src\js\OAuthAuthenticator.js:82
 #, javascript-format
 msgid "Your browser is blocking popups, please allow them for ${ window.location.protocol }//${ window.location.host } and try again"
 msgstr "Ihr Browser blockiert Popups, bitte diese für ${ window.location.protocol }//${ window.location.host } freischalten und wieder versuchen"
 
-#: src\js\OAuthAuthenticator.js:87
+#: src\js\OAuthAuthenticator.js:90
 msgid "Timeout attempting authorization"
 msgstr "Zeitlimitüberschreitung beim Authorisierungsversuch"
 
@@ -469,8 +468,8 @@ msgstr "Pfad für ${ grainOrId } ist leer"
 
 #: src\js\SiloNavi.js:299
 #, javascript-format
-msgid "Path to ${ id } is too deep"
-msgstr "Pfad to ${ id } ist zu tief"
+msgid "Path to ${ id } is unreachable"
+msgstr "Pfad to ${ id } ist unerreichbar"
 
 #: src\js\SiloTree.js:155
 msgid "Loading grains"
@@ -521,3 +520,11 @@ msgstr "Feld-Info"
 #, javascript-format
 msgid "Delete ${ node.text }?"
 msgstr "${ node.text } löschen?"
+
+#: src\js\AbstractAuthModule.js:8
+msgid "Data broker is offline, please try again later"
+msgstr "Databroker ist offline, bitte später nochmal versuchen"
+
+#: src\js\login.js:10
+msgid "You can close this window"
+msgstr "Dieses Fenster kann geschlossen werden"

@@ -689,8 +689,9 @@ export class GrainEditor {
 	_checkEmbeddedMedia(editor) {
 		const cont = editor ? editor.container : this.editor.element;
 		const media = cont.querySelectorAll('.mb-grain-file');
+		const baseUrl = new URL(this._apiSvc.baseUrl, window.location.href).href;
 		media.forEach((anchor) => {
-			if (anchor.href && anchor.href.startsWith(this._apiSvc.baseUrl)) {
+			if (anchor.href && anchor.href.startsWith(baseUrl)) {
 				this._apiSvc.loadBlob(anchor.href, /^(image|video|audio)\/.*/)
 					.then(blob => {
 						let elm;
@@ -719,7 +720,9 @@ export class GrainEditor {
 			result = merge({}, result, EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]);
 		}
 		result = this._extendSchemaByTraits(customProps, result);
-		console.log('getSchema', result);
+		if (_DEVELOPMENT_) {
+			console.log('getSchema', result);
+		}
 		return result;
 	}
 

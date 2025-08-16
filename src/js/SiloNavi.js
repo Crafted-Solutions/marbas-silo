@@ -296,7 +296,7 @@ export class SiloNavi extends SiloTree {
 					}
 				}
 				if (1000 < ++c) {
-					return handleErr(t`Path to ${id} is too deep`);
+					return handleErr(t`Path to ${id} is unreachable`);
 				}
 			};
 		}

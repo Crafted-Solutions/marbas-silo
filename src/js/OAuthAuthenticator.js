@@ -5,7 +5,8 @@ import { AuthStorage } from './AuthStorage';
 import { AsyncLock } from './cmn/AsyncLock';
 
 const WORKER_TARGET = 'silo-login';
-const WORKER_ATTRS = 'width=800,height=640';
+const WORKER_HEIGHT = Math.floor(window.screen.availHeight * 0.7);
+const WORKER_ATTRS = `width=${Math.min(WORKER_HEIGHT, window.screen.availWidth * 0.7)},height=${WORKER_HEIGHT}`;
 
 const useSameWindowForRedirects = false;
 
@@ -23,9 +24,12 @@ export class OAuthAuthenticator {
 			this.#loginGuard = new AsyncLock();
 			window.addEventListener('message', async (evt) => {
 				this.#closeWorker();
-				if (AuthStorage.state && evt.data.params) {
+				if (AuthStorage.state && evt.data && evt.data.params) {
 					try {
-						await this.#processProviderCallback(new URLSearchParams(evt.data.params));
+						const urlParams = new URLSearchParams(evt.data.params);
+						if (!(await this.#handleTemporaryErrors(urlParams))) {
+							await this.#processProviderCallback(urlParams);
+						}
 					} finally {
 						this.#loginGuard.release();
 					}
@@ -180,6 +184,15 @@ export class OAuthAuthenticator {
 		return new URL('login.html', window.location.href);
 	}
 
+	async #handleTemporaryErrors(cbParams) {
+		if ('temporarily_unavailable' == cbParams.get('error') && 'authentication_expired' == cbParams.get('error_description')) {
+			this.#loginGuard.release();
+			await this.authorize();
+			return true;
+		}
+		return false;
+	}
+
 	async #processProviderCallback(cbParams) {
 		try {
 			const config = this.#module.config;
@@ -306,6 +319,7 @@ export class OAuthAuthenticator {
 			this._worker.close();
 			delete this._worker;
 		}
+		window.focus();
 	}
 
 	#watchLoginWorker() {

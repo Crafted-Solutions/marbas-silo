@@ -162,7 +162,7 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 		if ('function' == typeof (handler)) {
 			result.addEventListener('click', handler.bind(this));
 		}
-		result.id = `action${name}`;
+		result.id = `${this.path}_action${name}`;
 		return result;
 	}
 
@@ -225,7 +225,16 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			this.icon.className = `input-group-text ${GrainXAttrs.getGrainIcon(this.grain)}`;
 			this.icon.title = this.grain.typeName || this._lblType;
 
-			if (await this.jsoneditor._grainEditor._apiSvc.isGrainInstanceOf(this.grain, MarBasDefaults.ID_TYPE_FILE)) {
+			if ('typeDefId' == this.key) {
+				let isReachable = false;
+				try {
+					const schemaAcl = await this.jsoneditor._grainEditor._apiSvc.getGrainAcl(MarBasDefaults.ID_SCHEMA);
+					isReachable = schemaAcl && schemaAcl.length;
+				} catch (e) { }
+				if (!isReachable) {
+					this.btnGoToGrain.remove();
+				}
+			} else if (await this.jsoneditor._grainEditor._apiSvc.isGrainInstanceOf(this.grain, MarBasDefaults.ID_TYPE_FILE)) {
 				const link = this.getLink({
 					href: `#`,
 					rel: t`Open (new window)`,
