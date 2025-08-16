@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"fast-glob": "^3.3.3",
-		"ttag-cli": "^1.10.18",
+		"ttag-cli": "^1.11.2",
 		"xgettext-template": "^6.0.0"
 	}
 }

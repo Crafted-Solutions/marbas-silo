@@ -77,7 +77,7 @@ module.exports = async (env) => {
 	};
 	const commonPageParams = {
 		title: 'MarBas Silo',
-		apiBaseUrl: 'https://localhost:7277/api/marbas',
+		apiBaseUrl: env.WEBPACK_SERVE ? 'https://localhost:7277/api/marbas' : '/api/marbas',
 		panelClasses: 'card card-body my-3 bg-light',
 		mode: mode,
 		extensionPoint: extensionPoint,

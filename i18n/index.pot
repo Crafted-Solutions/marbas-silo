@@ -3,33 +3,36 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\AbstractAuthModule.js:93
+#: src\js\AbstractAuthModule.js:7
+msgid "Invalid URL"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:8
+msgid "Data broker is offline, please try again later"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:11
+msgid "Invalid user or password"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:102
 #, javascript-format
 msgid "Connected to ${ info.brokerName } ${ info.brokerVersion } as ${ info.user }"
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:121
-msgid "Invalid URL"
-msgstr ""
-
-#: src\js\AbstractAuthModule.js:121
-#: src\js\AbstractAuthModule.js:158
-msgid "Invalid user or password"
-msgstr ""
-
-#: src\js\AbstractAuthModule.js:122
+#: src\js\AbstractAuthModule.js:132
 #, javascript-format
 msgid "Request failed (${ res.status } ${ res.statusText })"
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:135
+#: src\js\AbstractAuthModule.js:145
 #, javascript-format
 msgid ""
 "Incompatible schema version: ${ info.schemaVersion } (${ "
 "MarBasDefaults.MinSchemaVersion } is expected)"
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:139
+#: src\js\AbstractAuthModule.js:149
 #, javascript-format
 msgid ""
 "Incompatible API version: ${ info.version } (${ "
@@ -135,23 +138,27 @@ msgid ""
 "associated with it. Are you sure?"
 msgstr ""
 
-#: src\js\login.js:14
+#: src\js\login.js:10
+msgid "You can close this window"
+msgstr ""
+
+#: src\js\login.js:22
 msgid "Processing authorization provider response..."
 msgstr ""
 
-#: src\js\login.js:16
+#: src\js\login.js:24
 #, javascript-format
 msgid "${ title[0] } - Authorization Receiver"
 msgstr ""
 
-#: src\js\OAuthAuthenticator.js:79
+#: src\js\OAuthAuthenticator.js:82
 #, javascript-format
 msgid ""
 "Your browser is blocking popups, please allow them for ${ "
 "window.location.protocol }//${ window.location.host } and try again"
 msgstr ""
 
-#: src\js\OAuthAuthenticator.js:87
+#: src\js\OAuthAuthenticator.js:90
 msgid "Timeout attempting authorization"
 msgstr ""
 
@@ -205,7 +212,7 @@ msgstr ""
 
 #: src\js\SiloNavi.js:299
 #, javascript-format
-msgid "Path to ${ id } is too deep"
+msgid "Path to ${ id } is unreachable"
 msgstr ""
 
 #: src\js\SiloTree.js:155
@@ -220,39 +227,39 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:50
+#: src\js\jed\FieldEditorGrain.js:51
 msgid "Go To Grain"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:51
+#: src\js\jed\FieldEditorGrain.js:52
 msgid "Select"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:54
+#: src\js\jed\FieldEditorGrain.js:55
 msgid "Delete"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:170
+#: src\js\jed\FieldEditorGrain.js:171
 msgid "Other Options"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:189
+#: src\js\jed\FieldEditorGrain.js:190
 msgid "Copy ID"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:194
+#: src\js\jed\FieldEditorGrain.js:195
 msgid "Copy Path"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:199
+#: src\js\jed\FieldEditorGrain.js:200
 msgid "Copy URL"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:214
+#: src\js\jed\FieldEditorGrain.js:215
 msgid "<Self>"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:231
+#: src\js\jed\FieldEditorGrain.js:241
 msgid "Open (new window)"
 msgstr ""
 

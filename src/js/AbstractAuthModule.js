@@ -3,6 +3,15 @@ import { AuthStorage } from './AuthStorage';
 import { MbDomUtils } from './cmn/MbDomUtils';
 import { t } from 'ttag';
 
+const LOGIN_ERRORS = {
+	'404': function () { return t`Invalid URL`; },
+	'503': function () { return t`Data broker is offline, please try again later`; },
+	fromStatus: function (status) {
+		const m = "" + status;
+		return ('function' == typeof this[m] ? this[m]() : t`Invalid user or password`);
+	}
+};
+
 export class AbstractAuthModule {
 	_element;
 	_config;
@@ -118,7 +127,8 @@ export class AbstractAuthModule {
 				if (res.ok) {
 					return await res.json();
 				}
-				const err = new Error(404 == res.status ? t`Invalid URL` : t`Invalid user or password`);
+
+				const err = new Error(LOGIN_ERRORS.fromStatus(res.status));
 				err.error_description = t`Request failed (${res.status} ${res.statusText})`;
 				throw err;
 			});
@@ -155,7 +165,7 @@ export class AbstractAuthModule {
 						return true;
 					}
 				}
-				throw new Error(t`Invalid user or password`);
+				throw new Error(LOGIN_ERRORS.fromStatus(res.status));
 			});
 		} catch (e) {
 			this.reportError(e, true);

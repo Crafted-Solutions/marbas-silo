@@ -1,13 +1,28 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-#: src/index.hbs:25
-msgid "Logout"
+#: src/partials/AuthModuleDynamic.hbs:2
+msgid "Loading..."
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:3
 #: src/partials/AuthModuleDynamic.hbs:4
+#: src/partials/AuthModuleBasic.hbs:3
 msgid "Connection"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:6
+#: src/partials/AuthModuleBasic.hbs:21
+msgid "Broker URL"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:10
+#: src/partials/AuthModuleBasic.hbs:25
+msgid "Please provide data broker URL"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:15
+#: src/partials/AuthModuleBasic.hbs:30
+msgid "Connect"
 msgstr ""
 
 #: src/partials/AuthModuleBasic.hbs:5
@@ -34,27 +49,16 @@ msgstr ""
 msgid "Please provide a valid password"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:21
-#: src/partials/AuthModuleDynamic.hbs:6
-msgid "Broker URL"
-msgstr ""
-
-#: src/partials/AuthModuleBasic.hbs:25
-#: src/partials/AuthModuleDynamic.hbs:10
-msgid "Please provide data broker URL"
-msgstr ""
-
-#: src/partials/AuthModuleBasic.hbs:30
-#: src/partials/AuthModuleDynamic.hbs:15
-msgid "Connect"
-msgstr ""
-
 #: src/partials/AuthModuleBasic.hbs:33
 msgid "Invalid user or password"
 msgstr ""
 
-#: src/partials/AuthModuleDynamic.hbs:2
-msgid "Loading..."
+#: src/index.hbs:25
+msgid "Logout"
+msgstr ""
+
+#: src/partials/GrainPicker.hbs:6
+msgid "Select Grain"
 msgstr ""
 
 #: src/partials/FileNewDialog.hbs:6
@@ -102,10 +106,6 @@ msgstr ""
 #: src/partials/GrainNewDialog.hbs:23
 #: src/partials/_SiloNaviButton.hbs:5
 msgid "Type"
-msgstr ""
-
-#: src/partials/GrainPicker.hbs:6
-msgid "Select Grain"
 msgstr ""
 
 #: src/partials/GrainSecurityDialog.hbs:6
@@ -159,18 +159,6 @@ msgstr ""
 msgid "Restrict"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:6
-msgid "Input Request"
-msgstr ""
-
-#: src/partials/InputDialog.hbs:13
-msgid "Input"
-msgstr ""
-
-#: src/partials/InputDialog.hbs:16
-msgid "Value is required"
-msgstr ""
-
 #: src/partials/LangManager.hbs:2
 #: src/partials/LangManager.hbs:3
 msgid "Content Language"
@@ -193,6 +181,18 @@ msgstr ""
 msgid "Delete Selected Language"
 msgstr ""
 
+#: src/partials/InputDialog.hbs:6
+msgid "Input Request"
+msgstr ""
+
+#: src/partials/InputDialog.hbs:13
+msgid "Input"
+msgstr ""
+
+#: src/partials/InputDialog.hbs:16
+msgid "Value is required"
+msgstr ""
+
 #: src/partials/LocaleSwitch.hbs:3
 msgid "Deutch (de)"
 msgstr ""
@@ -203,6 +203,14 @@ msgstr ""
 
 #: src/partials/LocaleSwitch.hbs:11
 msgid "Switch Language"
+msgstr ""
+
+#: src/partials/SiloNaviMenu.hbs:3
+msgid "Navi Menu"
+msgstr ""
+
+#: src/partials/SiloNaviMenu.hbs:7
+msgid "New"
 msgstr ""
 
 #: src/partials/MsgBox.hbs:12
@@ -233,14 +241,6 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/partials/SiloNaviMenu.hbs:3
-msgid "Navi Menu"
-msgstr ""
-
-#: src/partials/SiloNaviMenu.hbs:7
-msgid "New"
-msgstr ""
-
 #: src/partials/TaskLayer.hbs:3
 msgid "In Progress"
 msgstr ""
@@ -260,10 +260,6 @@ msgstr ""
 #: src/partials/_ButtonReload.hbs:1
 #: src/partials/_SiloNaviButton.hbs:1
 msgid "Reload"
-msgstr ""
-
-#: src/partials/_DialogFooter.hbs:3
-msgid "Cacnel"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:2
@@ -304,4 +300,8 @@ msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:13
 msgid "Security"
+msgstr ""
+
+#: src/partials/_DialogFooter.hbs:3
+msgid "Cacnel"
 msgstr ""
