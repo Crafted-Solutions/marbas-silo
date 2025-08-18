@@ -1,0 +1,316 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Plural-Forms: nplurals = 2; plural = (n != 1);\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/index.hbs:25
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: src/partials/AuthModuleDynamic.hbs:2
+msgid "Loading..."
+msgstr "Wird geladen..."
+
+#: src/partials/AuthModuleBasic.hbs:3
+#: src/partials/AuthModuleDynamic.hbs:4
+msgid "Connection"
+msgstr "Verbindung"
+
+#: src/partials/AuthModuleBasic.hbs:21
+#: src/partials/AuthModuleDynamic.hbs:6
+msgid "Broker URL"
+msgstr "Broker-URL"
+
+#: src/partials/AuthModuleBasic.hbs:25
+#: src/partials/AuthModuleDynamic.hbs:10
+msgid "Please provide data broker URL"
+msgstr "Bitte Databroker-URL angeben"
+
+#: src/partials/LocaleSwitch.hbs:3
+msgid "Deutch (de)"
+msgstr ""
+
+#: src/partials/LangManager.hbs:4
+#: src/partials/LocaleSwitch.hbs:4
+msgid "English (en)"
+msgstr ""
+
+#: src/partials/LocaleSwitch.hbs:6
+msgid "UI Language"
+msgstr "UI-Sparche"
+
+#: src/partials/LocaleSwitch.hbs:11
+msgid "Switch Language"
+msgstr "Sprache wechseln"
+
+#: src/partials/AuthModuleBasic.hbs:30
+#: src/partials/AuthModuleDynamic.hbs:15
+msgid "Connect"
+msgstr "Verbinden"
+
+#: src/partials/LangManager.hbs:2
+#: src/partials/LangManager.hbs:3
+msgid "Content Language"
+msgstr "Sprache des Inhalts"
+
+#: src/partials/LangManager.hbs:6
+msgid "Manage languages"
+msgstr "Sprachen verwalten"
+
+#: src/partials/LangManager.hbs:7
+msgid "Add Language"
+msgstr "Sparache hinzufügen"
+
+#: src/partials/LangManager.hbs:8
+msgid "Delete Selected Language"
+msgstr "Ausgewählte Sprache löschen"
+
+#: src/partials/FileNewDialog.hbs:6
+msgid "New File"
+msgstr "Neue Datei"
+
+#: src/partials/MsgBox.hbs:12
+#: src/partials/TaskLayer.hbs:4
+#: src/partials/_DialogClose.hbs:1
+msgid "Close"
+msgstr "Schließen"
+
+#: src/partials/FileNewDialog.hbs:14
+#: src/partials/GrainNewDialog.hbs:15
+msgid "Name"
+msgstr "Name"
+
+#: src/partials/FileNewDialog.hbs:15
+msgid "(Optional) name for the new grain"
+msgstr "(Optional) Name des Grain"
+
+#: src/partials/FileNewDialog.hbs:18
+#: src/partials/_SiloNaviButton.hbs:4
+msgid "File"
+msgstr "Datei"
+
+#: src/partials/FileNewDialog.hbs:21
+msgid "Please provide a file"
+msgstr "Bitte Datei auswählen"
+
+#: src/partials/AuthModuleBasic.hbs:5
+msgid "User"
+msgstr "Benutzer"
+
+#: src/partials/AuthModuleBasic.hbs:7
+msgid "Login user name"
+msgstr "Anmeldename"
+
+#: src/partials/AuthModuleBasic.hbs:9
+msgid "Please provide a valid user name"
+msgstr "Bitte einen gültigen Benutzernamen angeben"
+
+#: src/partials/AuthModuleBasic.hbs:12
+msgid "Password"
+msgstr "Passwort"
+
+#: src/partials/AuthModuleBasic.hbs:14
+msgid "Login password"
+msgstr "Anmeldepasswort"
+
+#: src/partials/AuthModuleBasic.hbs:16
+msgid "Please provide a valid password"
+msgstr "Bitten ein gültigen Passwort angeben"
+
+#: src/partials/AuthModuleBasic.hbs:33
+msgid "Invalid user or password"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:13
+#: src/partials/_DialogFooter.hbs:2
+msgid "Ok"
+msgstr "Ok"
+
+#: src/partials/_DialogFooter.hbs:3
+msgid "Cacnel"
+msgstr "Abbrechen"
+
+#: src/partials/SiloNaviMenu.hbs:6
+#: src/partials/_ButtonReload.hbs:1
+#: src/partials/_SiloNaviButton.hbs:1
+msgid "Reload"
+msgstr "Neu laden"
+
+#: src/partials/MsgBox.hbs:14
+msgid "Yes"
+msgstr "Ja"
+
+#: src/partials/MsgBox.hbs:15
+msgid "No"
+msgstr "Nein"
+
+#: src/partials/MsgBox.hbs:16
+#: src/partials/TaskLayer.hbs:14
+msgid "Abort"
+msgstr "Beenden"
+
+#: src/partials/InputDialog.hbs:6
+msgid "Input Request"
+msgstr "Eingabgeaufforderung"
+
+#: src/partials/InputDialog.hbs:13
+msgid "Input"
+msgstr "Eingabe"
+
+#: src/partials/InputDialog.hbs:16
+msgid "Value is required"
+msgstr "Wert ist erforderlich"
+
+#: src/partials/GrainSecurityDialog.hbs:6
+msgid "Security Options"
+msgstr "Sicherheitsoptionen"
+
+#: src/partials/GrainSecurityDialog.hbs:7
+msgid "Modified"
+msgstr "Geändert"
+
+#: src/partials/GrainSecurityDialog.hbs:14
+msgid "Access Control List"
+msgstr "Zugriffskontrollliste"
+
+#: src/partials/GrainSecurityDialog.hbs:19
+#: src/partials/GrainSecurityDialog.hbs:20
+msgid "Add entry"
+msgstr "Eintrag hinzufügen"
+
+#: src/partials/GrainSecurityDialog.hbs:26
+msgid "Access Control"
+msgstr "Zugriff"
+
+#: src/partials/GrainSecurityDialog.hbs:27
+msgid "Iherit"
+msgstr "Vererben"
+
+#: src/partials/GrainSecurityDialog.hbs:28
+msgid "Source"
+msgstr "Quelle"
+
+#: src/partials/GrainSecurityDialog.hbs:49
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+#: src/partials/GrainSecurityDialog.hbs:52
+#: src/partials/GrainSecurityDialog.hbs:55
+msgid "Inhert to children"
+msgstr "Vererben an Kinder"
+
+#: src/partials/GrainSecurityDialog.hbs:72
+msgid "Permit"
+msgstr "Erlauben"
+
+#: src/partials/GrainSecurityDialog.hbs:76
+msgid "Restrict"
+msgstr "Einschränken"
+
+#: src/partials/GrainPicker.hbs:6
+msgid "Select Grain"
+msgstr "Grain Auswählen"
+
+#: src/partials/GrainNewDialog.hbs:6
+msgid "New Grain"
+msgstr "Neues Grain"
+
+#: src/partials/GrainNewDialog.hbs:7
+msgid "New Grain Type"
+msgstr "Neuer Grain-Typ"
+
+#: src/partials/GrainNewDialog.hbs:8
+msgid "New Container"
+msgstr "Neuer Container"
+
+#: src/partials/GrainNewDialog.hbs:16
+msgid "Name for the new element"
+msgstr "Name des neuen Elements"
+
+#: src/partials/GrainNewDialog.hbs:18
+msgid "Please provide a name for the element"
+msgstr "Bitte einen Elementnamen angeben"
+
+#: src/partials/GrainNewDialog.hbs:23
+#: src/partials/_SiloNaviButton.hbs:5
+msgid "Type"
+msgstr "Typ"
+
+#: src/partials/SiloNaviMenu.hbs:3
+msgid "Navi Menu"
+msgstr "Navi-Menü"
+
+#: src/partials/SiloNaviMenu.hbs:7
+msgid "Create"
+msgstr "Erstellen"
+
+#: src/partials/SiloNaviMenu.hbs:7
+msgid "New"
+msgstr "Neu"
+
+#: src/partials/_SiloNaviButton.hbs:6
+msgid "Rename"
+msgstr "Umbennenen"
+
+#: src/partials/_SiloNaviButton.hbs:7
+msgid "Cut"
+msgstr "Ausschneiden"
+
+#: src/partials/_SiloNaviButton.hbs:8
+msgid "Copy"
+msgstr "Kopieren"
+
+#: src/partials/_SiloNaviButton.hbs:9
+msgid "Paste"
+msgstr "Einfügen"
+
+#: src/partials/_SiloNaviButton.hbs:10
+msgid "Paste Link"
+msgstr "Verknüpfung einfügen"
+
+#: src/partials/_SiloNaviButton.hbs:11
+msgid "Clear Clipboard"
+msgstr "Zwischenablage leeren"
+
+#: src/partials/_SiloNaviButton.hbs:12
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/partials/_SiloNaviButton.hbs:13
+msgid "Security"
+msgstr "Sicherheit"
+
+#: src/partials/MsgBox.hbs:17
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/partials/TaskLayer.hbs:3
+msgid "In Progress"
+msgstr "Laufend"
+
+#: src/partials/TaskLayer.hbs:20
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+#: src/partials/TaskLayer.hbs:26
+msgid "Complete"
+msgstr "Abgeschlossen"
+
+#: src/partials/TaskLayer.hbs:32
+msgid "Aborted"
+msgstr "Abgebrochen"
+
+#: src/partials/GrainSecurityDialog.hbs:24
+msgid "Role"
+msgstr "Rolle"
+
+#: src/partials/_SiloNaviButton.hbs:2
+msgid "Of Type..."
+msgstr "Vom Typ..."
+
+#: src/partials/_SiloNaviButton.hbs:3
+msgid "Container"
+msgstr "Container"

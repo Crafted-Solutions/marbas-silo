@@ -1,31 +1,32 @@
 <div>
 	<div class="dropdown" style="position:absolute;" id="silo-nav-contextdd">
-		<button class="btn btn-secondary dropdown-toggle d-none" type="button" id="silo-nav-contextdd-trigger" data-bs-auto-close="*" data-bs-toggle="dropdown" aria-expanded="false">Navi Menu</button>
+		<button class="btn btn-secondary dropdown-toggle d-none" type="button" id="silo-nav-contextdd-trigger" data-bs-auto-close="*" data-bs-toggle="dropdown" aria-expanded="false">{{_ 'Navi Menu'}}</button>
 		<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="silo-nav-contextdd-trigger">
-			<li><button id="cmdReload" class="dropdown-item" type="button"><span class="bi-arrow-clockwise"></span> Reload</button></li>
+			{{> partials/_SiloNaviButton id='cmdReload' icon='bi-arrow-clockwise'}}
 			<li class="dropdown dropend">
-				<button class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="silo-nav-insertdd-trigger">Create</button>
+				<button class="dropdown-item dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="silo-nav-insertdd-trigger">{{_ 'New'}}</button>
 				<ul class="dropdown-menu" aria-labelledby="silo-nav-insertdd-trigger">
-					<li><button id="cmdNew" class="dropdown-item" type="button"><span class="text-primary bi-file">*</span> New</button></li>
-					<li><button id="cmdNewContainer" class="dropdown-item" type="button"><span class="text-primary bi-folder2">*</span> New Container</button></li>
-					<li><button id="cmdNewFile" class="dropdown-item" type="button"><span class="text-primary bi-file-earmark-binary">*</span> New File</button></li>
-					<li><button id="cmdNewType" class="dropdown-item" type="button"><span class="text-primary bi-boxes">*</span> New Type</button></li>
+					{{> partials/_SiloNaviButton id='cmdNew' icon='text-primary bi-file' iconText='*'}}
+					{{> partials/_SiloNaviButton id='cmdNewContainer' icon='text-primary bi-folder2' iconText='*'}}
+					{{> partials/_SiloNaviButton id='cmdNewFile' icon='text-primary bi-file-earmark-binary' iconText='*'}}
+					{{> partials/_SiloNaviButton id='cmdNewType' icon='text-primary bi-boxes' iconText='*'}}
 				</ul>
 			</li>
-			<li><button id="cmdRename" class="dropdown-item" type="button"><span class="bi-pencil-square"></span> Rename</button></li>
+			{{> partials/_SiloNaviButton id='cmdRename' icon='bi-pencil-square'}}
 			<li>
 				<hr class="dropdown-divider">
 			</li>
-			<li><button id="cmdCut" class="dropdown-item" type="button"><span class="bi-scissors"></span> Cut</button></li>
-			<li><button id="cmdCopy" class="dropdown-item" type="button"><span class="bi-copy"></span> Copy</button></li>
-			<li><button id="cmdPaste" class="dropdown-item" type="button"><span class="bi-clipboard"></span> Paste</button></li>
-			<li><button id="cmdPasteLink" class="dropdown-item" type="button"><span class="bi-clipboard"></span> Paste Link <sup class="bi-link"></sup></button></li>
-			<li><button id="cmdClearCbrd" class="dropdown-item" type="button"><span class="bi-clipboard-minus"></span> Clear Clipboard</button></li>
+			{{> partials/_SiloNaviButton id='cmdCut' icon='bi-scissors'}}
+			{{> partials/_SiloNaviButton id='cmdCopy' icon='bi-copy'}}
+			{{> partials/_SiloNaviButton id='cmdPaste' icon='bi-clipboard'}}
+			{{> partials/_SiloNaviButton id='cmdPasteLink' icon='bi-clipboard' iconText='<sup class="bi-link"></sup>'}}
+			{{> partials/_SiloNaviButton id='cmdClearCbrd' icon='bi-clipboard-minus'}}
+			{{!-- <li><button id="cmdPasteLink" class="dropdown-item" type="button"><span class="bi-clipboard"></span> Paste Link <sup class="bi-link"></sup></button></li> --}}
 			<li>
 				<hr class="dropdown-divider">
 			</li>
-			<li><button id="cmdDelete" class="dropdown-item" type="button"><span class="text-danger bi-trash-fill"></span> Delete</button></li>
-			<li><button id="cmdSecurity" class="dropdown-item" type="button"><span class="text-danger bi-shield"></span> Security</button></li>
+			{{> partials/_SiloNaviButton id='cmdDelete' icon='text-danger bi-trash-fill'}}
+			{{> partials/_SiloNaviButton id='cmdSecurity' icon='text-danger bi-shield'}}
 		</ul>
 	</div>
 </div>

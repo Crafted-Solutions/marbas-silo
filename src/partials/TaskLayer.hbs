@@ -1,7 +1,7 @@
 <div class="offcanvas offcanvas-bottom" tabindex="-1" id="task-layer" aria-labelledby="task-layer-title" data-bs-scroll="true" data-bs-backdrop="static" aria-hidden="true">
 	<div class="offcanvas-header">
-		<h5 class="offcanvas-title" id="task-layer-title">In Progress</h5>
-		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		<h5 class="offcanvas-title" id="task-layer-title">{{_ 'In Progress'}}</h5>
+		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="{{_ 'Close'}}"></button>
 	</div>
 	<div class="offcanvas-body">
 		<div id="task-layer-tasks" class="list-group list-group-flush"></div>
@@ -11,25 +11,25 @@
 		<div class="task-layer-task fs-5 list-group-item">
 			<div class="mb-2 task-layer-ongoing">
 				<span class="spinner-border text-primary align-middle me-2 task-layer-indprogress" role="status" aria-hidden="true"></span>
-				<button type="button" class="btn btn-sm btn-danger task-layer-abort d-none" aria-hidden="true">Abort</button>
+				<button type="button" class="btn btn-sm btn-danger task-layer-abort d-none" aria-hidden="true">{{_ 'Abort'}}</button>
 				<span class="task-layer-text"></span>
 			</div>
 			<div class="task-layer-error d-none" aria-hidden="true">
 				<div class="alert alert-danger align-items-center" role="alert">
 					<span class="bi bi-exclamation-octagon-fill me-2"></span>
-					<span class="mb-val">Failed</span>
+					<span class="mb-val">{{_ 'Failed'}}</span>
 				</div>
 			</div>
 			<div class="task-layer-success d-none" aria-hidden="true">
 				<div class="alert alert-success align-items-center" role="alert">
 					<span class="bi bi-check-circle-fill me-2"></span>
-					<span class="mb-val">Complete</span>
+					<span class="mb-val">{{_ 'Complete'}}</span>
 				</div>
 			</div>
 			<div class="task-layer-aborted d-none" aria-hidden="true">
 				<div class="alert alert-warning align-items-center" role="alert">
 					<span class="bi bi-check-circle-fill me-2"></span>
-					<span class="mb-val">Aborted</span>
+					<span class="mb-val">{{_ 'Aborted'}}</span>
 				</div>
 			</div>
 		</div>

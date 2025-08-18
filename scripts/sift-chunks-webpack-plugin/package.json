@@ -1,0 +1,13 @@
+{
+	"private": true,
+	"name": "sift-chunks-webpack-plugin",
+	"description": "Webpack plugin for filtering chunks",
+	"version": "0.1.0",
+	"author": "hatelamers",
+	"license": "MIT",
+	"main": "./index.js",
+	"scripts": {
+		"build": "exit 0",
+		"test": "exit 0"
+	}
+}

@@ -1,8 +1,10 @@
+import { t } from "ttag";
 import { MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
 import { MbDomUtils } from "./cmn/MbDomUtils";
 import { MarBasDefaults } from "../../packages/core/src/conf/marbas.conf";
 import { InputDialog } from "./cmn/InputDialog";
 import { MsgBox } from "./cmn/MsgBox";
+import { StorageUtils } from "./cmn/StorageUtils";
 
 export class LangManager {
 	#element;
@@ -36,7 +38,7 @@ export class LangManager {
 			hasSelection = this.#addToList(element)._selected || hasSelection;
 		});
 		if (!hasSelection) {
-			sessionStorage.removeItem('mbSiloLang');
+			LangManager.#activeLang = null;
 		}
 		this.#selector.addEventListener('change', this.#changeCb);
 		this.#listeners.forEach(listener => this.#selector.addEventListener('change', listener));
@@ -47,7 +49,11 @@ export class LangManager {
 	}
 
 	static get activeLang() {
-		return sessionStorage.getItem('mbSiloLang');
+		return StorageUtils.read('mbSiloLang');
+	}
+
+	static set #activeLang(value) {
+		StorageUtils.write('mbSiloLang', value);
 	}
 
 	static isDefaultLang(lang) {
@@ -60,20 +66,20 @@ export class LangManager {
 	}
 
 	onChange() {
-		sessionStorage.setItem('mbSiloLang', this.#selector.value);
+		LangManager.#activeLang = this.#selector.value;
 		this.#element.querySelector('#cmdDeleteLang').disabled = LangManager.isDefaultLang(LangManager.activeLang);
 	}
 
 	async #create() {
 		const isoCode = await InputDialog.requestTextFromUser({
-			title: 'Create Language',
-			prompt: 'ISO 639 Code',
+			title: t`Create Language`,
+			prompt: t`ISO 639 Code`,
 			defaultValue: ''
 		});
 		if (isoCode) {
 			let option = Array.prototype.find.call(this.#selector.options, elm => elm.value == isoCode);
 			if (option) {
-				MsgBox.invoke(`Language '${isoCode}' - ${option.textContent} exists already`);
+				MsgBox.invoke(t`Language '${isoCode}' - ${option.textContent} exists already`);
 				return;
 			}
 			const res = await this.#apiSvc.createLanguage(isoCode);
@@ -88,7 +94,7 @@ export class LangManager {
 
 	async #deleteSelected() {
 		if (LangManager.isDefaultLang(LangManager.activeLang)
-			|| 'yes' != await MsgBox.invoke(`Deleting language '${LangManager.activeLang}' would also delete all data associated with it. Are you sure?`, {
+			|| 'yes' != await MsgBox.invoke(t`Deleting language '${LangManager.activeLang}' would also delete all data associated with it. Are you sure?`, {
 				icon: 'primary',
 				buttons: { 'yes': true, 'no': true }
 			})) {

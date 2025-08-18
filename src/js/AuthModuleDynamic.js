@@ -15,17 +15,18 @@ export class AuthModule extends AbstractAuthModule {
 		let isLoggedIn = this.isLoggedIn;
 		if (isLoggedIn) {
 			isLoggedIn = await this.#verifyLogin();
-			if (isLoggedIn) {
-				await this.#configure();
-				result = result || {};
-				if (!result.headers) {
-					result.headers = {};
-				}
-				result.headers.Authorization = `${this.#helper.authType} ${AuthStorage.accessToken}`;
-			}
 		}
 		if (!isLoggedIn) {
-			this._validateAndLogin();
+			await this._validateAndLogin();
+			isLoggedIn = this.isLoggedIn;
+		}
+		if (isLoggedIn) {
+			await this.#configure();
+			result = result || {};
+			if (!result.headers) {
+				result.headers = {};
+			}
+			result.headers.Authorization = `${this.#helper.authType} ${this.#helper.token}`;
 		}
 		return result;
 	}
@@ -35,9 +36,13 @@ export class AuthModule extends AbstractAuthModule {
 			return false;
 		}
 		await this.#configure();
-		await this.#helper.logout();
+		const redirected = await this.#helper.logout();
 		this._clearStorage();
 		this._updateUI();
+		if (!redirected) {
+			this.#showForm();
+		}
+		this.#helper.updateUIState(this.isLoggedIn);
 		this._triggerEvent('silo-auth:logout');
 	}
 
@@ -47,14 +52,21 @@ export class AuthModule extends AbstractAuthModule {
 		}
 		await this.#configure();
 		this._clearStorage();
-		await this.#helper.authorize();
+		try {
+			await this.#helper.authorize();
+			this.#helper.updateUIState(this.isLoggedIn);
+		} catch (e) {
+			this.reportError(e, true);
+		}
 	}
 
 	_clearStorage() {
 		super._clearStorage();
-		if (this.#helper) {
-			this.#helper.clearStorage();
-		}
+		try {
+			if (this.#helper) {
+				this.#helper.clearStorage();
+			}
+		} catch (e) { }
 	}
 
 	async _init() {

@@ -1,3 +1,4 @@
+import { t } from "ttag";
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 
 import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
@@ -34,8 +35,8 @@ export class SiloNavi extends SiloTree {
 
 	async deleteNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
-		if (node && 'yes' == await MsgBox.invoke(`Delete ${node.text}?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
-			await Task.nowAsync('Creating file', async () => {
+		if (node && 'yes' == await MsgBox.invoke(t`Delete ${node.text}?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
+			await Task.nowAsync(t`Deleting grain`, async () => {
 				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
 				this.tree.removeNode(node);
 				if (parents.length) {
@@ -54,7 +55,7 @@ export class SiloNavi extends SiloTree {
 			this.#grainNewDlg = new GrainNewDialog("grain-new", this._apiSvc);
 			this.#grainNewDlg.addEventListener('hidden.bs.modal', async () => {
 				if (this.#grainNewDlg.accepted) {
-					await Task.nowAsync("Creating grain", async () => {
+					await Task.nowAsync(t`Creating grain`, async () => {
 						const grain = await this._apiSvc.createGrain(this.#grainNewDlg.parentGrain, this.#grainNewDlg.grainType, this.#grainNewDlg.grainName);
 						await this.revealAndSelectNode(grain);
 					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
@@ -69,7 +70,7 @@ export class SiloNavi extends SiloTree {
 			this.#fileNewDlg = new FileNewDialog("file-new", this._apiSvc);
 			this.#fileNewDlg.addEventListener('hidden.bs.modal', async () => {
 				if (this.#fileNewDlg.accepted) {
-					await Task.nowAsync('Creating file', async () => {
+					await Task.nowAsync(t`Creating file`, async () => {
 						const grain = await this._apiSvc.createFile(this.#fileNewDlg.formData);
 						await this.revealAndSelectNode(grain);
 					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
@@ -84,8 +85,8 @@ export class SiloNavi extends SiloTree {
 		if (node) {
 			const oldName = grainOrId.name || (await this._apiSvc.getGrain(grainOrId.id || grainOrId)).name || node.text;
 			const newName = await InputDialog.requestTextFromUser({
-				title: `Rename "${oldName}"`,
-				prompt: 'New Grain Name',
+				title: t`Rename "${oldName}"`,
+				prompt: t`New Grain Name`,
 				defaultValue: oldName
 			});
 			if (newName && newName != oldName) {
@@ -176,7 +177,7 @@ export class SiloNavi extends SiloTree {
 		const id = Object.keys(this.#clipboard)[0];
 		const op = this.#clipboard[id];
 
-		const taskName = `${'cut' == op ? "Moving" : "Copying"} grain`;
+		const taskName = 'cut' == op ? t`Moving grain` : t`Copying grain`;
 		await Task.nowAsync(taskName, async () => {
 			let grain;
 			if ('cut' == op) {
@@ -204,7 +205,7 @@ export class SiloNavi extends SiloTree {
 		if (!this.hasClipboardContent('copy')) {
 			return null;
 		}
-		const taskName = "Creating link";
+		const taskName = t`Creating link`;
 		await Task.nowAsync(taskName, async () => {
 			const id = Object.keys(this.#clipboard)[0];
 			const target = await this._apiSvc.getGrain(id);
@@ -252,7 +253,7 @@ export class SiloNavi extends SiloTree {
 					})
 					.catch(reason => {
 						console.error(reason);
-						MsgBox.invokeErr(`Failed to reload ${grain.parentId} due to: ${reason}`);
+						MsgBox.invokeErr(t`Failed to reload ${grain.parentId} due to: ${reason}`);
 					});
 			}
 		});
@@ -274,7 +275,7 @@ export class SiloNavi extends SiloTree {
 		} else {
 			const path = await this._apiSvc.getGrainPath(grainOrId, true);
 			if (!path || !path.length) {
-				return handleErr(`No path returned for ${grainOrId}`);
+				return handleErr(t`Path for ${grainOrId} is empty`);
 			}
 			grainOrId = path[0];
 			const id = grainOrId.id;
@@ -295,7 +296,7 @@ export class SiloNavi extends SiloTree {
 					}
 				}
 				if (1000 < ++c) {
-					return handleErr(`Path to ${id} is too deep`);
+					return handleErr(t`Path to ${id} is unreachable`);
 				}
 			};
 		}

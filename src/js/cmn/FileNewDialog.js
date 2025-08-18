@@ -3,8 +3,6 @@ import { _NewDialog } from "./_NewDialog";
 export class FileNewDialog extends _NewDialog {
 	constructor(scope, apiSvc) {
 		super(scope, apiSvc);
-		this._title = 'New File';
-		this._nameLabel = 'Name';
 	}
 
 	get formData() {

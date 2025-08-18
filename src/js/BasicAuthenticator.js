@@ -1,5 +1,6 @@
 import dlgHtml from "../partials/LoginDialog.hbs";
 
+import { t } from "ttag";
 import { AuthStorage } from "./AuthStorage";
 import { _Dialog } from "./cmn/_Dialog";
 
@@ -26,11 +27,16 @@ export class BasicAuthenticator {
 
 	constructor(authModule) {
 		this.#module = authModule;
+		this.#module.form.target = '';
 		this.#buildUI();
 	}
 
 	get authType() {
 		return 'Basic';
+	}
+
+	get token() {
+		return AuthStorage.accessToken;
 	}
 
 	async authorize() {
@@ -49,17 +55,34 @@ export class BasicAuthenticator {
 
 	async logout() {
 		this.clearStorage();
-		return Promise.resolve();
+		return Promise.resolve(false);
 	}
 
 	clearStorage() {
 		AuthStorage.accessToken = null;
 	}
 
+	updateUIState(isLoggedIn) {
+		// NOOP
+	}
+
 	#buildUI() {
 		if (!this.#dialog) {
 			const tpl = document.createElement('template');
-			tpl.innerHTML = dlgHtml({});
+			tpl.innerHTML = dlgHtml({
+				i18n: {
+					title: t`Login Onto Broker`,
+					btnClose: t`Close`,
+					btnOk: t`Ok`,
+					btnCancel: t`Cancel`,
+					lblUser: t`User`,
+					phUser: t`Login user name`,
+					fbUser: t`Please provide a valid user name`,
+					lblPassword: t`Password`,
+					phPassword: t`Login password`,
+					fbPassword: t`Please provide a valid password`
+				}
+			});
 			document.body.appendChild(tpl.content);
 
 			this.#dialog = new LoginDialog('login-dlg');

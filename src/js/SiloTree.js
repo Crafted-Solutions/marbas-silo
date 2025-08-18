@@ -1,4 +1,5 @@
 
+import { t } from "ttag";
 import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/module/lib/BSTreeViewTemplate"
 (function () {
 	const origNode = BSTreeViewTemplate.node;
@@ -151,7 +152,7 @@ export class SiloTree {
 	async _loadNodeChildren(node, renderer) {
 		const grainId = (node.dataAttr || {}).grain;
 		const flags = MarBasDefaults.ID_ROOT == grainId ? Task.Flag.DEFAULT | Task.Flag.REPORT_START : Task.Flag.REPORT_ERROR | Task.Flag.REPORT_START;
-		await Task.nowAsync("Loading grains", async () => {
+		await Task.nowAsync(t`Loading grains`, async () => {
 			const grain = await this._apiSvc.getGrain(grainId);
 			await this._getNodeProperties(grain, node);
 			let children = 0 < grain.childCount ? await this._apiSvc.listGrainChildren(grain, false, this._options.typeFilter) : [];

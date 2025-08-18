@@ -1,3 +1,4 @@
+import { t } from "ttag";
 import startCase from "lodash.startcase";
 import { MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement, MbUtils } from "@crafted.solutions/marbas-core";
 import { _Dialog } from "./_Dialog";
@@ -6,7 +7,6 @@ import { Task } from "./Task";
 
 const UuidRegExp = /[a-f\d]{4}(?:[a-f\d]{4}-){4}[a-f\d]{12}/g;
 const AccessFlagMax = 'Full';
-const LoadTaskName = "Reading grain security";
 
 export class GrainSecurityDialog extends _Dialog {
 	#grain;
@@ -20,14 +20,16 @@ export class GrainSecurityDialog extends _Dialog {
 	#modified = {};
 	#added = {};
 	#deleted = {};
+	#loadTaskName;
 
 	constructor(apiSvc, scope = null) {
 		super(scope || 'grain-security');
+		this.#loadTaskName = t`Reading grain security`;
 		this.#apiSvc = apiSvc;
 		this.#aclHeadElm = this._element.querySelector(`#${this._scope}-aclhead`);
 		this.#aclBodyElm = this._element.querySelector(`#${this._scope}-acl tbody`);
 		document.addEventListener(Task.Event.ERROR, (evt) => {
-			if (LoadTaskName == evt.detail.task.name) {
+			if (this.#loadTaskName == evt.detail.task.name) {
 				this.modal.hide();
 			}
 		});
@@ -46,7 +48,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	show(grainId) {
-		this._element.querySelector(`#${this._scope}-subtitle`).textContent = `loading...`;
+		this._element.querySelector(`#${this._scope}-subtitle`).textContent = t`Loading...`;
 		MbDomUtils.clearNode(this.#aclHeadElm);
 		MbDomUtils.clearNode(this.#aclBodyElm);
 		this.#modified = {};
@@ -59,7 +61,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	async _load(grainId) {
-		Task.nowAsync(LoadTaskName, async () => {
+		Task.nowAsync(this.#loadTaskName, async () => {
 			if (grainId) {
 				this.#grain = await this.#apiSvc.getGrain(grainId);
 			}
@@ -261,7 +263,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 				if (inheritedAcl) {
 					const isBuiltIn = MarBasDefaults.ID_DEFAULT == entry.sourceGrainId;
-					tr.querySelector(`.${this._scope}-source`).textContent = isBuiltIn ? 'System defaults' : entry.sourceGrainId;
+					tr.querySelector(`.${this._scope}-source`).textContent = isBuiltIn ? t`System defaults` : entry.sourceGrainId;
 					if (!isBuiltIn) {
 						grainIds[entry.sourceGrainId] = MbUtils.pushOrCreate(grainIds[entry.sourceGrainId], tr.id);
 					}

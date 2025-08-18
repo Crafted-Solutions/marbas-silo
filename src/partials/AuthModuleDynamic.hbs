@@ -1,18 +1,18 @@
 <div id="silo-auth" class="col-12 silo-noauth">
-	<div id="silo-loading">Loading...</div>
+	<div id="silo-loading">{{_ 'Loading...'}}</div>
 	<form class="needs-validation d-none" action="#" onsubmit="return false;" novalidate>
-		<h2 class="d-none">Connection</h2>
+		<h2 class="d-none">{{_ 'Connection'}}</h2>
 		<div class="row my-2">
-			<label class="col-form-label col-sm-1 text-end" for="silo-auth-txt-url">Broker URL</label>
+			<label class="col-form-label col-sm-1 text-end" for="silo-auth-txt-url">{{_ 'Broker URL'}}</label>
 			<div class="col-sm-11">
 				<input id="silo-auth-txt-url" type="text" class="form-control" value="{{apiBaseUrl}}" aria-describedby="silo-auth-txt-url-fb" required>
 				<div id="silo-auth-txt-url-fb" class="invalid-feedback">
-					Please provide data broker URL
+					{{_ 'Please provide data broker URL'}}
 				</div>
 			</div>
 		</div>
 		<div class="my-2">
-			<input id="silo-auth-btn-login" type="submit" class="btn btn-primary" value="Connect">
+			<input id="silo-auth-btn-login" type="submit" class="btn btn-primary" value="{{_ 'Connect'}}">
 		</div>
 	</form>
 </div>
