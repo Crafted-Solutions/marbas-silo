@@ -414,12 +414,12 @@ msgstr "Antwort vom Authorisierungs-Provider wird verarbeitet..."
 msgid "${ title[0] } - Authorization Receiver"
 msgstr "${ title[0] } - Authorisierungsempfänger"
 
-#: src\js\OAuthAuthenticator.js:82
+#: src\js\OAuthAuthenticator.js:83
 #, javascript-format
 msgid "Your browser is blocking popups, please allow them for ${ window.location.protocol }//${ window.location.host } and try again"
 msgstr "Ihr Browser blockiert Popups, bitte diese für ${ window.location.protocol }//${ window.location.host } freischalten und wieder versuchen"
 
-#: src\js\OAuthAuthenticator.js:90
+#: src\js\OAuthAuthenticator.js:91
 msgid "Timeout attempting authorization"
 msgstr "Zeitlimitüberschreitung beim Authorisierungsversuch"
 

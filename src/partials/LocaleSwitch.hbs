@@ -2,7 +2,7 @@
 {{! language labels tranlslations, all must occur verbarim for PO to update}}
 {{#* inline "lang-de"}}{{_ 'Deutch (de)'}}{{/inline}}
 {{#* inline "lang-en"}}{{_ 'English (en)'}}{{/inline}}
-<div class="btn-group dropend">
+<div class="btn-group dropend ps-2 silo-locale-select">
 	<button title="{{_ 'UI Language'}}: {{> (concat 'lang-' locale)}}" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{locale}}</button>
 	<ul class="dropdown-menu">
 		{{#each locales}}
