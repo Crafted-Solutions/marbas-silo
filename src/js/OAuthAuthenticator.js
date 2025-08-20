@@ -300,7 +300,7 @@ export class OAuthAuthenticator {
 	}
 
 	#isWorkerBlocked() {
-		return !this._worker || typeof this._worker.outerHeight === "undefined" || parseInt(this._worker.outerHeight) < 10;
+		return !this._worker || typeof this._worker.closed === "undefined" || this._worker.closed;
 	}
 
 	#closeWorker() {
