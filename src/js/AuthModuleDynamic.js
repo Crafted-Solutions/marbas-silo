@@ -1,4 +1,4 @@
-import { AbstractAuthModule } from "./AbstractAuthModule";
+import { AbstractAuthModule, AuthModuleErrors } from "./AbstractAuthModule";
 import { AuthStorage } from "./AuthStorage.js";
 import { MbDomUtils } from "./cmn/MbDomUtils.js";
 
@@ -20,8 +20,7 @@ export class AuthModule extends AbstractAuthModule {
 			await this._validateAndLogin();
 			isLoggedIn = this.isLoggedIn;
 		}
-		if (isLoggedIn) {
-			await this.#configure();
+		if (isLoggedIn && await this.#configure()) {
 			result = result || {};
 			if (!result.headers) {
 				result.headers = {};
@@ -36,13 +35,16 @@ export class AuthModule extends AbstractAuthModule {
 			return false;
 		}
 		await this.#configure();
-		const redirected = await this.#helper.logout();
+
+		const redirected = this.#helper && await this.#helper.logout();
 		this._clearStorage();
 		this._updateUI();
 		if (!redirected) {
 			this.#showForm();
 		}
-		this.#helper.updateUIState(this.isLoggedIn);
+		if (this.#helper) {
+			this.#helper.updateUIState(this.isLoggedIn);
+		}
 		this._triggerEvent('silo-auth:logout');
 	}
 
@@ -50,13 +52,14 @@ export class AuthModule extends AbstractAuthModule {
 		if (!this._validateForm()) {
 			return false;
 		}
-		await this.#configure();
 		this._clearStorage();
-		try {
-			await this.#helper.authorize();
-			this.#helper.updateUIState(this.isLoggedIn);
-		} catch (e) {
-			this.reportError(e, true);
+		if (await this.#configure()) {
+			try {
+				await this.#helper.authorize();
+				this.#helper.updateUIState(this.isLoggedIn);
+			} catch (e) {
+				this.reportError(e, true);
+			}
 		}
 	}
 
@@ -92,9 +95,18 @@ export class AuthModule extends AbstractAuthModule {
 	async #configure() {
 		if (!this._config) {
 			this.#helper = null;
-			this._config = await fetch(`${this.brokerUrl}/SysInfo/AuthConfig`).then(res => res.json());
+			try {
+				this._config = await fetch(`${this.brokerUrl}/SysInfo/AuthConfig`).then(async res => {
+					if (res.ok) {
+						return await res.json();
+					}
+					throw new Error(AuthModuleErrors.fromStatus(res.status));
+				});
+			} catch (e) {
+				this.reportError(e, true);
+			}
 		}
-		if (!this.#helper) {
+		if (!this.#helper && this._config) {
 			const helperPkg = 'OIDC' == this._config.schema
 				? await import(/* webpackChunkName: "oauth" */ './OAuthAuthenticator.js')
 				: await import(/* webpackChunkName: "basicauth" */ './BasicAuthenticator.js');
@@ -105,8 +117,7 @@ export class AuthModule extends AbstractAuthModule {
 	}
 
 	async #verifyLogin() {
-		if (this.isExpired) {
-			await this.#configure();
+		if (this.isExpired && await this.#configure()) {
 			return await this.#helper.refresh();
 		}
 		return true;

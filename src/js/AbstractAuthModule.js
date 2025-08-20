@@ -3,7 +3,7 @@ import { AuthStorage } from './AuthStorage';
 import { MbDomUtils } from './cmn/MbDomUtils';
 import { t } from 'ttag';
 
-const LOGIN_ERRORS = {
+export const AuthModuleErrors = {
 	'404': function () { return t`Invalid URL`; },
 	'503': function () { return t`Data broker is offline, please try again later`; },
 	fromStatus: function (status) {
@@ -128,7 +128,7 @@ export class AbstractAuthModule {
 					return await res.json();
 				}
 
-				const err = new Error(LOGIN_ERRORS.fromStatus(res.status));
+				const err = new Error(AuthModuleErrors.fromStatus(res.status));
 				err.error_description = t`Request failed (${res.status} ${res.statusText})`;
 				throw err;
 			});
@@ -165,7 +165,7 @@ export class AbstractAuthModule {
 						return true;
 					}
 				}
-				throw new Error(LOGIN_ERRORS.fromStatus(res.status));
+				throw new Error(AuthModuleErrors.fromStatus(res.status));
 			});
 		} catch (e) {
 			this.reportError(e, true);
