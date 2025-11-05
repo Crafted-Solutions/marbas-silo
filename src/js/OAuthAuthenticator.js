@@ -3,6 +3,7 @@ import * as oauth from 'oauth4webapi';
 import * as jose from 'jose';
 import { AuthStorage } from './AuthStorage';
 import { AsyncLock } from './cmn/AsyncLock';
+import { MbDomUtils } from "./cmn/MbDomUtils";
 
 const WORKER_TARGET = 'silo-login';
 const WORKER_HEIGHT = Math.floor(window.screen.availHeight * 0.7);
@@ -289,7 +290,7 @@ export class OAuthAuthenticator {
 			this.#oauthMeta = {
 				issuer: config.authority,
 				authorization_endpoint: config.authorizationUrl,
-				token_endpoint: config.useTokenProxy ? `${this.#module.brokerUrl}/OAuth/Token` : config.tokenUrl,
+				token_endpoint: config.useTokenProxy ? `${(new URL(this.#module.brokerUrl, window.location.href)).href}/OAuth/Token` : config.tokenUrl,
 				scopes_supported: Object.keys(config.scopes)
 			};
 			if (config.pkce) {
@@ -341,26 +342,8 @@ export class OAuthAuthenticator {
 		}
 	}
 
-	static get #stripCbUrlParams() {
-		const result = new URL(window.location.href);
-		const prevSize = result.searchParams.size;
-		if (prevSize) {
-			result.searchParams.delete('code');
-			result.searchParams.delete('state');
-			result.searchParams.delete('session_state');
-			result.searchParams.delete('error');
-			result.searchParams.delete('error_description');
-			result.searchParams.delete('iss');
-		}
-		result._mod = prevSize > result.searchParams.size;
-		return result;
-	}
-
 	static cleanLocation() {
-		const url = OAuthAuthenticator.#stripCbUrlParams;
-		if (url._mod) {
-			window.history.replaceState({}, document.title, url);
-		}
+		MbDomUtils.cleanBrowserLocation(['code', 'state', 'session_state', 'error', 'error_description', 'iss']);
 	}
 }
 

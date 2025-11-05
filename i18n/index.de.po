@@ -52,12 +52,12 @@ msgstr "Anmeldepasswort"
 msgid "Please provide a valid password"
 msgstr "Bitten ein gültigen Passwort angeben"
 
-#: src\js\index.js:24
+#: src\js\index.js:25
 #, javascript-format
 msgid "This app requires access to session storage, configure your browser to accept cookies for ${ location.protocol }//${ location.host }"
 msgstr "Diese App erfordert Zugriff auf Sitzungsspeicher, bitte in der Browser-Konfiguration Cookies für ${ location.protocol }//${ location.host } erlauben"
 
-#: src\js\index.js:29
+#: src\js\index.js:30
 #, javascript-format
 msgid "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
 msgstr "Unerwarteter Fehler aufgereten im Vorgang \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
@@ -414,12 +414,12 @@ msgstr "Antwort vom Authorisierungs-Provider wird verarbeitet..."
 msgid "${ title[0] } - Authorization Receiver"
 msgstr "${ title[0] } - Authorisierungsempfänger"
 
-#: src\js\OAuthAuthenticator.js:83
+#: src\js\OAuthAuthenticator.js:84
 #, javascript-format
 msgid "Your browser is blocking popups, please allow them for ${ window.location.protocol }//${ window.location.host } and try again"
 msgstr "Ihr Browser blockiert Popups, bitte diese für ${ window.location.protocol }//${ window.location.host } freischalten und wieder versuchen"
 
-#: src\js\OAuthAuthenticator.js:91
+#: src\js\OAuthAuthenticator.js:92
 msgid "Timeout attempting authorization"
 msgstr "Zeitlimitüberschreitung beim Authorisierungsversuch"
 

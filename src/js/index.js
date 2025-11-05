@@ -15,6 +15,7 @@ import { MsgBox } from "./cmn/MsgBox";
 import { ExtensionLoader } from "./ExtensionLoader";
 import { StorageUtils } from "./cmn/StorageUtils";
 import { UILocale } from "./UILocale";
+import { MbDomUtils } from "./cmn/MbDomUtils";
 
 global.NoOp = () => { };
 
@@ -37,10 +38,10 @@ if (!redirected) {
 
 	const processParameters = () => {
 		if (window.location.search) {
-			const params = new URLSearchParams(window.location.search);
-			if (params.get('grain')) {
-				window.history.replaceState({}, document.title, "/");
-				const evt = new CustomEvent('mb-silo:navigate', { detail: params.get('grain') });
+			const grainId = (new URLSearchParams(window.location.search)).get('grain');
+			if (grainId) {
+				MbDomUtils.cleanBrowserLocation(['grain']);
+				const evt = new CustomEvent('mb-silo:navigate', { detail: grainId });
 				document.dispatchEvent(evt);
 			}
 		}
