@@ -1,0 +1,7 @@
+<div class="modal {{#if dlgClasses}}{{dlgClasses}}{{else}}fade{{/if}}" id="{{dlgScope}}" tabindex="-1" aria-labelledby="{{dlgScope}}-title" aria-hidden="true" {{#if dlgStatic}} data-bs-backdrop="static" {{/if}}>
+	<div class="modal-dialog modal-dialog-scrollable {{#if dlgCenter}}modal-dialog-centered{{/if}}">
+		<div class="modal-content">
+			{{> @partial-block }}
+		</div>
+	</div>
+</div>

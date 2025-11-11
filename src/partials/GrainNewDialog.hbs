@@ -1,30 +1,26 @@
-<div class="modal fade" id="grain-new" tabindex="-1" aria-labelledby="grain-new-title" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="grain-new-title">
-					<span class="grain-new-mode grain-new-mode-generic">{{_ 'New Grain'}}</span>
-					<span class="grain-new-mode grain-new-mode-type d-none" aria-hidden="true">{{_ 'New Grain Type'}}</span>
-					<span class="grain-new-mode grain-new-mode-container d-none" aria-hidden="true">{{_ 'New Container'}}</span>
-					<div class="fs-6" id="grain-new-path"></div>
-				</h5>
-				{{> partials/_DialogClose}}
-			</div>
-			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
-				<div class="mb-3">
-					<label for="grain-new-txt-name" class="form-label">{{_ 'Name'}}</label>
-					<input type="text" class="form-control" id="grain-new-txt-name" placeholder="{{_ 'Name for the new element'}}" value="" aria-describedby="grain-new-txt-name-fb" required>
-					<div id="grain-new-txt-name-fb" class="invalid-feedback">
-						{{_ 'Please provide a name for the element'}}
-					</div>
-				</div>
-				<div class="mb-3 grain-new-mode grain-new-mode-generic">
-					<span class="btn-group ms-1 mb-1 float-end">{{> partials/_ButtonReload dlgScope='grain-new'}}</span>
-					<label for="grain-new-sel-type" class="col-form-label">{{_ 'Type'}}</label>
-					<nav id="grain-new-sel-type"></nav>
-				</div>
-			</form>
-			{{> partials/_DialogFooter dlgScope='grain-new'}}
+{{#> partials/_DialogModal dlgScope='grain-new'}}
+<div class="modal-header">
+	<h5 class="modal-title" id="grain-new-title">
+		<span class="grain-new-mode grain-new-mode-generic">{{_ 'New Grain'}}</span>
+		<span class="grain-new-mode grain-new-mode-type d-none" aria-hidden="true">{{_ 'New Grain Type'}}</span>
+		<span class="grain-new-mode grain-new-mode-container d-none" aria-hidden="true">{{_ 'New Container'}}</span>
+		<div class="fs-6" id="grain-new-subtitle"></div>
+	</h5>
+	{{> partials/_DialogClose}}
+</div>
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+	<div class="mb-3">
+		<label for="grain-new-txt-name" class="form-label">{{_ 'Name'}}</label>
+		<input type="text" class="form-control" id="grain-new-txt-name" placeholder="{{_ 'Name for the new element'}}" value="" aria-describedby="grain-new-txt-name-fb" required>
+		<div id="grain-new-txt-name-fb" class="invalid-feedback">
+			{{_ 'Please provide a name for the element'}}
 		</div>
 	</div>
-</div>
+	<div class="mb-3 grain-new-mode grain-new-mode-generic">
+		<span class="btn-group ms-1 mb-1 float-end">{{> partials/_ButtonReload dlgScope='grain-new'}}</span>
+		<label for="grain-new-sel-type" class="col-form-label">{{_ 'Type'}}</label>
+		<nav id="grain-new-sel-type"></nav>
+	</div>
+</form>
+{{> partials/_DialogFooter dlgScope='grain-new'}}
+{{/partials/_DialogModal}}

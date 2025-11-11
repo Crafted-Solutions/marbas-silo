@@ -1,3 +1,9 @@
+const INPUT_EVENTS = ['keydown', 'paste', 'focus', 'mousedown'];
+
+function handleReadonlyInput(evt) {
+	if (evt.keyCode != 9) evt.preventDefault();
+}
+
 export const MbDomUtils = {
 	clearNode: function (node) {
 		if ('function' == typeof (node.replaceChildren)) {
@@ -37,6 +43,41 @@ export const MbDomUtils = {
 		};
 		MbDomUtils.hideNode(link, !gid());
 		return link;
+	},
+
+	fakeReadonlyElements: function (container) {
+		const elms = container.querySelectorAll(`.readonly`);
+		for (const elm of elms) {
+			for (const evt of INPUT_EVENTS) {
+				elm.addEventListener(evt, handleReadonlyInput);
+			}
+		}
+	},
+
+	buildFromTemplate(elmId, templateFunc, context = {}, parent = document.body) {
+		if (!document.getElementById(elmId)) {
+			const tpl = document.createElement('template');
+			tpl.innerHTML = templateFunc(context);
+			parent.appendChild(tpl.content);
+		}
+	},
+
+	downloadBlob: function downloadBlob(blob, name) {
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.target = '_blank';
+		if (name) {
+			a.download = name;
+		}
+		a.style.display = 'none';
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(() => {
+			console.info("Revoking blob URL");
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}, 60000);
 	},
 
 	stripUrlParameters: function (url, cleanParams = null) {

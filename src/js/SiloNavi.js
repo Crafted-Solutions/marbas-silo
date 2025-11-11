@@ -22,8 +22,18 @@ export class SiloNavi extends SiloTree {
 		super(elementId, apiSvc, rootNodes, initCallback);
 		this.#buildContextMenu();
 		document.addEventListener('mb-silo:navigate', async (evt) => {
+			await this.navigateToNode(evt.detail || MarBasDefaults.ID_ROOT);
+		});
+		document.addEventListener('mb-silo:reload', async (evt) => {
+			let id = MarBasDefaults.ID_ROOT;
+			let navigate = false;
 			if (evt.detail) {
-				await this.navigateToNode(evt.detail);
+				id = evt.detail.id || id;
+				navigate = evt.detail.navigate;
+			}
+			await this.reloadNode(id);
+			if (navigate) {
+				await this.navigateToNode(id);
 			}
 		});
 		document.addEventListener('mb-silo:typdef-defaults', async (evt) => {

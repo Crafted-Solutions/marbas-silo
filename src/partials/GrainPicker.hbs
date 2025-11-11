@@ -1,20 +1,20 @@
-<div class="modal fade" id="grain-picker" tabindex="-1" aria-labelledby="grain-picker-title" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="grain-picker-title">
-					<span>{{_ 'Select Grain'}} </span>
-					<div class="fs-6" id="grain-picker-subtitle"></div>
-				</h5>
-				<span class="btn-group ms-2 float-end">{{> partials/_ButtonReload dlgScope='grain-picker'}}</span>
-				{{> partials/_DialogClose}}
-			</div>
-			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
-				<div class="mb-3">
-					<nav id="grain-picker-sel"></nav>
-				</div>
-			</form>
-			{{> partials/_DialogFooter dlgScope='grain-picker'}}
-		</div>
-	</div>
+{{#> partials/_DialogModal dlgScope='grain-picker' dlgClasses='modal-over fade'}}
+<div class="modal-header">
+	<h5 class="modal-title" id="grain-picker-title">
+		<span>{{_ 'Select Grain'}} </span>
+		<div class="fs-6" id="grain-picker-subtitle"></div>
+	</h5>
+	<span class="btn-group ms-2 float-end">{{> partials/_ButtonReload dlgScope='grain-picker'}}</span>
+	{{> partials/_DialogClose}}
 </div>
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+	<div class="mb-3">
+		<input type="hidden" id="grain-picker-validation" class="form-control" aria-describedby="grain-picker-validation-fb">
+		<div id="grain-picker-validation-fb" class="invalid-feedback">
+			{{_ 'Please select a grain'}}
+		</div>
+		<nav id="grain-picker-sel"></nav>
+	</div>
+</form>
+{{> partials/_DialogFooter dlgScope='grain-picker'}}
+{{/partials/_DialogModal}}

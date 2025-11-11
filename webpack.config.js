@@ -141,7 +141,8 @@ module.exports = async (env) => {
 		},
 		devtool: 'production' == mode ? false : "eval-cheap-source-map",
 		resolve: {
-			alias: resolveAlias
+			alias: resolveAlias,
+			fallback: { path: false }
 		},
 		module: {
 			rules: [

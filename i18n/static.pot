@@ -1,13 +1,28 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-#: src/index.hbs:25
-msgid "Logout"
+#: src/partials/AuthModuleDynamic.hbs:2
+msgid "Loading..."
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:3
 #: src/partials/AuthModuleDynamic.hbs:4
+#: src/partials/AuthModuleBasic.hbs:3
 msgid "Connection"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:6
+#: src/partials/AuthModuleBasic.hbs:21
+msgid "Broker URL"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:10
+#: src/partials/AuthModuleBasic.hbs:25
+msgid "Please provide data broker URL"
+msgstr ""
+
+#: src/partials/AuthModuleDynamic.hbs:15
+#: src/partials/AuthModuleBasic.hbs:30
+msgid "Connect"
 msgstr ""
 
 #: src/partials/AuthModuleBasic.hbs:5
@@ -34,141 +49,50 @@ msgstr ""
 msgid "Please provide a valid password"
 msgstr ""
 
-#: src/partials/AuthModuleBasic.hbs:21
-#: src/partials/AuthModuleDynamic.hbs:6
-msgid "Broker URL"
-msgstr ""
-
-#: src/partials/AuthModuleBasic.hbs:25
-#: src/partials/AuthModuleDynamic.hbs:10
-msgid "Please provide data broker URL"
-msgstr ""
-
-#: src/partials/AuthModuleBasic.hbs:30
-#: src/partials/AuthModuleDynamic.hbs:15
-msgid "Connect"
-msgstr ""
-
 #: src/partials/AuthModuleBasic.hbs:33
 msgid "Invalid user or password"
 msgstr ""
 
-#: src/partials/AuthModuleDynamic.hbs:2
-msgid "Loading..."
+#: src/index.hbs:26
+msgid "Logout"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:6
-msgid "New File"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:14
-#: src/partials/GrainNewDialog.hbs:15
-msgid "Name"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:15
-msgid "(Optional) name for the new grain"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:18
-#: src/partials/_SiloNaviButton.hbs:4
-msgid "File"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:21
-msgid "Please provide a file"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:6
-msgid "New Grain"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:7
-msgid "New Grain Type"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:8
-msgid "New Container"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:16
-msgid "Name for the new element"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:18
-msgid "Please provide a name for the element"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:23
-#: src/partials/_SiloNaviButton.hbs:5
-msgid "Type"
-msgstr ""
-
-#: src/partials/GrainPicker.hbs:6
+#: src/partials/GrainPicker.hbs:4
 msgid "Select Grain"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:6
-msgid "Security Options"
+#: src/partials/GrainPicker.hbs:14
+msgid "Please select a grain"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:7
-msgid "Modified"
+#: src/partials/GrainNewDialog.hbs:4
+msgid "New Grain"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:14
-msgid "Access Control List"
+#: src/partials/GrainNewDialog.hbs:5
+msgid "New Grain Type"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:19
-#: src/partials/GrainSecurityDialog.hbs:20
-msgid "Add entry"
+#: src/partials/GrainNewDialog.hbs:6
+msgid "New Container"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:24
-msgid "Role"
+#: src/partials/GrainNewDialog.hbs:13
+#: src/partials/FileNewDialog.hbs:6
+msgid "Name"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:26
-msgid "Access Control"
+#: src/partials/GrainNewDialog.hbs:14
+msgid "Name for the new element"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:27
-msgid "Iherit"
+#: src/partials/GrainNewDialog.hbs:16
+msgid "Please provide a name for the element"
 msgstr ""
 
-#: src/partials/GrainSecurityDialog.hbs:28
-msgid "Source"
-msgstr ""
-
-#: src/partials/GrainSecurityDialog.hbs:49
-#: src/partials/GrainSecurityDialog.hbs:49
-msgid "Delete entry"
-msgstr ""
-
-#: src/partials/GrainSecurityDialog.hbs:52
-#: src/partials/GrainSecurityDialog.hbs:55
-msgid "Inhert to children"
-msgstr ""
-
-#: src/partials/GrainSecurityDialog.hbs:72
-msgid "Permit"
-msgstr ""
-
-#: src/partials/GrainSecurityDialog.hbs:76
-msgid "Restrict"
-msgstr ""
-
-#: src/partials/InputDialog.hbs:6
-msgid "Input Request"
-msgstr ""
-
-#: src/partials/InputDialog.hbs:13
-msgid "Input"
-msgstr ""
-
-#: src/partials/InputDialog.hbs:16
-msgid "Value is required"
+#: src/partials/GrainNewDialog.hbs:21
+#: src/partials/_SiloNaviButton.hbs:5
+msgid "Type"
 msgstr ""
 
 #: src/partials/LangManager.hbs:2
@@ -193,6 +117,86 @@ msgstr ""
 msgid "Delete Selected Language"
 msgstr ""
 
+#: src/partials/GrainSecurityDialog.hbs:4
+msgid "Security Options"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:5
+msgid "Modified"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:12
+msgid "Access Control List"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:17
+#: src/partials/GrainSecurityDialog.hbs:18
+msgid "Add entry"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:22
+msgid "Role"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:24
+msgid "Access Control"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:25
+msgid "Iherit"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:26
+msgid "Source"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:46
+#: src/partials/GrainSecurityDialog.hbs:46
+msgid "Delete entry"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:49
+#: src/partials/GrainSecurityDialog.hbs:52
+msgid "Inhert to children"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:69
+msgid "Permit"
+msgstr ""
+
+#: src/partials/GrainSecurityDialog.hbs:73
+msgid "Restrict"
+msgstr ""
+
+#: src/partials/InputDialog.hbs:2
+msgid "Input Request"
+msgstr ""
+
+#: src/partials/InputDialog.hbs:5
+msgid "Input"
+msgstr ""
+
+#: src/partials/InputDialog.hbs:8
+msgid "Value is required"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:2
+msgid "New File"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:7
+msgid "(Optional) name for the new grain"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:10
+#: src/partials/_SiloNaviButton.hbs:4
+msgid "File"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:13
+msgid "Please provide a file"
+msgstr ""
+
 #: src/partials/LocaleSwitch.hbs:3
 msgid "Deutch (de)"
 msgstr ""
@@ -205,32 +209,22 @@ msgstr ""
 msgid "Switch Language"
 msgstr ""
 
-#: src/partials/MsgBox.hbs:12
-#: src/partials/TaskLayer.hbs:4
+#: src/partials/ToolsMenu.hbs:4
+msgid "Tools"
+msgstr ""
+
+#: src/partials/ToolsMenu.hbs:9
+msgid "Export Package"
+msgstr ""
+
+#: src/partials/ToolsMenu.hbs:14
+msgid "Import Package"
+msgstr ""
+
 #: src/partials/_DialogClose.hbs:1
+#: src/partials/MsgBox.hbs:10
+#: src/partials/TaskLayer.hbs:4
 msgid "Close"
-msgstr ""
-
-#: src/partials/MsgBox.hbs:13
-#: src/partials/_DialogFooter.hbs:2
-msgid "Ok"
-msgstr ""
-
-#: src/partials/MsgBox.hbs:14
-msgid "Yes"
-msgstr ""
-
-#: src/partials/MsgBox.hbs:15
-msgid "No"
-msgstr ""
-
-#: src/partials/MsgBox.hbs:16
-#: src/partials/TaskLayer.hbs:14
-msgid "Abort"
-msgstr ""
-
-#: src/partials/MsgBox.hbs:17
-msgid "Cancel"
 msgstr ""
 
 #: src/partials/SiloNaviMenu.hbs:3
@@ -239,6 +233,28 @@ msgstr ""
 
 #: src/partials/SiloNaviMenu.hbs:7
 msgid "New"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:11
+#: src/partials/_DialogFooter.hbs:2
+msgid "Ok"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:12
+msgid "Yes"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:13
+msgid "No"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:14
+#: src/partials/TaskLayer.hbs:14
+msgid "Abort"
+msgstr ""
+
+#: src/partials/MsgBox.hbs:15
+msgid "Cancel"
 msgstr ""
 
 #: src/partials/TaskLayer.hbs:3
@@ -257,13 +273,13 @@ msgstr ""
 msgid "Aborted"
 msgstr ""
 
+#: src/partials/_DialogFooter.hbs:3
+msgid "Cacnel"
+msgstr ""
+
 #: src/partials/_ButtonReload.hbs:1
 #: src/partials/_SiloNaviButton.hbs:1
 msgid "Reload"
-msgstr ""
-
-#: src/partials/_DialogFooter.hbs:3
-msgid "Cacnel"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:2
