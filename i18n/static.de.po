@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/index.hbs:25
+#: src/index.hbs:26
 msgid "Logout"
 msgstr "Ausloggen"
 
@@ -68,31 +68,31 @@ msgstr "Sparache hinzufügen"
 msgid "Delete Selected Language"
 msgstr "Ausgewählte Sprache löschen"
 
-#: src/partials/FileNewDialog.hbs:6
+#: src/partials/FileNewDialog.hbs:2
 msgid "New File"
 msgstr "Neue Datei"
 
-#: src/partials/MsgBox.hbs:12
+#: src/partials/MsgBox.hbs:10
 #: src/partials/TaskLayer.hbs:4
 #: src/partials/_DialogClose.hbs:1
 msgid "Close"
 msgstr "Schließen"
 
-#: src/partials/FileNewDialog.hbs:14
-#: src/partials/GrainNewDialog.hbs:15
+#: src/partials/FileNewDialog.hbs:6
+#: src/partials/GrainNewDialog.hbs:13
 msgid "Name"
 msgstr "Name"
 
-#: src/partials/FileNewDialog.hbs:15
+#: src/partials/FileNewDialog.hbs:7
 msgid "(Optional) name for the new grain"
 msgstr "(Optional) Name des Grain"
 
-#: src/partials/FileNewDialog.hbs:18
+#: src/partials/FileNewDialog.hbs:10
 #: src/partials/_SiloNaviButton.hbs:4
 msgid "File"
 msgstr "Datei"
 
-#: src/partials/FileNewDialog.hbs:21
+#: src/partials/FileNewDialog.hbs:13
 msgid "Please provide a file"
 msgstr "Bitte Datei auswählen"
 
@@ -124,7 +124,7 @@ msgstr "Bitten ein gültigen Passwort angeben"
 msgid "Invalid user or password"
 msgstr ""
 
-#: src/partials/MsgBox.hbs:13
+#: src/partials/MsgBox.hbs:11
 #: src/partials/_DialogFooter.hbs:2
 msgid "Ok"
 msgstr "Ok"
@@ -133,108 +133,107 @@ msgstr "Ok"
 msgid "Cacnel"
 msgstr "Abbrechen"
 
-#: src/partials/SiloNaviMenu.hbs:6
 #: src/partials/_ButtonReload.hbs:1
 #: src/partials/_SiloNaviButton.hbs:1
 msgid "Reload"
 msgstr "Neu laden"
 
-#: src/partials/MsgBox.hbs:14
+#: src/partials/MsgBox.hbs:12
 msgid "Yes"
 msgstr "Ja"
 
-#: src/partials/MsgBox.hbs:15
+#: src/partials/MsgBox.hbs:13
 msgid "No"
 msgstr "Nein"
 
-#: src/partials/MsgBox.hbs:16
+#: src/partials/MsgBox.hbs:14
 #: src/partials/TaskLayer.hbs:14
 msgid "Abort"
 msgstr "Beenden"
 
-#: src/partials/InputDialog.hbs:6
+#: src/partials/InputDialog.hbs:2
 msgid "Input Request"
 msgstr "Eingabgeaufforderung"
 
-#: src/partials/InputDialog.hbs:13
+#: src/partials/InputDialog.hbs:5
 msgid "Input"
 msgstr "Eingabe"
 
-#: src/partials/InputDialog.hbs:16
+#: src/partials/InputDialog.hbs:8
 msgid "Value is required"
 msgstr "Wert ist erforderlich"
 
-#: src/partials/GrainSecurityDialog.hbs:6
+#: src/partials/GrainSecurityDialog.hbs:4
 msgid "Security Options"
 msgstr "Sicherheitsoptionen"
 
-#: src/partials/GrainSecurityDialog.hbs:7
+#: src/partials/GrainSecurityDialog.hbs:5
 msgid "Modified"
 msgstr "Geändert"
 
-#: src/partials/GrainSecurityDialog.hbs:14
+#: src/partials/GrainSecurityDialog.hbs:12
 msgid "Access Control List"
 msgstr "Zugriffskontrollliste"
 
-#: src/partials/GrainSecurityDialog.hbs:19
-#: src/partials/GrainSecurityDialog.hbs:20
+#: src/partials/GrainSecurityDialog.hbs:17
+#: src/partials/GrainSecurityDialog.hbs:18
 msgid "Add entry"
 msgstr "Eintrag hinzufügen"
 
-#: src/partials/GrainSecurityDialog.hbs:26
+#: src/partials/GrainSecurityDialog.hbs:24
 msgid "Access Control"
 msgstr "Zugriff"
 
-#: src/partials/GrainSecurityDialog.hbs:27
+#: src/partials/GrainSecurityDialog.hbs:25
 msgid "Iherit"
 msgstr "Vererben"
 
-#: src/partials/GrainSecurityDialog.hbs:28
+#: src/partials/GrainSecurityDialog.hbs:26
 msgid "Source"
 msgstr "Quelle"
 
-#: src/partials/GrainSecurityDialog.hbs:49
+#: src/partials/GrainSecurityDialog.hbs:46
 msgid "Delete entry"
 msgstr "Eintrag löschen"
 
+#: src/partials/GrainSecurityDialog.hbs:49
 #: src/partials/GrainSecurityDialog.hbs:52
-#: src/partials/GrainSecurityDialog.hbs:55
 msgid "Inhert to children"
 msgstr "Vererben an Kinder"
 
-#: src/partials/GrainSecurityDialog.hbs:72
+#: src/partials/GrainSecurityDialog.hbs:69
 msgid "Permit"
 msgstr "Erlauben"
 
-#: src/partials/GrainSecurityDialog.hbs:76
+#: src/partials/GrainSecurityDialog.hbs:73
 msgid "Restrict"
 msgstr "Einschränken"
 
-#: src/partials/GrainPicker.hbs:6
+#: src/partials/GrainPicker.hbs:4
 msgid "Select Grain"
 msgstr "Grain Auswählen"
 
-#: src/partials/GrainNewDialog.hbs:6
+#: src/partials/GrainNewDialog.hbs:4
 msgid "New Grain"
 msgstr "Neues Grain"
 
-#: src/partials/GrainNewDialog.hbs:7
+#: src/partials/GrainNewDialog.hbs:5
 msgid "New Grain Type"
 msgstr "Neuer Grain-Typ"
 
-#: src/partials/GrainNewDialog.hbs:8
+#: src/partials/GrainNewDialog.hbs:6
 msgid "New Container"
 msgstr "Neuer Container"
 
-#: src/partials/GrainNewDialog.hbs:16
+#: src/partials/GrainNewDialog.hbs:14
 msgid "Name for the new element"
 msgstr "Name des neuen Elements"
 
-#: src/partials/GrainNewDialog.hbs:18
+#: src/partials/GrainNewDialog.hbs:16
 msgid "Please provide a name for the element"
 msgstr "Bitte einen Elementnamen angeben"
 
-#: src/partials/GrainNewDialog.hbs:23
+#: src/partials/GrainNewDialog.hbs:21
 #: src/partials/_SiloNaviButton.hbs:5
 msgid "Type"
 msgstr "Typ"
@@ -283,7 +282,7 @@ msgstr "Löschen"
 msgid "Security"
 msgstr "Sicherheit"
 
-#: src/partials/MsgBox.hbs:17
+#: src/partials/MsgBox.hbs:15
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -303,7 +302,7 @@ msgstr "Abgeschlossen"
 msgid "Aborted"
 msgstr "Abgebrochen"
 
-#: src/partials/GrainSecurityDialog.hbs:24
+#: src/partials/GrainSecurityDialog.hbs:22
 msgid "Role"
 msgstr "Rolle"
 
@@ -314,3 +313,19 @@ msgstr "Vom Typ..."
 #: src/partials/_SiloNaviButton.hbs:3
 msgid "Container"
 msgstr "Container"
+
+#: src/partials/ToolsMenu.hbs:4
+msgid "Tools"
+msgstr "Werkzeug"
+
+#: src/partials/ToolsMenu.hbs:9
+msgid "Export Package"
+msgstr "Paket Exportieren"
+
+#: src/partials/ToolsMenu.hbs:14
+msgid "Import Package"
+msgstr "Paket Importieren"
+
+#: src/partials/GrainPicker.hbs:14
+msgid "Please select a grain"
+msgstr "Bitte ein Grain wählen"

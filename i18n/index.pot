@@ -44,39 +44,26 @@ msgid "Login Onto Broker"
 msgstr ""
 
 #: src\js\BasicAuthenticator.js:75
-msgid "Close"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:76
-msgid "Ok"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:14
-#: src\js\BasicAuthenticator.js:77
-msgid "Cancel"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:78
 msgid "User"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:79
+#: src\js\BasicAuthenticator.js:76
 msgid "Login user name"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:80
+#: src\js\BasicAuthenticator.js:77
 msgid "Please provide a valid user name"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:81
+#: src\js\BasicAuthenticator.js:78
 msgid "Password"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:82
+#: src\js\BasicAuthenticator.js:79
 msgid "Login password"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:83
+#: src\js\BasicAuthenticator.js:80
 msgid "Please provide a valid password"
 msgstr ""
 
@@ -104,14 +91,14 @@ msgstr ""
 msgid "Field Info"
 msgstr ""
 
-#: src\js\index.js:24
+#: src\js\index.js:26
 #, javascript-format
 msgid ""
 "This app requires access to session storage, configure your browser to "
 "accept cookies for ${ location.protocol }//${ location.host }"
 msgstr ""
 
-#: src\js\index.js:29
+#: src\js\index.js:31
 #, javascript-format
 msgid ""
 "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
@@ -151,66 +138,249 @@ msgstr ""
 msgid "${ title[0] } - Authorization Receiver"
 msgstr ""
 
-#: src\js\OAuthAuthenticator.js:82
+#: src\js\OAuthAuthenticator.js:84
 #, javascript-format
 msgid ""
 "Your browser is blocking popups, please allow them for ${ "
 "window.location.protocol }//${ window.location.host } and try again"
 msgstr ""
 
-#: src\js\OAuthAuthenticator.js:90
+#: src\js\OAuthAuthenticator.js:92
 msgid "Timeout attempting authorization"
 msgstr ""
 
-#: src\js\SiloNavi.js:38
+#: src\js\Packager.js:21
+msgid "Export Package"
+msgstr ""
+
+#: src\js\Packager.js:22
+msgid "Package Name"
+msgstr ""
+
+#: src\js\Packager.js:23
+msgid "(Optional) name for package file"
+msgstr ""
+
+#: src\js\Packager.js:24
+msgid ""
+"Note: grains are added to the package in order of appearance, this order is "
+"applied when the package is imported"
+msgstr ""
+
+#: src\js\Packager.js:25
+msgid "Add another grain"
+msgstr ""
+
+#: src\js\Packager.js:26
+msgid "Remove this grain"
+msgstr ""
+
+#: src\js\Packager.js:27
+msgid "Move this grain up"
+msgstr ""
+
+#: src\js\Packager.js:28
+msgid "Move this grain down"
+msgstr ""
+
+#: src\js\Packager.js:29
+msgid "Anchor Grain"
+msgstr ""
+
+#: src\js\Packager.js:30
+msgid "Grain to export"
+msgstr ""
+
+#: src\js\Packager.js:31
+msgid "Browse grains"
+msgstr ""
+
+#: src\js\Packager.js:32
+msgid "Please select a grain"
+msgstr ""
+
+#: src\js\Packager.js:33
+msgid "Include Linked Grains"
+msgstr ""
+
+#: src\js\Packager.js:34
+msgid "Include Type Information"
+msgstr ""
+
+#: src\js\Packager.js:35
+msgid "Include Parent Grains"
+msgstr ""
+
+#: src\js\Packager.js:36
+msgid "Include Children"
+msgstr ""
+
+#: src\conf\editor.conf.js:350
+#: src\js\Packager.js:38
+msgid "None"
+msgstr ""
+
+#: src\js\Packager.js:39
+msgid "Immediate only"
+msgstr ""
+
+#: src\js\Packager.js:40
+msgid "All recursively"
+msgstr ""
+
+#: src\js\Packager.js:207
+msgid "Import Package"
+msgstr ""
+
+#: src\js\Packager.js:208
+msgid "Package"
+msgstr ""
+
+#: src\js\Packager.js:209
+msgid "Please provide a package"
+msgstr ""
+
+#: src\js\Packager.js:210
+msgid "Duplicate Grains Handling"
+msgstr ""
+
+#: src\js\Packager.js:212
+msgid "Ignore"
+msgstr ""
+
+#: src\js\Packager.js:213
+msgid "Merge (skip if newer)"
+msgstr ""
+
+#: src\js\Packager.js:214
+msgid "Merge"
+msgstr ""
+
+#: src\js\Packager.js:215
+msgid "Overwrite (skip if newer)"
+msgstr ""
+
+#: src\js\Packager.js:216
+msgid "Overwrite"
+msgstr ""
+
+#: src\js\Packager.js:217
+msgid "Overwrite recursively"
+msgstr ""
+
+#: src\js\Packager.js:219
+msgid "Missing Dependencies Handling"
+msgstr ""
+
+#: src\js\Packager.js:221
+msgid "Warn and continue"
+msgstr ""
+
+#: src\js\Packager.js:222
+msgid "Create placeholder (dummy) grain"
+msgstr ""
+
+#: src\js\Packager.js:223
+msgid "Abort operation"
+msgstr ""
+
+#: src\js\Packager.js:324
+msgid "Caching"
+msgstr ""
+
+#: src\js\Packager.js:329
+#, javascript-format
+msgid "Processing grain \"${ name }\" (${ id })"
+msgstr ""
+
+#: src\js\Packager.js:331
+msgid "Processing"
+msgstr ""
+
+#: src\js\Packager.js:275
+msgid "Exporting package"
+msgstr ""
+
+#: src\js\Packager.js:282
+msgid "Importing package"
+msgstr ""
+
+#: src\js\Packager.js:285
+msgid "Pending"
+msgstr ""
+
+#: src\js\Packager.js:292
+msgid "Cancelled"
+msgstr ""
+
+#: src\js\Packager.js:306
+#, javascript-format
+msgid ""
+"Import results: ${ importResult.importedCount } grains imported, ${ "
+"importResult.ignoredCount } grains skipped"
+msgstr ""
+
+#: src\js\Packager.js:308
+msgid " (completed with warnings)"
+msgstr ""
+
+#: src\js\Packager.js:310
+msgid " (completed with errors)"
+msgstr ""
+
+#: src\js\Packager.js:313
+msgid "Package Import"
+msgstr ""
+
+#: src\js\SiloNavi.js:48
 #, javascript-format
 msgid "Delete ${ node.text }?"
 msgstr ""
 
-#: src\js\SiloNavi.js:39
+#: src\js\SiloNavi.js:49
 msgid "Deleting grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:58
+#: src\js\SiloNavi.js:68
 msgid "Creating grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:73
+#: src\js\SiloNavi.js:83
 msgid "Creating file"
 msgstr ""
 
-#: src\js\SiloNavi.js:88
+#: src\js\SiloNavi.js:98
 #, javascript-format
 msgid "Rename \"${ oldName }\""
 msgstr ""
 
-#: src\js\SiloNavi.js:89
+#: src\js\SiloNavi.js:99
 msgid "New Grain Name"
 msgstr ""
 
-#: src\js\SiloNavi.js:180
+#: src\js\SiloNavi.js:190
 msgid "Moving grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:180
+#: src\js\SiloNavi.js:190
 msgid "Copying grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:208
+#: src\js\SiloNavi.js:218
 msgid "Creating link"
 msgstr ""
 
-#: src\js\SiloNavi.js:256
+#: src\js\SiloNavi.js:266
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr ""
 
-#: src\js\SiloNavi.js:278
+#: src\js\SiloNavi.js:288
 #, javascript-format
 msgid "Path for ${ grainOrId } is empty"
 msgstr ""
 
-#: src\js\SiloNavi.js:299
+#: src\js\SiloNavi.js:309
 #, javascript-format
 msgid "Path to ${ id } is unreachable"
 msgstr ""
@@ -227,40 +397,44 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:51
+#: src\js\jed\FieldEditorGrain.js:50
 msgid "Go To Grain"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:52
+#: src\js\jed\FieldEditorGrain.js:51
 msgid "Select"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:55
+#: src\js\jed\FieldEditorGrain.js:54
 msgid "Delete"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:171
+#: src\js\jed\FieldEditorGrain.js:170
 msgid "Other Options"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:190
+#: src\js\jed\FieldEditorGrain.js:189
 msgid "Copy ID"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:195
+#: src\js\jed\FieldEditorGrain.js:194
 msgid "Copy Path"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:200
+#: src\js\jed\FieldEditorGrain.js:199
 msgid "Copy URL"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:215
+#: src\js\jed\FieldEditorGrain.js:214
 msgid "<Self>"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:241
+#: src\js\jed\FieldEditorGrain.js:240
 msgid "Open (new window)"
+msgstr ""
+
+#: src\js\cmn\GrainPicker.js:38
+msgid "Select Grain"
 msgstr ""
 
 #: src\js\cmn\GrainSecurityDialog.js:27
@@ -273,6 +447,19 @@ msgstr ""
 
 #: src\js\cmn\GrainSecurityDialog.js:266
 msgid "System defaults"
+msgstr ""
+
+#: src\js\cmn\_Dialog.js:80
+msgid "Close"
+msgstr ""
+
+#: src\js\cmn\_Dialog.js:81
+msgid "Ok"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:14
+#: src\js\cmn\_Dialog.js:82
+msgid "Cancel"
 msgstr ""
 
 #: src\conf\editor.conf.js:14
@@ -388,10 +575,6 @@ msgstr ""
 
 #: src\conf\editor.conf.js:338
 msgid "Value Constraint Parameters"
-msgstr ""
-
-#: src\conf\editor.conf.js:350
-msgid "None"
 msgstr ""
 
 #: src\conf\editor.conf.js:354

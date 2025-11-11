@@ -584,7 +584,7 @@ export class GrainEditor {
 
 	_showGrainPicker(closeCallback, pickerOptions) {
 		if (!this.#grainPicker) {
-			this.#grainPicker = new GrainPicker('grain-picker', this._apiSvc);
+			this.#grainPicker = GrainPicker.instance('grain-picker', this._apiSvc);
 		}
 		this.#grainPicker.addEventListener('hidden.bs.modal', () => {
 			closeCallback(this.#grainPicker);

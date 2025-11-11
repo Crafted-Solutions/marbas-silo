@@ -1,28 +1,18 @@
-<div class="modal fade" id="file-new" tabindex="-1" aria-labelledby="file-new-title" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="file-new-title">
-					<span>{{_ 'New File'}}</span>
-					<div class="fs-6" id="file-new-path"></div>
-				</h5>
-				{{> partials/_DialogClose}}
-			</div>
-			<form class="modal-body needs-validation" action="#" onsubmit="return false;" enctype="multipart/form-data" novalidate>
-				<input type="hidden" id="file-new-parent-id" name="ParentId">
-				<div class="mb-3">
-					<label for="file-new-txt-name" class="form-label">{{_ 'Name'}}</label>
-					<input type="text" class="form-control" id="file-new-txt-name" name="Name" placeholder="{{_ '(Optional) name for the new grain'}}" value="">
-				</div>
-				<div class="mb-3">
-					<label for="file-new-file" class="form-label">{{_ 'File'}}</label>
-					<input class="form-control" name="File" type="file" id="file-new-file" aria-describedby="file-new-file-fb" required>
-					<div id="file-new-file-fb" class="invalid-feedback">
-						{{_ 'Please provide a file'}}
-					</div>
-				</div>
-			</form>
-			{{> partials/_DialogFooter dlgScope='file-new'}}
+{{#> partials/_DialogModal dlgScope='file-new'}}
+{{> partials/_DialogModalHeader dlgScope='file-new' dlgTitle=(_ 'New File')}}
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" enctype="multipart/form-data" novalidate>
+	<input type="hidden" id="file-new-parent-id" name="ParentId">
+	<div class="mb-3">
+		<label for="file-new-txt-name" class="form-label">{{_ 'Name'}}</label>
+		<input type="text" class="form-control" id="file-new-txt-name" name="Name" placeholder="{{_ '(Optional) name for the new grain'}}" value="">
+	</div>
+	<div class="mb-3">
+		<label for="file-new-file" class="form-label">{{_ 'File'}}</label>
+		<input class="form-control" name="File" type="file" id="file-new-file" aria-describedby="file-new-file-fb" required>
+		<div id="file-new-file-fb" class="invalid-feedback">
+			{{_ 'Please provide a file'}}
 		</div>
 	</div>
-</div>
+</form>
+{{> partials/_DialogFooter dlgScope='file-new'}}
+{{/partials/_DialogModal}}

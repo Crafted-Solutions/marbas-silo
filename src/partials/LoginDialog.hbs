@@ -1,35 +1,22 @@
-<div class="modal fade" id="login-dlg" tabindex="-1" aria-labelledby="login-dlg-title" data-bs-backdrop="static" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">
-					<span>{{i18n.title}}</span>
-					<div class="fs-6" id="login-dlg-subtitle"></div>
-				</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{i18n.btnClose}}"></button>
+{{#> partials/_DialogModal dlgScope='login-dlg' dlgStatic='1' dlgCenter='1'}}
+{{> partials/_DialogModalHeaderDyn dlgScope='login-dlg'}}
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+	<div class="mb-3">
+		<div>
+			<label class="form-label text-end" for="login-dlg-txt-user">{{i18n.lblUser}}</label>
+			<input id="login-dlg-txt-user" type="text" class="form-control" aria-describedby="login-dlg-txt-user-fb" placeholder="{{i18n.phUser}}" required>
+			<div id="login-dlg-txt-user-fb" class="invalid-feedback">
+				{{i18n.fbUser}}
 			</div>
-			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
-				<div class="mb-3">
-					<div>
-						<label class="form-label text-end" for="login-dlg-txt-user">{{i18n.lblUser}}</label>
-						<input id="login-dlg-txt-user" type="text" class="form-control" aria-describedby="login-dlg-txt-user-fb" placeholder="{{i18n.phUser}}" required>
-						<div id="login-dlg-txt-user-fb" class="invalid-feedback">
-							{{i18n.fbUser}}
-						</div>
-					</div>
-					<div class="mt-2">
-						<label class="form-label text-end" for="login-dlg-txt-pwd">{{i18n.lblPassword}}</label>
-						<input id="login-dlg-txt-pwd" type="password" class="form-control" aria-describedby="login-dlg-txt-pwd-fb" placeholder="{{i18n.phPassword}}" required>
-						<div id="login-dlg-txt-pwd-fb" class="invalid-feedback">
-							{{i18n.fbPassword}}
-						</div>
-					</div>
-				</div>
-			</form>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" id="login-dlg-btn-ok">{{i18n.btnOk}}</button>
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{i18n.btnCancel}}</button>
+		</div>
+		<div class="mt-2">
+			<label class="form-label text-end" for="login-dlg-txt-pwd">{{i18n.lblPassword}}</label>
+			<input id="login-dlg-txt-pwd" type="password" class="form-control" aria-describedby="login-dlg-txt-pwd-fb" placeholder="{{i18n.phPassword}}" required>
+			<div id="login-dlg-txt-pwd-fb" class="invalid-feedback">
+				{{i18n.fbPassword}}
 			</div>
 		</div>
 	</div>
-</div>
+</form>
+{{> partials/_DialogFooterDyn dlgScope='login-dlg'}}
+{{/partials/_DialogModal}}
