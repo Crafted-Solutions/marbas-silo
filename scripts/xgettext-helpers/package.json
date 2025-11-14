@@ -5,7 +5,7 @@
 	"version": "0.0.1",
 	"main": "./xgettext-helpers.js",
 	"bin": {
-		"xgettext-helpers": "./xgettext-helpers.js"
+		"xgettext-helpers": "xgettext-helpers.js"
 	},
 	"scripts": {
 		"build": "exit 0",
