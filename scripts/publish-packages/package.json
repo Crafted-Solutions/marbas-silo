@@ -6,7 +6,7 @@
 	"type": "module",
 	"main": "./publish-packages.js",
 	"bin": {
-		"publish-packages": "./publish-packages.js"
+		"publish-packages": "publish-packages.js"
 	},
 	"scripts": {
 		"build": "exit 0",
