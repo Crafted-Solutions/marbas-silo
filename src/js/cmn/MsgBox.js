@@ -1,6 +1,8 @@
 import { Modal } from "bootstrap";
 import { MbDomUtils } from "./MbDomUtils";
 
+const MsgBoxTypes = ['warning', 'danger', 'info', 'success', 'primary'];
+
 export class MsgBox {
 	static #inst;
 	#element;
@@ -48,7 +50,7 @@ export class MsgBox {
 			return;
 		}
 		options = options || {};
-		
+
 		this.#handlers = {};
 		this.#result = options.closeAction || 'close';
 		this.#defaultAction = null;
@@ -58,27 +60,10 @@ export class MsgBox {
 
 		const icoElm = this.#element.querySelector('.msgbox-dlg-icon');
 		if (options.icon) {
-			['bi-exclamation-triangle-fill', 'bi-exclamation-octagon-fill', 'bi-check-circle-fill', 'bi-info-circle-fill', 'bi-info-square-fill', 'text-danger', 'text-warning', 'text-info', 'text-success', 'text-primary'].forEach(x => {
-				icoElm.classList.toggle(x, false);
-			});
-			icoElm.classList.toggle(`text-${options.icon}`, true);
-			switch (options.icon) {
-				case 'warning':
-					icoElm.classList.toggle('bi-exclamation-triangle-fill', true);
-					break;
-				case 'danger':
-					icoElm.classList.toggle('bi-exclamation-octagon-fill', true);
-					break;
-				case 'info':
-					icoElm.classList.toggle('bi-info-circle-fill', true);
-					break;
-				case 'success':
-					icoElm.classList.toggle('bi-check-circle-fill', true);
-					break;
-				case 'primary':
-					icoElm.classList.toggle('bi-question-square-fill', true);
-					break;			
-			}
+			const markers = ['bi-exclamation-triangle-fill', 'bi-exclamation-octagon-fill', 'bi-info-circle-fill', 'bi-check-circle-fill', 'bi-question-square-fill'
+				, ...MsgBoxTypes.map(x => `text-${x}`)];
+			icoElm.classList.remove(...markers);
+			icoElm.classList.add(`text-${options.icon}`, markers[MsgBoxTypes.indexOf(options.icon)]);
 		}
 		MbDomUtils.hideNode(icoElm, !options.icon);
 
@@ -119,7 +104,7 @@ export class MsgBox {
 			MsgBox.#inst.#element.addEventListener('hidden.bs.modal', () => {
 				resolve(MsgBox.#inst.result);
 			}, { once: true });
-			MsgBox.#inst.show(text, options);	
+			MsgBox.#inst.show(text, options);
 		});
 	}
 
