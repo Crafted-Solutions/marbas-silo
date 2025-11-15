@@ -1,23 +1,13 @@
-<div class="modal fade" id="input-dlg" tabindex="-1" aria-labelledby="input-dlg-title" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="input-dlg-title">
-					<span>{{_ 'Input Request'}}</span>
-					<div class="fs-6" id="input-dlg-subtitle"></div>
-				</h5>
-				{{> partials/_DialogClose}}
-			</div>
-			<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
-				<div class="mb-3">
-					<label for="input-dlg-txt" class="form-label">{{_ 'Input'}}</label>
-					<input type="text" class="form-control" id="input-dlg-txt" placeholder="Your value" value="" aria-describedby="input-dlg-txt-fb" required>
-					<div id="input-dlg-txt-fb" class="invalid-feedback">
-						{{_ 'Value is required'}}
-					</div>
-				</div>
-			</form>
-			{{> partials/_DialogFooter dlgScope='input-dlg'}}
+{{#> partials/_DialogModal dlgScope='input-dlg'}}
+{{> partials/_DialogModalHeader dlgScope='input-dlg' dlgTitle=(_ 'Input Request')}}
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+	<div class="mb-3">
+		<label for="input-dlg-txt" class="form-label">{{_ 'Input'}}</label>
+		<input type="text" class="form-control" id="input-dlg-txt" placeholder="" value="" aria-describedby="input-dlg-txt-fb" required>
+		<div id="input-dlg-txt-fb" class="invalid-feedback">
+			{{_ 'Value is required'}}
 		</div>
 	</div>
-</div>
+</form>
+{{> partials/_DialogFooter dlgScope='input-dlg'}}
+{{/partials/_DialogModal}}

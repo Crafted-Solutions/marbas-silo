@@ -1,39 +1,24 @@
-import { Modal } from "bootstrap";
+
+import { t } from "ttag";
 
 import { SiloTree } from "../SiloTree";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "./GrainXAttrs";
+import { _Dialog } from "./_Dialog";
 
-export class GrainPicker {
-	#element;
-	#accepted;
+export class GrainPicker extends _Dialog {
 	#apiSvc;
 	#rootGrain;
+	static #instances = {};
 
-	constructor(element, apiSvc) {
-		this.#element = document.getElementById(element);
+	constructor(scope, apiSvc) {
+		super(scope);
 		this.#apiSvc = apiSvc;
-		this.#accepted = false;
-		this.modal = Modal.getOrCreateInstance(this.#element);
-		this.#element.addEventListener('keypress', (evt) => {
-			if ('Enter' == evt.key || 13 == evt.keyCode) {
-				this.#onOk();
-				evt.stopPropagation();
-				evt.preventDefault();
-			}
-		});
-		this.#element.querySelector('#grain-picker-btn-ok').onclick = () => {
-			this.#onOk();
-		};
-		this.#element.querySelector('#grain-picker-btn-reload').onclick = () => {
+		this._element.querySelector(`#${this._scope}-btn-reload`).onclick = () => {
 			if (this.grainSelector && this.#rootGrain) {
 				this.grainSelector.reloadNode(this.#rootGrain);
 			}
 		};
-	}
-
-	get accepted() {
-		return this.#accepted;
 	}
 
 	get rootGrain() {
@@ -49,22 +34,16 @@ export class GrainPicker {
 		}
 	}
 
-	addEventListener(evtType, listener, options) {
-		this.#element.addEventListener(evtType, listener, options);
-	}
-
-	removeEventListener(evtType, listener) {
-		this.#element.removeEventListener(evtType, listener);
-	}
-
 	show(options) {
-		this.#element.querySelector('#grain-picker-title span').textContent = options.title || 'Select Grain';
-		const form = this.#element.querySelector('form');
-		form.reset();
-		form.classList.toggle('was-validated', false);
-		this.#accepted = false;
-		this.modal.show();
+		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || t`Select Grain`;
+		super.show();
 		this.#load(options.root, options.typeFilter, options.selectionFilter);
+	}
+
+	validate() {
+		const result = super.validate() && !!this.selectedGrain;
+		this._element.querySelector(`#${this._scope}-validation`).classList[this.selectedGrain ? 'remove' : 'add']('is-invalid');
+		return result;
 	}
 
 	async #load(rootGrainOrId, typeFilter, selectionFilter) {
@@ -86,7 +65,7 @@ export class GrainPicker {
 				this.grainSelector.reloadNode(this.#rootGrain);
 			}
 		} else {
-			this.grainSelector = new SiloTree('grain-picker-sel', this.#apiSvc, [{
+			this.grainSelector = new SiloTree(`${this._scope}-sel`, this.#apiSvc, [{
 				text: this.#rootGrain.label,
 				lazyLoad: true,
 				icon: GrainXAttrs.getGrainIcon(this.#rootGrain),
@@ -106,14 +85,10 @@ export class GrainPicker {
 		}
 	}
 
-	#onOk() {
-		const form = this.#element.querySelector('form');
-		form.classList.toggle('was-validated', true);
-		if (!form.checkValidity() || !this.selectedGrain) {
-			return;
+	static instance(scope, apiSvc) {
+		if (!GrainPicker.#instances[scope]) {
+			GrainPicker.#instances[scope] = new GrainPicker(scope, apiSvc);
 		}
-
-		this.#accepted = true;
-		this.modal.hide();
+		return GrainPicker.#instances[scope];
 	}
 }

@@ -129,10 +129,23 @@ $spacer: 1rem !default;
 	vertical-align: top;
 }
 
+.export-dlg-item:first-of-type .export-dlg-btn-up {
+	display: none;
+}
+.export-dlg-item:last-of-type .export-dlg-btn-down {
+	display: none;
+}
+
 [data-schematype="array"] .btn-group:last-of-type {
 	margin-top: 0.25rem !important;
 }
 
 .grain-security-role:nth-child(1) {
 	white-space: nowrap;
+}
+.modal-over.modal {
+    z-index: 1057 !important;
+}
+.modal-backdrop.modal-backdrop-over.show {
+    z-index: 1056 !important;
 }

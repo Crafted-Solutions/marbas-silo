@@ -16,15 +16,24 @@ if (isCLI) cliPublish();
 
 export async function cliPublish() {
 	const { values } = parseArgs({
-		options: {},
+		options: {
+			provenance: {
+				type: 'boolean',
+				short: 'p'
+			},
+			'dry-run': {
+				type: 'boolean',
+				short: 'd'
+			}
+		},
 		strict: false,
-		allowPositionals: true,
+		allowPositionals: true
 	});
 
 	await publish(values);
 }
 
-export async function publish() {
+export async function publish(options = {}) {
 
 	const [remoteVersionsResult, newVersionsResult] = await Promise.all([
 		execAsync(`npm view . version -w packages --json`),
@@ -56,20 +65,28 @@ export async function publish() {
 			try {
 				// console.log(process.env);
 				let cmd = 'npm';
+				const spawnOpts = {
+					stdio: 'inherit',
+					env: process.env
+				};
 				if ('win32' === process.platform) {
 					cmd += '.cmd';
+					spawnOpts.shell = true;
 				}
-				const proc = spawn(cmd, [
+				const cmdArgs = [
 					'publish',
 					'-w',
 					pkg,
 					'--access',
-					'public',
-					'--provenance'
-				], {
-					stdio: 'inherit',
-					env: process.env
-				});
+					'public'
+				];
+				if (options.provenance) {
+					cmdArgs.push('--provenance');
+				}
+				if (options['dry-run']) {
+					cmdArgs.push('--dry-run');
+				}
+				const proc = spawn(cmd, cmdArgs, spawnOpts);
 				proc.on('error', errHandler);
 				proc.on('close', resolve);
 			} catch (e) {

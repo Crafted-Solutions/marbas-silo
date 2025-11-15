@@ -1,81 +1,77 @@
-<div class="modal modal-xl" id="grain-security" tabindex="-1" aria-labelledby="grain-security-title" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="grain-security-title">
-					<span>{{_ 'Security Options'}}</span>
-					<span id="grain-security-mod" class="d-none" aria-hidden="true" title="{{_ 'Modified'}}">*</span>
-					<div class="fs-6" id="grain-security-subtitle"></div>
-				</h5>
-				{{> partials/_DialogClose}}
-			</div>
-			<form class="modal-body table-responsive needs-validation" action="#" onsubmit="return false;" novalidate>
-				<table id="grain-security-acl" class="table table-bordered table-sm table-striped">
-					<caption class="d-none">{{_ 'Access Control List'}}</caption>
-					<thead>
-						<tr>
-							<th scope="col" rowspan="2">
-								<div class="btn-group dropend me-2 d-none" id="grain-security-add" aria-hidden="true">
-									<button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle bi-plus" title="{{_ 'Add entry'}}" data-bs-toggle="dropdown" aria-expanded="false">
-										<span class="d-none" id="grain-security-add-label">{{_ 'Add entry'}}</span>
-									</button>
-									<ul class="dropdown-menu" aria-labelledby="grain-security-add-label"></ul>
-								</div>
-								{{_ 'Role'}}
-							</th>
-							<th colspan="9">{{_ 'Access Control'}}</th>
-							<th scope="col" rowspan="2">{{_ 'Iherit'}}</th>
-							<th scope="col" rowspan="2">{{_ 'Source'}}</th>
-						</tr>
-						<tr id="grain-security-aclhead" class="th-rotate">
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-			</form>
-			{{> partials/_DialogFooter dlgScope='grain-security'}}
-		</div>
-		<template id="grain-security-tpl-addentry">
-			<li><button type="button" class="dropdown-item"></button></li>
-		</template>
-		<template id="grain-security-tpl-aclhead">
-			<th scope="col">
-				<div class="th-content"></div>
-			</th>
-		</template>
-		<template id="grain-security-tpl-aclentry">
-			<tr>
-				<td class="grain-security-role">
-					<button type="button" class="btn btn-sm btn-outline-danger bi-x d-none" title="{{_ 'Delete entry'}}" aria-hidden="true"><span class="d-none">{{_ 'Delete entry'}}</span></button>
-					<span class="mb-val"></span>
-				</td>
-				<td class="grain-security-inherit" title="{{_ 'Inhert to children'}}">
-					<div class="form-check d-none" aria-hidden="true">
-						<input class="form-check-input" type="checkbox" value="1" id="grain-security-chk-inherit">
-						<label class="form-check-label d-none" for="grain-security-chk-inherit">{{_ 'Inhert to children'}}</label>
-					</div>
-					<span class="mb-val d-none"></span>
-				</td>
-				<td class="grain-security-source"></td>
-			</tr>
-		</template>
-		<template id="grain-security-tpl-aclflag">
-			<td>
-				<span class="mb-perm-flag text-primary"><span class="d-none mb-val"></span></span>
-				<span class="mb-restr-flag text-danger"><span class="d-none mb-val"></span></span>
-			</td>
-		</template>
-		<template id="grain-security-tpl-aclflag-rw">
-			<td class="text-nowrap">
-				<span class="mb-perm-flag text-nowrap text-primary">
-					<input class="btn-check" type="checkbox" value="" id="grain-security-chk-perm">
-					<label class="btn btn-sm btn-outline-primary bi-hand-thumbs-up-fill" for="grain-security-chk-perm" title="{{_ 'Permit'}}"></label>
-				</span>
-				<span class="mb-restr-flag text-nowrap text-danger">
-					<input class="btn-check" type="checkbox" value="" id="grain-security-chk-restr">
-					<label class="btn btn-sm btn-outline-danger bi-hand-thumbs-down-fill" for="grain-security-chk-restr" title="{{_ 'Restrict'}}"></label>
-				</span>
-			</td>
-		</template>
-	</div>
+{{#> partials/_DialogModal dlgScope='grain-security' dlgClasses='modal-xl'}}
+<div class="modal-header">
+	<h5 class="modal-title" id="grain-security-title">
+		<span>{{_ 'Security Options'}}</span>
+		<span id="grain-security-mod" class="d-none" aria-hidden="true" title="{{_ 'Modified'}}">*</span>
+		<div class="fs-6" id="grain-security-subtitle"></div>
+	</h5>
+	{{> partials/_DialogClose}}
 </div>
+<form class="modal-body table-responsive needs-validation" action="#" onsubmit="return false;" novalidate>
+	<table id="grain-security-acl" class="table table-bordered table-sm table-striped">
+		<caption class="d-none">{{_ 'Access Control List'}}</caption>
+		<thead>
+			<tr>
+				<th scope="col" rowspan="2">
+					<div class="btn-group dropend me-2 d-none" id="grain-security-add" aria-hidden="true">
+						<button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle bi-plus" title="{{_ 'Add entry'}}" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="d-none" id="grain-security-add-label">{{_ 'Add entry'}}</span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="grain-security-add-label"></ul>
+					</div>
+					{{_ 'Role'}}
+				</th>
+				<th colspan="9">{{_ 'Access Control'}}</th>
+				<th scope="col" rowspan="2">{{_ 'Iherit'}}</th>
+				<th scope="col" rowspan="2">{{_ 'Source'}}</th>
+			</tr>
+			<tr id="grain-security-aclhead" class="th-rotate">
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</form>
+{{> partials/_DialogFooter dlgScope='grain-security'}}
+<template id="grain-security-tpl-addentry">
+	<li><button type="button" class="dropdown-item"></button></li>
+</template>
+<template id="grain-security-tpl-aclhead">
+	<th scope="col">
+		<div class="th-content"></div>
+	</th>
+</template>
+<template id="grain-security-tpl-aclentry">
+	<tr>
+		<td class="grain-security-role">
+			<button type="button" class="btn btn-sm btn-outline-danger bi-x d-none" title="{{_ 'Delete entry'}}" aria-hidden="true"><span class="d-none">{{_ 'Delete entry'}}</span></button>
+			<span class="mb-val"></span>
+		</td>
+		<td class="grain-security-inherit" title="{{_ 'Inhert to children'}}">
+			<div class="form-check d-none" aria-hidden="true">
+				<input class="form-check-input" type="checkbox" value="1" id="grain-security-chk-inherit">
+				<label class="form-check-label d-none" for="grain-security-chk-inherit">{{_ 'Inhert to children'}}</label>
+			</div>
+			<span class="mb-val d-none"></span>
+		</td>
+		<td class="grain-security-source"></td>
+	</tr>
+</template>
+<template id="grain-security-tpl-aclflag">
+	<td>
+		<span class="mb-perm-flag text-primary"><span class="d-none mb-val"></span></span>
+		<span class="mb-restr-flag text-danger"><span class="d-none mb-val"></span></span>
+	</td>
+</template>
+<template id="grain-security-tpl-aclflag-rw">
+	<td class="text-nowrap">
+		<span class="mb-perm-flag text-nowrap text-primary">
+			<input class="btn-check" type="checkbox" value="" id="grain-security-chk-perm">
+			<label class="btn btn-sm btn-outline-primary bi-hand-thumbs-up-fill" for="grain-security-chk-perm" title="{{_ 'Permit'}}"></label>
+		</span>
+		<span class="mb-restr-flag text-nowrap text-danger">
+			<input class="btn-check" type="checkbox" value="" id="grain-security-chk-restr">
+			<label class="btn btn-sm btn-outline-danger bi-hand-thumbs-down-fill" for="grain-security-chk-restr" title="{{_ 'Restrict'}}"></label>
+		</span>
+	</td>
+</template>
+{{/partials/_DialogModal}}

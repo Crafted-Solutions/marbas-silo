@@ -16,8 +16,9 @@
 		<h1 class="d-none"><span class="silo-title">{{title}}</span> {{> partials/LocaleSwitch}}</h1>
 
 		<section id="top" class="d-none border border-1 rounded navbar py-2 px-3 my-2 bg-light flex-shrink-0">
-			<div class="row row-cols-2 flex-grow-1">
+			<div class="row row-cols-auto flex-grow-1">
 				{{> partials/LangManager}}
+				{{> partials/ToolsMenu}}
 				{{> partials/AuthModule}}
 				<div class="silo-auth text-end col-8 d-none" aria-hidden="true">
 					<span id="silo-auth-info"></span>

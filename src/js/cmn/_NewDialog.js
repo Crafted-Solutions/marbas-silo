@@ -34,7 +34,7 @@ export class _NewDialog extends _Dialog {
 	show(parentGrainId, options = {}) {
 		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || this._title;
 		this._element.querySelector(`label[for="${this._scope}-txt-name"]`).textContent = options.nameLabel || this._nameLabel;
-		this._element.querySelector(`#${this._scope}-path`).textContent = `loading...`;
+		this._element.querySelector(`#${this._scope}-subtitle`).textContent = `loading...`;
 		super.show();
 		this._load(parentGrainId);
 	}
@@ -43,6 +43,6 @@ export class _NewDialog extends _Dialog {
 		if (parentGrainId) {
 			this._parentGrain = await this._apiSvc.getGrain(parentGrainId);
 		}
-		this._element.querySelector(`#${this._scope}-path`).textContent = `under ${this._parentGrain.path}`;
+		this._element.querySelector(`#${this._scope}-subtitle`).textContent = `under ${this._parentGrain.path}`;
 	}
 } 

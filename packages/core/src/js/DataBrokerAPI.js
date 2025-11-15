@@ -1,8 +1,11 @@
 import merge from "lodash.merge";
+import contentDisposition from "content-disposition";
 import { MarBasDefaults, MarBasRoleEntitlement, MarBasTraitValueType } from "../conf/marbas.conf.js";
 import { MbUtils } from "./MbUtils.js";
 
 const NoOp = () => { };
+
+const FETCH_YIELD_FAILMSG = 'API reported failure';
 
 const TierAPI = {
 	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
@@ -12,6 +15,10 @@ const TierAPI = {
 const ResolverAPI = Object.assign({}, TierAPI, {
 	[MarBasDefaults.ID_TYPE_FILE]: 'File'
 });
+
+const BackgroundJobStatus = {
+	'Pending': 0, 'Running': 1, 'Paused': 2, 'Complete': 3, 'Cancelled': 4, 'Error': 5
+};
 
 export class DataBrokerAPI {
 	#lang;
@@ -262,7 +269,7 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						inv.then(() => {
@@ -302,7 +309,7 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						if (json.success) {
@@ -310,7 +317,7 @@ export class DataBrokerAPI {
 								resolve(this.#addGrainToCache(json.yield));
 							}).catch(() => resolve(json.yield));
 						} else {
-							reject("API returned failure");
+							reject(FETCH_YIELD_FAILMSG);
 						}
 					})
 					.catch(reject);
@@ -470,7 +477,7 @@ export class DataBrokerAPI {
 					if (res.ok) {
 						return res.json();
 					}
-					reject(`Request failed (${res.status} ${res.statusText})`);
+					reject(DataBrokerAPI.makeFetchErr(res));
 				}).then(json => {
 					resolve(json.success);
 				}).catch(reject);
@@ -642,7 +649,7 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						inv.then(() => {
@@ -768,7 +775,7 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						if (json.success) {
@@ -776,7 +783,7 @@ export class DataBrokerAPI {
 								resolve(this.#addGrainToCache(json.yield));
 							}).catch(() => resolve(json.yield));
 						} else {
-							reject("API reported failure");
+							reject(FETCH_YIELD_FAILMSG);
 						}
 					})
 					.catch(reject);
@@ -798,13 +805,13 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						if (json.success) {
 							resolve(json.yield);
 						} else {
-							reject("API reported failure");
+							reject(FETCH_YIELD_FAILMSG);
 						}
 					})
 					.catch(reject);
@@ -813,16 +820,17 @@ export class DataBrokerAPI {
 	}
 
 	loadFileBlob(grainOrId, disposition = 'Attachment', acceptType = /.*/, maxSize = 10 * 1024 * 1024) {
-		return this.loadBlob(`${this.baseUrl}/File/${grainOrId.id || grainOrId}/${disposition}`, acceptType, maxSize);
+		return this.loadBlob(`${this.baseUrl}/File/${grainOrId.id || grainOrId}/${disposition}`, acceptType, maxSize, true);
 	}
 
-	loadBlob(url, acceptType = /.*/, maxSize = 30 * 1024 * 1024) {
+	loadBlob(url, acceptType = /.*/, maxSize = 30 * 1024 * 1024, forDownload = false) {
 		return new Promise((resolve, reject) => {
 			if (-1 < this.#rejects.indexOf(url)) {
 				reject(`Response from ${url} doesn't match criteria`);
 				return;
 			}
 			this.applyStdFetchOptions().then(opts => {
+				let filename;
 				fetch(url, opts)
 					.then(res => {
 						if (res.ok) {
@@ -833,16 +841,150 @@ export class DataBrokerAPI {
 								reject(`Response ${type} of ${size} bytes from ${url} doesn't match criteria`);
 								return null;
 							}
+							if (true === forDownload) {
+								const disposition = res.headers.get('Content-Disposition');
+								if (disposition) {
+									filename = contentDisposition.parse(disposition).parameters.filename;
+								}
+							} else if (forDownload && forDownload.length) {
+								filename = forDownload;
+							}
 							return res.blob();
 						}
 
-						reject(`Request to ${url} failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 						return null;
 					})
 					.then(blob => {
 						if (blob) {
-							resolve(blob);
+							resolve(filename ? new File([blob], filename) : blob);
+						} else {
+							reject(`Response from ${url} contained no data`);
 						}
+					})
+					.catch(reject);
+			}).catch(reject);
+		});
+	}
+
+	exportPackage(exportOptions) {
+		return new Promise((resolve, reject) => {
+			this.applyStdFetchOptions({
+				method: 'POST',
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(exportOptions)
+			}).then(opts => {
+				let filename = `${(exportOptions.namePrefix || "marbas-export-")}${Date.now()}.zip`;
+				fetch(`${this.baseUrl}/Transport/PackageOut`, opts)
+					.then(res => {
+						if (res.ok) {
+							const disposition = res.headers.get('Content-Disposition');
+							if (disposition) {
+								filename = contentDisposition.parse(disposition).parameters.filename || filename;
+							}
+							return res.blob();
+						}
+						reject(DataBrokerAPI.makeFetchErr(res));
+						return null;
+					})
+					.then((blob) => {
+						resolve(new File([blob], filename));
+					})
+					.catch(reject);
+			}).catch(reject);
+		});
+	}
+
+	importPackage(formData, pollingInterval = 0, progressCallback = null, abortAfter = 0) {
+		return new Promise((resolve, reject) => {
+			this.applyStdFetchOptions({
+				method: 'PUT',
+				body: formData
+			}).then(opts => {
+				fetch(`${this.baseUrl}/Transport/PackageIn`, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(DataBrokerAPI.makeFetchErr(res));
+					})
+					.then(json => {
+						if (json.success) {
+							if (progressCallback && 1 > pollingInterval) {
+								pollingInterval = 500;
+							}
+							if (0 < pollingInterval) {
+								const jobId = json.yield.id;
+								let abort = false;
+								if (progressCallback) {
+									abort = !progressCallback(json.yield);
+								}
+								if (abort) {
+									this.deleteBackgroundJob(jobId, true)
+										.then(resolve).catch(reject);
+
+								} else {
+									const ih = setInterval(() => {
+										this.getBackgroundJob(jobId, true)
+											.then(job => {
+												if (BackgroundJobStatus.Complete <= BackgroundJobStatus[job.status]) {
+													clearInterval(ih);
+													resolve(job);
+												} else {
+													if (progressCallback) {
+														abort = !progressCallback(job);
+													}
+													if (abort) {
+														clearInterval(ih);
+														this.deleteBackgroundJob(jobId, true)
+															.then(resolve).catch(reject);
+													}
+												}
+											})
+											.catch(err => {
+												clearInterval(ih);
+												reject(err);
+											});
+									}, pollingInterval);
+								}
+							} else {
+								resolve(json.yield);
+							}
+						} else {
+							reject(FETCH_YIELD_FAILMSG);
+						}
+					})
+					.catch(reject);
+			}).catch(reject);
+		});
+	}
+
+	getBackgroundJob(id, autoRemoveInactive = false) {
+		let url = `${this.baseUrl}/BackgroundJob/${id}`;
+		if (autoRemoveInactive) {
+			url += '?autoRemove=true';
+		}
+		return this.#fetchGet(url);
+	}
+
+	deleteBackgroundJob(id, cancel = false) {
+		return new Promise((resolve, reject) => {
+			this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
+				let url = `${this.baseUrl}/BackgroundJob/${id}`;
+				if (cancel) {
+					url += '?cancel=true';
+				}
+				fetch(url, opts)
+					.then(res => {
+						if (res.ok) {
+							return res.json();
+						}
+						reject(DataBrokerAPI.makeFetchErr(res));
+					})
+					.then(json => {
+						resolve(json.yield);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -884,13 +1026,13 @@ export class DataBrokerAPI {
 								return { success: true, yield: sim };
 							}
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						if (json.success) {
 							resolve(json.yield);
 						} else {
-							reject("API reported failure");
+							reject(FETCH_YIELD_FAILMSG);
 						}
 					})
 					.catch(reject);
@@ -921,7 +1063,7 @@ export class DataBrokerAPI {
 								return { success: true, yield: sim };
 							}
 						}
-						reject(`Request failed (${res.status} ${res.statusText})`);
+						reject(DataBrokerAPI.makeFetchErr(res));
 					})
 					.then(json => {
 						if (!returnYield) {
@@ -929,7 +1071,7 @@ export class DataBrokerAPI {
 						} else if (json.success) {
 							resolve(json.yield);
 						} else {
-							reject("API reported failure");
+							reject(FETCH_YIELD_FAILMSG);
 						}
 					})
 					.catch(reject);
@@ -965,5 +1107,9 @@ export class DataBrokerAPI {
 			url += `?${params}`;
 		}
 		return url;
+	}
+
+	static makeFetchErr(res) {
+		return `Request to ${res.url} failed (${res.status} ${res.statusText})`;
 	}
 }

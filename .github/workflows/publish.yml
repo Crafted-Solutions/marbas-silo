@@ -50,8 +50,7 @@ jobs:
       run: |
         npm ci
         npm exec -c publish-packages
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+  
     - name: Build drop-in
       shell: bash
       run: |

@@ -3,6 +3,7 @@ import dlgHtml from "../partials/LoginDialog.hbs";
 import { t } from "ttag";
 import { AuthStorage } from "./AuthStorage";
 import { _Dialog } from "./cmn/_Dialog";
+import { MbDomUtils } from "./cmn/MbDomUtils";
 
 class LoginDialog extends _Dialog {
 	show(options) {
@@ -68,13 +69,9 @@ export class BasicAuthenticator {
 
 	#buildUI() {
 		if (!this.#dialog) {
-			const tpl = document.createElement('template');
-			tpl.innerHTML = dlgHtml({
+			MbDomUtils.buildFromTemplate('login-dlg', dlgHtml, _Dialog.getDefaultI18n({
 				i18n: {
 					title: t`Login Onto Broker`,
-					btnClose: t`Close`,
-					btnOk: t`Ok`,
-					btnCancel: t`Cancel`,
 					lblUser: t`User`,
 					phUser: t`Login user name`,
 					fbUser: t`Please provide a valid user name`,
@@ -82,8 +79,7 @@ export class BasicAuthenticator {
 					phPassword: t`Login password`,
 					fbPassword: t`Please provide a valid password`
 				}
-			});
-			document.body.appendChild(tpl.content);
+			}));
 
 			this.#dialog = new LoginDialog('login-dlg');
 			this.#dialog.addEventListener('hidden.bs.modal', () => {

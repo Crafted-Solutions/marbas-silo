@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-core",
-	"version": "0.1.16",
+	"version": "0.1.17",
 	"description": "Core modules for mabas-databroker access",
 	"keywords": [
 		"MarBas",
@@ -11,7 +11,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Crafted-Solutions/marbas-silo.git"
+		"url": "git+https://github.com/Crafted-Solutions/marbas-silo.git"
 	},
 	"author": "hatelamers",
 	"license": "MIT",
@@ -26,14 +26,15 @@
 		"require": "./dist/index.cjs"
 	},
 	"scripts": {
-		"build": "rollup ./src/js/index.js --file ./dist/index.cjs --format cjs --external lodash.merge && rollup ./src/js/index.js --file ./dist/index.js --format esm --external lodash.merge",
+		"build": "rollup ./src/js/index.js --file ./dist/index.cjs --format cjs --external lodash.merge,content-disposition && rollup ./src/js/index.js --file ./dist/index.js --format esm --external lodash.merge,content-disposition",
 		"watch": "rollup ./src/js/index.js --file ./dist/index.js --format esm --watch",
 		"prepack": "npm run build"
 	},
 	"dependencies": {
+		"content-disposition": "^0.5.4",
 		"lodash.merge": "^4.6.2"
 	},
 	"devDependencies": {
-		"rollup": "^4.46.2"
+		"rollup": "^4.52.5"
 	}
 }
