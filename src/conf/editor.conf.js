@@ -10,11 +10,10 @@ export const EditorSchemaConfig = {
 	PATH_DEFAULT_GROUP: PATH_PRIMARY_GROUP,
 	PATH_SYS_OBJECT: `${PATH_PRIMARY_GROUP}_sys`,
 	DEPTH_DATA_CARRIER: 3,
-	BASIC: {
+	BASIC_CORE: {
 		get title() { return t`Grain Editor`; },
 		headerTemplate: '{{self._1.presentation.label}}{{self._1._sys.dirty}}',
 		type: 'object',
-		format: 'categories',
 		options: {
 			disable_collapse: true
 		},
@@ -40,59 +39,9 @@ export const EditorSchemaConfig = {
 						"$ref": '#/definitions/_sys'
 					}
 				}
-			},
-			_2: {
-				get title() { return t`Advanced`; },
-				type: 'object',
-				propertyOrder: 2000,
-				options: {
-					disable_collapse: true,
-					titleHidden: true,
-					containerAttributes: {
-						'class': 'mb-tab-container'
-					}
-				},
-				properties: {
-					meta: {
-						get title() { return t`Metadata`; },
-						"$ref": '#/definitions/meta',
-						propertyOrder: 1000
-					},
-					stats: {
-						get title() { return t`Statistics`; },
-						"$ref": '#/definitions/stats',
-						propertyOrder: 2000
-					}
-				}
 			}
 		},
 		definitions: {
-			meta: {
-				type: "object",
-				id: "meta",
-				readonly: true,
-				properties: {
-					id: {
-						get title() { return t`ID`; },
-						type: "string"
-					},
-					name: {
-						get title() { return t`Name`; },
-						type: "string"
-					},
-					path: {
-						get title() { return t`Path`; },
-						type: "string"
-					},
-					typeDefId: {
-						get title() { return t`Type Definition`; },
-						type: "string",
-						format: "grain",
-						readonly: true,
-						default: MarBasDefaults.ID_TYPE_TYPEDEF
-					}
-				}
-			},
 			presentation: {
 				type: 'object',
 				id: 'presentation',
@@ -113,29 +62,6 @@ export const EditorSchemaConfig = {
 					}
 				}
 			},
-			stats: {
-				type: 'object',
-				id: "stats",
-				readonly: true,
-				properties: {
-					revision: {
-						get title() { return t`Revision`; },
-						type: "integer"
-					},
-					cTime: {
-						get title() { return t`Created`; },
-						type: "string"
-					},
-					mTime: {
-						get title() { return t`Modified`; },
-						type: "string"
-					},
-					owner: {
-						get title() { return t`Owner`; },
-						type: "string"
-					},
-				}
-			},
 			_sys: {
 				type: 'object',
 				id: '_sys',
@@ -144,6 +70,9 @@ export const EditorSchemaConfig = {
 					titleHidden: true
 				},
 				properties: {
+					id: {
+						type: 'string'
+					},
 					dirty: {
 						type: 'string',
 						default: ''
@@ -391,7 +320,7 @@ export const EditorSchemaConfig = {
 							'class': 'mb-grain-file'
 						}],
 						watch: {
-							id: `${PATH_SECONDARY_GROUP}meta.id`,
+							id: `${PATH_PRIMARY_GROUP}_sys.id`,
 							apiPfx: `${PATH_PRIMARY_GROUP}_sys.api`
 						},
 						options: {
@@ -435,6 +364,82 @@ export const EditorSchemaConfig = {
 			format: "checkbox",
 			get title() { return t`Rich Text`; }
 		}
+	}
+};
+
+EditorSchemaConfig.BASIC = structuredClone(EditorSchemaConfig.BASIC_CORE);
+EditorSchemaConfig.BASIC.format = 'categories';
+EditorSchemaConfig.BASIC.properties._2 = {
+	get title() { return t`Advanced`; },
+	type: 'object',
+	propertyOrder: 2000,
+	options: {
+		disable_collapse: true,
+		titleHidden: true,
+		containerAttributes: {
+			'class': 'mb-tab-container'
+		}
+	},
+	properties: {
+		meta: {
+			get title() { return t`Metadata`; },
+			"$ref": '#/definitions/meta',
+			propertyOrder: 1000
+		},
+		stats: {
+			get title() { return t`Statistics`; },
+			"$ref": '#/definitions/stats',
+			propertyOrder: 2000
+		}
+	}
+};
+EditorSchemaConfig.BASIC.definitions.meta = {
+	type: "object",
+	id: "meta",
+	readonly: true,
+	properties: {
+		id: {
+			get title() { return t`ID`; },
+			type: "string"
+		},
+		name: {
+			get title() { return t`Name`; },
+			type: "string"
+		},
+		path: {
+			get title() { return t`Path`; },
+			type: "string"
+		},
+		typeDefId: {
+			get title() { return t`Type Definition`; },
+			type: "string",
+			format: "grain",
+			readonly: true,
+			default: MarBasDefaults.ID_TYPE_TYPEDEF
+		}
+	}
+};
+EditorSchemaConfig.BASIC.definitions.stats = {
+	type: 'object',
+	id: "stats",
+	readonly: true,
+	properties: {
+		revision: {
+			get title() { return t`Revision`; },
+			type: "integer"
+		},
+		cTime: {
+			get title() { return t`Created`; },
+			type: "string"
+		},
+		mTime: {
+			get title() { return t`Modified`; },
+			type: "string"
+		},
+		owner: {
+			get title() { return t`Owner`; },
+			type: "string"
+		},
 	}
 };
 

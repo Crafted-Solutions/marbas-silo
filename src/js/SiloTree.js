@@ -124,6 +124,11 @@ export class SiloTree {
 		return !!this._focusedNode;
 	}
 
+	isNodeSelected(grainOrId) {
+		const node = this._getNodeByGrain(grainOrId.id || grainOrId);
+		return node && node.state && node.state.selected;
+	}
+
 	async reloadNode(grainOrId, restoreSelection = true) {
 		const id = grainOrId.id || grainOrId;
 		const node = this._getNodeByGrain(id);

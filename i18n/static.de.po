@@ -11,6 +11,7 @@ msgid "Logout"
 msgstr "Ausloggen"
 
 #: src/partials/AuthModuleDynamic.hbs:2
+#: src/partials/GrainEditorDialog.hbs:4
 msgid "Loading..."
 msgstr "Wird geladen..."
 
@@ -255,30 +256,37 @@ msgid "Rename"
 msgstr "Umbennenen"
 
 #: src/partials/_SiloNaviButton.hbs:7
+#: src/partials/_SiloNaviButton.hbs:8
 msgid "Cut"
 msgstr "Ausschneiden"
 
 #: src/partials/_SiloNaviButton.hbs:8
+#: src/partials/_SiloNaviButton.hbs:9
 msgid "Copy"
 msgstr "Kopieren"
 
+#: src/partials/_SiloNaviButton.hbs:10
 #: src/partials/_SiloNaviButton.hbs:9
 msgid "Paste"
 msgstr "Einfügen"
 
 #: src/partials/_SiloNaviButton.hbs:10
+#: src/partials/_SiloNaviButton.hbs:11
 msgid "Paste Link"
 msgstr "Verknüpfung einfügen"
 
 #: src/partials/_SiloNaviButton.hbs:11
+#: src/partials/_SiloNaviButton.hbs:12
 msgid "Clear Clipboard"
 msgstr "Zwischenablage leeren"
 
 #: src/partials/_SiloNaviButton.hbs:12
+#: src/partials/_SiloNaviButton.hbs:13
 msgid "Delete"
 msgstr "Löschen"
 
 #: src/partials/_SiloNaviButton.hbs:13
+#: src/partials/_SiloNaviButton.hbs:14
 msgid "Security"
 msgstr "Sicherheit"
 
@@ -329,3 +337,11 @@ msgstr "Paket Importieren"
 #: src/partials/GrainPicker.hbs:14
 msgid "Please select a grain"
 msgstr "Bitte ein Grain wählen"
+
+#: src/partials/GrainEditorDialog.hbs:2
+msgid "Grain Editor"
+msgstr "Grain-Editor"
+
+#: src/partials/_SiloNaviButton.hbs:7
+msgid "Quick Edit"
+msgstr "Schnelleditor"

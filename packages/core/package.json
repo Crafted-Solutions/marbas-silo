@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-core",
-	"version": "0.1.17",
+	"version": "0.1.18",
 	"description": "Core modules for mabas-databroker access",
 	"keywords": [
 		"MarBas",
@@ -31,10 +31,10 @@
 		"prepack": "npm run build"
 	},
 	"dependencies": {
-		"content-disposition": "^0.5.4",
+		"content-disposition": "^1.0.1",
 		"lodash.merge": "^4.6.2"
 	},
 	"devDependencies": {
-		"rollup": "^4.52.5"
+		"rollup": "^4.54.0"
 	}
 }

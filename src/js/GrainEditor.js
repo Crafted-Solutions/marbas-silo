@@ -92,16 +92,17 @@ export class GrainEditor {
 	#watches = {};
 	#dateFields;
 	#ignoreChanges;
-	#listeners = [];
 	#labelResolvers = {};
 	#grainPicker;
 	_apiSvc;
 	_element;
 	_link;
+	_schemaID;
 
-	constructor(elementId, apiSvc) {
+	constructor(elementId, apiSvc, schemaID = 'BASIC') {
 		this._element = document.getElementById(elementId);
 		this._apiSvc = apiSvc;
+		this._schemaID = schemaID;
 		this.#changeCb = () => this.onEditorChange();
 		this.#readyCb = () => this.onEditorReady();
 		this.#addRowCb = (editor) => this.onEditorAddRow(editor);
@@ -233,6 +234,7 @@ export class GrainEditor {
 			const startval = {
 				_1: {
 					_sys: {
+						id: this.grain.id,
 						api: this._apiSvc.baseUrl
 					}
 				},
@@ -287,6 +289,7 @@ export class GrainEditor {
 	async unloadEditor() {
 		if (this.editor) {
 			await this.verifySaved();
+			this.editor.off('ready', this.#readyCb);
 			this.editor.off('change', this.#changeCb);
 			this.editor.off('addRow', this.#addRowCb);
 			for (const key in this.#watches) {
@@ -365,7 +368,7 @@ export class GrainEditor {
 		return this.grain;
 	}
 
-	async validate(showMessage = true, focusError = true) {
+	async validate(showMessage = true, focusError = !this.isPopup) {
 		const result = this.editor.validate();
 		let actGroupPath = focusError ? this._getActiveGroup().getAttribute('data-schemapath') : undefined;
 		let invalidPath;
@@ -402,8 +405,8 @@ export class GrainEditor {
 		return this.editor && this.editor.is_dirty;
 	}
 
-	addChangeListener(listener) {
-		this.#listeners.push(listener);
+	get isPopup() {
+		return !!this._element.closest('.modal');
 	}
 
 	onEditorChange() {
@@ -563,9 +566,8 @@ export class GrainEditor {
 	}
 
 	_notify() {
-		this.#listeners.forEach((listener) => {
-			listener(this.grain);
-		});
+		const evt = new CustomEvent('mb-silo:grain-modified', { detail: this.grain });
+		document.dispatchEvent(evt);
 	}
 
 	_addEditorListener(editorKey) {
@@ -605,14 +607,16 @@ export class GrainEditor {
 		if (this.editor) {
 			const btnHolder = this.editor.root.theme.getHeaderButtonHolder();
 			// button labels are translated via GrainEditor.translate
-			let btn = this.editor.root.getButton('', 'arrows', 'Select in the navigation');
-			btn.classList.add('btn-outline-secondary');
-			btn.classList.remove('btn-secondary', 'btn-sm');
-			btn.addEventListener('click', () => {
-				const evt = new CustomEvent('mb-silo:navigate', { detail: this.grain.id });
-				document.dispatchEvent(evt);
-			});
-			btnHolder.appendChild(btn);
+			let btn = this.isPopup ? null : this.editor.root.getButton('', 'arrows', 'Select in the navigation');
+			if (btn) {
+				btn.classList.add('btn-outline-secondary');
+				btn.classList.remove('btn-secondary', 'btn-sm');
+				btn.addEventListener('click', () => {
+					const evt = new CustomEvent('mb-silo:navigate', { detail: this.grain.id });
+					document.dispatchEvent(evt);
+				});
+				btnHolder.appendChild(btn);
+			}
 
 			if (this._link) {
 				btn = this.editor.root.getButton('', 'link', 'Edit link');
@@ -715,7 +719,7 @@ export class GrainEditor {
 	}
 
 	_getSchema(grain, customProps) {
-		let result = EditorSchemaConfig.BASIC;
+		let result = EditorSchemaConfig[this._schemaID];
 		if (EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]) {
 			result = merge({}, result, EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]);
 		}

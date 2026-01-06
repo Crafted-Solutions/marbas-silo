@@ -10,6 +10,7 @@ import { InputDialog } from "./cmn/InputDialog";
 import { MsgBox } from "./cmn/MsgBox";
 import { GrainSecurityDialog } from "./cmn/GrainSecurityDialog";
 import { Task } from "./cmn/Task";
+import { GrainEditorDialog } from "./cmn/GrainEditorDialog";
 
 export class SiloNavi extends SiloTree {
 
@@ -39,6 +40,11 @@ export class SiloNavi extends SiloTree {
 		document.addEventListener('mb-silo:typdef-defaults', async (evt) => {
 			if (evt.detail) {
 				await this.openTypeDefDefaults(evt.detail.typeDefId, evt.detail.defaultsId);
+			}
+		});
+		document.addEventListener('mb-silo:grain-modified', (evt) => {
+			if (evt.detail) {
+				this.updateNode(evt.detail);
 			}
 		});
 	}
@@ -421,6 +427,13 @@ export class SiloNavi extends SiloTree {
 				this.renameNode(grainId);
 			}
 		});
+		this.ctxMnu.addCmdListener('cmdEdit', (evt) => {
+			const grainId = this._getGrainIdFor(evt);
+			if (grainId) {
+				const dlg = GrainEditorDialog.getOrCreate(this._apiSvc);
+				dlg.show(grainId);
+			}
+		});
 		this.ctxMnu.addCmdListener('cmdDelete', (evt) => {
 			const grainId = this._getGrainIdFor(evt);
 			if (grainId) {
@@ -481,6 +494,7 @@ export class SiloNavi extends SiloTree {
 
 				this.ctxMnu.enableCmd('cmdClearCbrd', this.hasClipboardContent());
 				this.ctxMnu.enableCmd('cmdSecurity', await this._apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadAcl));
+				this.ctxMnu.enableCmd('cmdEdit', !this.isNodeSelected(grainId));
 
 			} catch (e) {
 				console.warn(`Error initiazing menu`, e);
