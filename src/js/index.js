@@ -144,9 +144,6 @@ if (!redirected) {
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	});
 
-	editorMgr.addChangeListener((grain) => {
-		naviMgr.updateNode(grain);
-	});
 	authModule.addEventListener('silo-auth:login', () => {
 		loadLoggedInState();
 	});

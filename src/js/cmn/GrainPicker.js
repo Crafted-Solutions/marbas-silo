@@ -40,8 +40,8 @@ export class GrainPicker extends _Dialog {
 		this.#load(options.root, options.typeFilter, options.selectionFilter);
 	}
 
-	validate() {
-		const result = super.validate() && !!this.selectedGrain;
+	async validate() {
+		const result = (await super.validate()) && !!this.selectedGrain;
 		this._element.querySelector(`#${this._scope}-validation`).classList[this.selectedGrain ? 'remove' : 'add']('is-invalid');
 		return result;
 	}

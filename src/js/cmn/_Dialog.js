@@ -11,15 +11,15 @@ export class _Dialog {
 		this._element = document.getElementById(scope);
 		this._accepted = false;
 		this.modal = Modal.getOrCreateInstance(this._element);
-		this._element.addEventListener('keypress', (evt) => {
-			if ('Enter' == evt.key || 13 == evt.keyCode) {
-				this._onOk();
+		this._element.addEventListener('keypress', async (evt) => {
+			if (!evt.shiftKey && ('Enter' == evt.key || 13 == evt.keyCode)) {
+				await this._onOk();
 				evt.stopPropagation();
 				evt.preventDefault();
 			}
 		});
-		this._element.querySelector(`#${this._scope}-btn-ok`).onclick = () => {
-			this._onOk();
+		this._element.querySelector(`#${this._scope}-btn-ok`).onclick = async () => {
+			await this._onOk();
 		};
 		if (this._element.classList.contains('modal-over')) {
 			this._element.addEventListener('shown.bs.modal', () => {
@@ -43,22 +43,24 @@ export class _Dialog {
 		this._element.removeEventListener(evtType, listener);
 	}
 
-	show() {
+	show(reset = true) {
 		const form = this._element.querySelector('form');
-		form.reset();
+		if (reset) {
+			form.reset();
+		}
 		form.classList.toggle('was-validated', false);
 		this._accepted = false;
 		this.modal.show();
 	}
 
-	validate() {
+	async validate() {
 		const form = this._element.querySelector('form');
 		form.classList.toggle('was-validated', true);
 		return form.checkValidity();
 	}
 
-	_onOk() {
-		if (!this.validate()) {
+	async _onOk() {
+		if (!(await this.validate())) {
 			return;
 		}
 		this._accepted = true;
