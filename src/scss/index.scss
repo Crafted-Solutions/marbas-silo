@@ -149,3 +149,6 @@ $spacer: 1rem !default;
 .modal-backdrop.modal-backdrop-over.show {
     z-index: 1056 !important;
 }
+#task-layer {
+    z-index: 1060 !important;
+}

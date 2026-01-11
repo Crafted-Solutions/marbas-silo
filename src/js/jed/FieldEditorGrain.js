@@ -127,6 +127,13 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 		this.#updateValueActions();
 	}
 
+	activate() {
+		super.activate();
+		if (!this.value) {
+			this.onPickGrain();
+		}
+	}
+
 	showValidationErrors(errors) {
 		this.#execWithSuperInput(super.showValidationErrors.bind(this, errors));
 	}
@@ -136,7 +143,7 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			if (picker.accepted) {
 				this.setValue(picker.selectedGrain);
 			}
-		}, GrainEditor.getGrainPickerOptions('array' == this.parent.schema.type ? this.parent.container : this.container));
+		}, this.#grainEditor.getGrainPickerOptions('array' == this.parent.schema.type ? this.parent.container : this.container));
 	}
 
 	onDeleteGrain() {

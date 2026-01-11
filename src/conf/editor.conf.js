@@ -263,29 +263,14 @@ export const EditorSchemaConfig = {
 							}
 						}
 					},
-					_constraintParams: {
+					constraintParams: {
 						get title() { return t`Value Constraint Parameters`; },
-						required: true,
+						required: false,
 						type: 'string',
+						format: 'contstraints',
 						options: {
 							grid_columns: 12
-						},
-						format: "select",
-						enumSource: [{
-							// A watched field source
-							source: [
-								{
-									value: '',
-									get title() { return t`None`; }
-								},
-								{
-									value: 'PickerConfig',
-									get title() { return t`Configure grain picker`; }
-								}
-							],
-							title: "{{item.title}}",
-							value: "{{item.value}}"
-						}]
+						}
 					}
 				}
 			}

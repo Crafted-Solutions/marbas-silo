@@ -1,10 +1,10 @@
 {{#> partials/_DialogModal dlgScope='msgbox-dlg' dlgCenter="1" dlgStatic="1" dlgClasses='modal-over fade'}}
 <div class="modal-header">
-	<h5 class="modal-title"><em class="msgbox-dlg-icon fs-3 bi pe-2 d-none" aria-hidden="true"></em><span id="msgbox-dlg-title"></span></h5>
+	<h5 class="modal-title"><em class="{{dlgScope}}-icon fs-3 bi pe-2 d-none" aria-hidden="true"></em><span id="{{dlgScope}}-title"></span></h5>
 	{{> partials/_DialogClose}}
 </div>
 <div class="modal-body">
-	<p class="msgbox-dlg-text"></p>
+	<p class="{{dlgScope}}-text"></p>
 </div>
 <div class="modal-footer">
 	<button type="button" data-btn-id="close" class="btn btn-msgbox btn-secondary" data-bs-dismiss="modal">{{_ 'Close'}}</button>

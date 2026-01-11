@@ -1,5 +1,5 @@
 import { t } from "ttag";
-import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
+import { EVENT_NODE_EXPANDED } from "@jbtronics/bs-treeview";
 
 import { MarBasBuiltIns, MarBasDefaults, MarBasGrainAccessFlag, MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
 import { GrainNewDialog } from "./cmn/GrainNewDialog";
@@ -14,8 +14,6 @@ import { GrainEditorDialog } from "./cmn/GrainEditorDialog";
 
 export class SiloNavi extends SiloTree {
 
-	#grainNewDlg;
-	#fileNewDlg;
 	#securityDlg;
 	#clipboard = {};
 
@@ -23,6 +21,7 @@ export class SiloNavi extends SiloTree {
 		super(elementId, apiSvc, rootNodes, initCallback);
 		this.#buildContextMenu();
 		document.addEventListener('mb-silo:navigate', async (evt) => {
+			await this.initialized;
 			await this.navigateToNode(evt.detail || MarBasDefaults.ID_ROOT);
 		});
 		document.addEventListener('mb-silo:reload', async (evt) => {
@@ -66,34 +65,37 @@ export class SiloNavi extends SiloTree {
 		}
 	}
 
-	createNode(parentOrId, mode = 'generic') {
-		if (!this.#grainNewDlg) {
-			this.#grainNewDlg = new GrainNewDialog("grain-new", this._apiSvc);
-			this.#grainNewDlg.addEventListener('hidden.bs.modal', async () => {
-				if (this.#grainNewDlg.accepted) {
-					await Task.nowAsync(t`Creating grain`, async () => {
-						const grain = await this._apiSvc.createGrain(this.#grainNewDlg.parentGrain, this.#grainNewDlg.grainType, this.#grainNewDlg.grainName);
-						await this.revealAndSelectNode(grain);
-					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-				}
-			});
+	async createNode(parentOrId, typeDefId = MarBasDefaults.ID_TYPE_ELEMENT) {
+		const dlg = GrainNewDialog.instance(this._apiSvc);
+		dlg.addEventListener('hidden.bs.modal', async () => {
+			if (dlg.accepted) {
+				await Task.nowAsync(t`Creating grain`, async () => {
+					const grain = await this._apiSvc.createGrain(dlg.parentGrain, dlg.grainType, dlg.grainName);
+					await this.revealAndSelectNode(grain);
+				}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+			}
+		}, { once: true });
+		let grainType;
+		if (MarBasDefaults.ID_TYPE_ELEMENT != typeDefId) {
+			grainType = {
+				id: typeDefId,
+				label: MarBasDefaults.ID_TYPE_TYPEDEF == typeDefId ? t`Type Definition` : await this._apiSvc.resolveGrainLabel(typeDefId)
+			};
 		}
-		this.#grainNewDlg.show(parentOrId.id || parentOrId, mode);
+		dlg.show(parentOrId.id || parentOrId, grainType);
 	}
 
 	createFile(parentOrId) {
-		if (!this.#fileNewDlg) {
-			this.#fileNewDlg = new FileNewDialog("file-new", this._apiSvc);
-			this.#fileNewDlg.addEventListener('hidden.bs.modal', async () => {
-				if (this.#fileNewDlg.accepted) {
-					await Task.nowAsync(t`Creating file`, async () => {
-						const grain = await this._apiSvc.createFile(this.#fileNewDlg.formData);
-						await this.revealAndSelectNode(grain);
-					}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-				}
-			});
-		}
-		this.#fileNewDlg.show(parentOrId.id || parentOrId);
+		const dlg = FileNewDialog.instance(this._apiSvc);
+		dlg.addEventListener('hidden.bs.modal', async () => {
+			if (dlg.accepted) {
+				await Task.nowAsync(t`Creating file`, async () => {
+					const grain = await this._apiSvc.createFile(dlg.formData);
+					await this.revealAndSelectNode(grain);
+				}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+			}
+		}, { once: true });
+		dlg.show(parentOrId.id || parentOrId);
 	}
 
 	async renameNode(grainOrId) {
@@ -234,49 +236,6 @@ export class SiloNavi extends SiloTree {
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	}
 
-	async revealAndSelectNode(grain) {
-		let node = this._getNodeByGrain(grain);
-		let parent = this._getNodeByGrain(grain.parentId);
-
-		const result = new Promise((resolve) => {
-			this._element.addEventListener(EVENT_NODE_SELECTED, (evt) => {
-				if (evt.detail.node == node) {
-					document.getElementById(node.id).scrollIntoView();
-				}
-			}, { once: true });
-			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
-				if (evt.detail.node == parent) {
-					if (!node) {
-						node = this._getNodeByGrain(grain);
-					}
-					if (node) {
-						this.tree.selectNode(node, { silent: true });
-						this.tree._triggerEvent(EVENT_NODE_SELECTED, node, { silent: false });
-					}
-					resolve(node);
-				}
-			}, { once: true });
-
-			if (node) {
-				this.tree.revealNode(node);
-				node.setSelected(true);
-				resolve(node);
-			} else {
-				this.reloadNode(grain.parentId, false)
-					.then(n => {
-						parent = n;
-						this.tree.expandNode(parent);
-					})
-					.catch(reason => {
-						console.error(reason);
-						MsgBox.invokeErr(t`Failed to reload ${grain.parentId} due to: ${reason}`);
-					});
-			}
-		});
-
-		return await result;
-	}
-
 	async expandBranch(grainOrId) {
 		let node = this._getNodeByGrain(grainOrId);
 		const handleErr = (errMsg) => {
@@ -379,7 +338,7 @@ export class SiloNavi extends SiloTree {
 		this.ctxMnu.addCmdListener('cmdNewContainer', (evt) => {
 			const grainId = this._getGrainIdFor(evt);
 			if (grainId) {
-				this.createNode(grainId, 'container');
+				this.createNode(grainId, MarBasDefaults.ID_TYPE_CONTAINER);
 			}
 		});
 		this.ctxMnu.addCmdListener('cmdNewFile', (evt) => {
@@ -391,7 +350,7 @@ export class SiloNavi extends SiloTree {
 		this.ctxMnu.addCmdListener('cmdNewType', (evt) => {
 			const grainId = this._getGrainIdFor(evt);
 			if (grainId) {
-				this.createNode(grainId, 'type');
+				this.createNode(grainId, MarBasDefaults.ID_TYPE_TYPEDEF);
 			}
 		});
 		this.ctxMnu.addCmdListener('cmdCut', (evt) => {

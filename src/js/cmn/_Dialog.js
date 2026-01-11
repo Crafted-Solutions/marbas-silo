@@ -18,16 +18,12 @@ export class _Dialog {
 				evt.preventDefault();
 			}
 		});
+		this._element.addEventListener('hidden.bs.modal', this._handleClose.bind(this));
 		this._element.querySelector(`#${this._scope}-btn-ok`).onclick = async () => {
 			await this._onOk();
 		};
 		if (this._element.classList.contains('modal-over')) {
-			this._element.addEventListener('shown.bs.modal', () => {
-				const bds = document.querySelectorAll('.modal-backdrop.show');
-				if (1 < bds.length) {
-					bds.item(bds.length - 1).classList.add('modal-backdrop-over');
-				}
-			});
+			_Dialog.makeModalOver(this._element);
 		}
 	}
 
@@ -36,14 +32,20 @@ export class _Dialog {
 	}
 
 	addEventListener(evtType, listener, options) {
-		this._element.addEventListener(evtType, listener, options);
+		this._element.addEventListener('hidden.bs.modal' == evtType ? 'mbdialog:close' : evtType, listener, options);
 	}
 
 	removeEventListener(evtType, listener) {
 		this._element.removeEventListener(evtType, listener);
 	}
 
-	show(reset = true) {
+	show(reset = true, parent = null, restoreParent = false) {
+		if (parent) {
+			this._restoreParent = restoreParent;
+			this._parent = parent;
+			parent._child = this;
+			parent.modal.hide();
+		}
 		const form = this._element.querySelector('form');
 		if (reset) {
 			form.reset();
@@ -67,9 +69,37 @@ export class _Dialog {
 		this.modal.hide();
 	}
 
+	_handleClose(evt) {
+		if (this._child) {
+			return;
+		}
+		const dispEvent = () => {
+			const custEvt = new CustomEvent('mbdialog:close', { detail: this, bubbles: evt.bubbles, cancelable: evt.cancelable, composed: evt.composed });
+			this._element.dispatchEvent(custEvt);
+		};
+		if (this._parent && this == this._parent._child) {
+			delete this._parent._child;
+			if (this._restoreParent) {
+				this._parent.addEventListener('shown.bs.modal', dispEvent, { once: true });
+				this._parent.modal.show();
+				return;
+			}
+		}
+		dispEvent();
+	}
+
 	_getTemplate(name, subElement = null) {
 		const cont = this._element.querySelector(`#${this._scope}-tpl-${name}`).content;
 		return subElement && cont ? cont.querySelector(subElement) : cont;
+	}
+
+	static makeModalOver(element) {
+		element.addEventListener('shown.bs.modal', () => {
+			const bds = document.querySelectorAll('.modal-backdrop.show');
+			if (1 < bds.length) {
+				bds.item(bds.length - 1).classList.add('modal-backdrop-over');
+			}
+		});
 	}
 
 	static getDefaultI18n(context) {

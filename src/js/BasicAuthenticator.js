@@ -10,6 +10,9 @@ class LoginDialog extends _Dialog {
 		if (options && options.brokerUrl) {
 			this._element.querySelector(`#${this._scope}-subtitle`).textContent = options.brokerUrl;
 		}
+		this.addEventListener('shown.bs.modal', () => {
+			this._element.querySelector(`#${this._scope}-txt-user`).focus();
+		});
 		super.show();
 	}
 

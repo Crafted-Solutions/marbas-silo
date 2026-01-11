@@ -1,29 +1,29 @@
 {{#> partials/_DialogModal dlgScope='import-dlg'}}
-{{> partials/_DialogModalHeaderDyn dlgScope='import-dlg'}}
+{{> partials/_DialogModalHeaderDyn dlgScope=dlgScope}}
 <form class="modal-body needs-validation" action="#" onsubmit="return false;" enctype="multipart/form-data" novalidate>
 	<div class="mb-3">
-		<label for="import-dlg-file" class="form-label">{{i18n.lblFile}}</label>
-		<input class="form-control" name="Content" type="file" id="import-dlg-file" accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" aria-describedby="import-dlg-file-fb" required>
-		<div id="import-dlg-file-fb" class="invalid-feedback">
+		<label for="{{dlgScope}}-file" class="form-label">{{i18n.lblFile}}</label>
+		<input class="form-control" name="Content" type="file" id="{{dlgScope}}-file" accept="zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" aria-describedby="{{dlgScope}}-file-fb" required>
+		<div id="{{dlgScope}}-file-fb" class="invalid-feedback">
 			{{i18n.fbFile}}
 		</div>
 	</div>
 	<div class="mb-3">
-		<label for="import-dlg-duplicates" class="form-label">{{i18n.lblDuplicates}}</label>
-		<select id="import-dlg-duplicates" name="DuplicatesHandling" class="form-select">
+		<label for="{{dlgScope}}-duplicates" class="form-label">{{i18n.lblDuplicates}}</label>
+		<select id="{{dlgScope}}-duplicates" name="DuplicatesHandling" class="form-select">
 			{{#each i18n.lblDuplicatesOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/duplicates}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
 		</select>
 	</div>
 	<div class="mb-3">
-		<label for="import-dlg-missing-deps" class="form-label">{{i18n.lblMissingDeps}}</label>
-		<select id="import-dlg-missing-deps" name="MissingDependencyHandling" class="form-select">
+		<label for="{{dlgScope}}-missing-deps" class="form-label">{{i18n.lblMissingDeps}}</label>
+		<select id="{{dlgScope}}-missing-deps" name="MissingDependencyHandling" class="form-select">
 			{{#each i18n.lblMissingDepsOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/missingDeps}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
 		</select>
 	</div>
 </form>
-{{> partials/_DialogFooterDyn dlgScope='import-dlg'}}
+{{> partials/_DialogFooterDyn dlgScope=dlgScope}}
 {{/partials/_DialogModal}}

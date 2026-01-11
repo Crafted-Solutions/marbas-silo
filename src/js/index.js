@@ -1,5 +1,5 @@
 import "../scss/index.scss";
-import { EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
+import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 import { t } from "ttag";
 
 const redirected = await UILocale.init();
@@ -52,8 +52,10 @@ if (!redirected) {
 		Task.now("Initializing", (done) => {
 			langManager.reload();
 			siloTools.update();
+			naviMgr.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
+				processParameters();
+			}, { once: true });
 			naviMgr.tree.expandAll();
-			processParameters();
 			done();
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	};
@@ -80,10 +82,10 @@ if (!redirected) {
 	const siloTools = new SiloTools('silo-tools', apiSvc);
 
 	const naviMgr = new SiloNavi('silo-nav', apiSvc, [{
-		text: "marbas",
+		text: MarBasDefaults.NAME_ROOT,
 		lazyLoad: true,
 		icon: IconMaps.ById[MarBasDefaults.ID_ROOT],
-		id: `n-${MarBasDefaults.ID_ROOT}`,
+		id: `silo-nav-${MarBasDefaults.ID_ROOT}`,
 		dataAttr: {
 			grain: MarBasDefaults.ID_ROOT
 		},
