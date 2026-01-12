@@ -15,75 +15,15 @@ import { Bootstrap5RevTheme } from "./jed/Bootstrap5RevTheme";
 import { TraitUtils } from "./cmn/TraitUtils";
 import { FieldEditorIcon } from "./jed/FieldEditorIcon";
 import { UILocale } from "./UILocale";
+import { FieldEditorPropConstraints } from "./jed/FieldEditorPropConstraints";
+import { GrainPropConstraints } from "./cmn/GrainPropConstraints";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldValueType = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.valueType`;
 const FieldRtf = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isRtf`;
 const FieldDateOnly = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isDateOnly`;
-const FieldConstrParams = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef._constraintParams`;
-const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.([0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12})`, 'i');
-
-const PropValConstr = {
-	create: function (prop) {
-		if (prop.constraintParams) {
-			const params = new URLSearchParams(prop.constraintParams);
-			if (params.get('use') in PropValConstr) {
-				return new PropValConstr[params.get('use')](prop.valueConstraintId, params);
-			}
-		}
-		return null;
-	},
-	init: function (propDef) {
-		if (propDef && 'constraintParams' in propDef) {
-			propDef._constraintParams = propDef.constraintParams ? (new URLSearchParams(propDef.constraintParams)).get('use') : null;
-		}
-	},
-	sync: function (propDef, selectedConstr) {
-		if (selectedConstr in PropValConstr) {
-			const inst = new PropValConstr[selectedConstr](propDef.valueConstraintId, new URLSearchParams(propDef.constraintParams));
-			inst.updateParams(propDef);
-		} else {
-			propDef.constraintParams = null;
-		}
-	},
-
-	PickerConfig: class PickerConfig {
-		#setRoot = true;
-
-		constructor(constraintId, params) {
-			this.constraintId = constraintId;
-			if ('false' == params.get('setRoot')) {
-				this.#setRoot = false;
-			}
-		}
-
-		tweakSchema(schema) {
-			if (!this.constraintId) {
-				return;
-			}
-			const tweaker = (schemaItem) => {
-				if (!schemaItem.options) {
-					schemaItem.options = {};
-				}
-				if (!schemaItem.options.containerAttributes) {
-					schemaItem.options.containerAttributes = {};
-				}
-				schemaItem.options.containerAttributes['data-pickeropts'] = JSON.stringify({ root: this.constraintId });
-			};
-			tweaker(schema);
-			if (schema.items) {
-				tweaker(schema.items);
-			}
-		}
-
-		updateParams(propDef) {
-			propDef.constraintParams = "use=PickerConfig";
-			if (!this.#setRoot) {
-				propDef.constraintParams += "&setRoot=false";
-			}
-		}
-	}
-};
+const GuidPattern = /[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i;
+const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.(${GuidPattern.source})`, 'i');
 
 export class GrainEditor {
 	#readyCb;
@@ -183,6 +123,7 @@ export class GrainEditor {
 
 		FieldEditorGrain.install();
 		FieldEditorIcon.install();
+		FieldEditorPropConstraints.install();
 		Bootstrap5RevTheme.install();
 
 		await ExtensionLoader.installExtension('GrainEditorStatic', {
@@ -192,8 +133,7 @@ export class GrainEditor {
 			MarBasTraitValueType: MarBasTraitValueType,
 			EditorGrainPickerConfig: EditorGrainPickerConfig,
 			EditorSchemaConfig: EditorSchemaConfig,
-			JSONEditor: JSONEditor,
-			PropValConstr: PropValConstr
+			JSONEditor: JSONEditor
 		});
 	}
 
@@ -218,7 +158,6 @@ export class GrainEditor {
 			}
 			delete this.grain._siloAttrsMod;
 
-			PropValConstr.init(this.grain);
 			this.customProps = {
 				def: await this._apiSvc.getGrainPropDefs(this.grain)
 			};
@@ -443,8 +382,6 @@ export class GrainEditor {
 				GrainXAttrs.setAttr(this.grain, 'propMod', sub.getValue() ? 'dateonly' : null);
 			} else if (FieldValueType == editorKey) {
 				this.#updatePropDefEditorByValueType(sub.getValue());
-			} else if (FieldConstrParams == editorKey) {
-				PropValConstr.sync(this.grain, sub.getValue());
 			}
 		}
 		if (makeDirty && !this.#markTraitChange(editorKey)) {
@@ -470,7 +407,7 @@ export class GrainEditor {
 				if (!this.editor.was_dirty) {
 					this._setDirty(makeDirty);
 				}
-			}, GrainEditor.getGrainPickerOptions(editor.parent.container));
+			}, this.getGrainPickerOptions(editor.parent.container));
 		}
 	}
 
@@ -586,7 +523,7 @@ export class GrainEditor {
 
 	_showGrainPicker(closeCallback, pickerOptions) {
 		if (!this.#grainPicker) {
-			this.#grainPicker = GrainPicker.instance('grain-picker', this._apiSvc);
+			this.#grainPicker = GrainPicker.instance(this._apiSvc);
 		}
 		this.#grainPicker.addEventListener('hidden.bs.modal', () => {
 			closeCallback(this.#grainPicker);
@@ -824,9 +761,9 @@ export class GrainEditor {
 			propSchema.title = prop.label;
 			propSchema.propertyOrder = GrainEditor.makeOrderKey(prop.sortKey, prop.name);
 
-			const valConstr = PropValConstr.create(prop);
-			if (valConstr) {
-				valConstr.tweakSchema(propSchema);
+			const constrHandler = GrainPropConstraints.createHandler(prop.constraintParams);
+			if (constrHandler) {
+				constrHandler.tweakTargetSchema(prop, propSchema);
 			}
 
 			sections[secKey].properties[prop.id] = propSchema;
@@ -997,10 +934,14 @@ export class GrainEditor {
 		return Array.from(sortKey || name).reduce((res, curr, i) => res + (10 ** 16) / ((257 - (curr.charCodeAt(0) % 256)) * (256 ** (i + 1))), 0);
 	}
 
-	static getGrainPickerOptions(elm) {
+	getGrainPickerOptions(elm) {
 		const opts = elm.getAttribute('data-pickeropts');
 		if (opts) {
-			return opts.startsWith('{') ? JSON.parse(opts) : EditorGrainPickerConfig[opts || 'DEFAULT'];
+			const result = opts.startsWith('{') ? JSON.parse(opts) : EditorGrainPickerConfig[opts || 'DEFAULT'];
+			if (result.root && !GuidPattern.test(result.root)) {
+				result.root = this._apiSvc.resolveGrainPath(result.root, this.grain);
+			}
+			return result;
 		}
 		return {};
 	}

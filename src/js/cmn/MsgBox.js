@@ -1,5 +1,6 @@
 import { Modal } from "bootstrap";
 import { MbDomUtils } from "./MbDomUtils";
+import { _Dialog } from "./_Dialog";
 
 const MsgBoxTypes = ['warning', 'danger', 'info', 'success', 'primary'];
 
@@ -32,6 +33,7 @@ export class MsgBox {
 		this.#element.addEventListener('hidden.bs.modal', () => {
 			this.#callHandler(this.#result);
 		});
+		_Dialog.makeModalOver(this.#element);
 	}
 
 	/**

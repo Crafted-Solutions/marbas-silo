@@ -221,13 +221,13 @@ export class DataBrokerAPI {
 	}
 
 	getGrainByPath(path, ignoreCache = false) {
-		if (!path || 'marbas' == path || '/' == path) {
+		if (!path || MarBasDefaults.NAME_ROOT == path || '/' == path) {
 			return this.getGrain(null, ignoreCache);
 		}
 		const searchPath = path.replace(/^(\/|marbas\/)/, '').replace(/\/\**$/, '');
 		return new Promise(resolve => {
 			if (!ignoreCache && Object.keys(this.#grains).some(id => {
-				if (`marbas/${searchPath}` == this.#grains[id].path) {
+				if (`${MarBasDefaults.NAME_ROOT}/${searchPath}` == this.#grains[id].path) {
 					resolve(this.#grains[id]);
 					return true;
 				}
@@ -242,6 +242,23 @@ export class DataBrokerAPI {
 					resolve(grain);
 				})
 				.catch(() => { resolve(null) });
+		});
+	}
+
+	resolveGrainPath(path, relativeToGrainOrId = null) {
+		if (!path.startsWith('.')) {
+			return this.getGrainByPath(path);
+		}
+		if (!relativeToGrainOrId) {
+			relativeToGrainOrId = MarBasDefaults.ID_ROOT;
+		}
+		return new Promise((resolve, reject) => {
+			this.getGrain(relativeToGrainOrId.id || relativeToGrainOrId)
+				.then(baseGrain => {
+					var url = new URL(path, `https://test.com/${baseGrain.path}`);
+					this.getGrainByPath(url.pathname.substring(1)).then(resolve).catch(reject);
+				})
+				.catch(reject);
 		});
 	}
 

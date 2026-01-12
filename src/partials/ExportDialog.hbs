@@ -1,49 +1,40 @@
 {{#*inline "ExportItem"}}
-<li class="list-group-item export-dlg-item" data-sfx="{{sfx}}">
+<li class="list-group-item {{dlgScope}}-item" data-sfx="{{sfx}}">
 	<div class="btn-toolbar mb-2" role="toolbar">
-		<button type="button" class="export-dlg-btn-del btn btn-sm btn-secondary me-1 bi-trash" title="{{i18n.btnRemoveAnchor}}"><span class="d-none">{{i18n.btnRemoveAnchor}}</span></button>
-		<button type="button" class="export-dlg-btn-up btn btn-sm btn-secondary me-1 bi-arrow-up" title="{{i18n.btnMoveAnchorUp}}"><span class="d-none">{{i18n.btnMoveAnchorUp}}</span></button>
-		<button type="button" class="export-dlg-btn-down btn btn-sm btn-secondary me-3 bi-arrow-down" title="{{i18n.btnMoveAnchorDown}}"><span class="d-none">{{i18n.btnMoveAnchorDown}}</span></button>
+		<button type="button" class="{{dlgScope}}-btn-del btn btn-sm btn-secondary me-1 bi-trash" title="{{i18n.btnRemoveAnchor}}"><span class="d-none">{{i18n.btnRemoveAnchor}}</span></button>
+		<button type="button" class="{{dlgScope}}-btn-up btn btn-sm btn-secondary me-1 bi-arrow-up" title="{{i18n.btnMoveAnchorUp}}"><span class="d-none">{{i18n.btnMoveAnchorUp}}</span></button>
+		<button type="button" class="{{dlgScope}}-btn-down btn btn-sm btn-secondary me-3 bi-arrow-down" title="{{i18n.btnMoveAnchorDown}}"><span class="d-none">{{i18n.btnMoveAnchorDown}}</span></button>
 	</div>
 	<div class="mb-3">
-		<label for="export-dlg-anchor-{{sfx}}" class="form-label">{{i18n.lblAnchor}}</label>
-		<input type="hidden" name="AnchorId" value="" aria-describedby="export-dlg-anchor-fb-{{sfx}}" required>
-		<div class="input-group has-validation">
-			<span class="input-group-text export-dlg-anchor-icon bi-question-diamond"></span>
-			<input type="text" id="export-dlg-anchor-{{sfx}}" name="Anchor" value="" class="form-control readonly" placeholder="{{i18n.phAnchor}}" aria-describedby="export-dlg-anchor-fb-{{sfx}}" required>
-			<button class="btn btn-outline-secondary grain-picker" type="button" title="{{i18n.btnPicker}}">...</button>
-			<div id="export-dlg-anchor-fb-{{sfx}}" class="invalid-feedback">
-				{{i18n.fbAnchor}}
-			</div>
-		</div>
+		{{> partials/_GrainSelectField scope=dlgScope sfx=(concat "-" sfx) name='anchor' formname='Anchor' lbl=i18n.lblAnchor ph=i18n.phAnchor fb=i18n.fbAnchor}}
 	</div>
 	<div class="mb-3">
-		<label for="export-dlg-sel-links-{{sfx}}" class="form-label">{{i18n.lblLinksTraversal}}</label>
-		<select id="export-dlg-sel-links-{{sfx}}" name="LinksTraversal" class="form-select">
+		<label for="{{dlgScope}}-sel-links-{{sfx}}" class="form-label">{{i18n.lblLinksTraversal}}</label>
+		<select id="{{dlgScope}}-sel-links-{{sfx}}" name="LinksTraversal" class="form-select">
 			{{#each i18n.lblTraversalOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/linksTraversal}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
 		</select>
 	</div>
 	<div class="mb-3">
-		<label for="export-dlg-sel-types-{{sfx}}" class="form-label">{{i18n.lblTypeDefTraversal}}</label>
-		<select id="export-dlg-sel-types-{{sfx}}" name="TypeDefTraversal" class="form-select">
+		<label for="{{dlgScope}}-sel-types-{{sfx}}" class="form-label">{{i18n.lblTypeDefTraversal}}</label>
+		<select id="{{dlgScope}}-sel-types-{{sfx}}" name="TypeDefTraversal" class="form-select">
 			{{#each i18n.lblTraversalOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/typeDefTraversal}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
 		</select>
 	</div>
 	<div class="mb-3">
-		<label for="export-dlg-sel-parents-{{sfx}}" class="form-label">{{i18n.lblParentTraversal}}</label>
-		<select id="export-dlg-sel-parents-{{sfx}}" name="ParentTraversal" class="form-select">
+		<label for="{{dlgScope}}-sel-parents-{{sfx}}" class="form-label">{{i18n.lblParentTraversal}}</label>
+		<select id="{{dlgScope}}-sel-parents-{{sfx}}" name="ParentTraversal" class="form-select">
 			{{#each i18n.lblTraversalOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/parentTraversal}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
 		</select>
 	</div>
 	<div class="mb-3">
-		<label for="export-dlg-sel-children-{{sfx}}" class="form-label">{{i18n.lblChildrenTraversal}}</label>
-		<select id="export-dlg-sel-children-{{sfx}}" name="ChildrenTraversal" class="form-select">
+		<label for="{{dlgScope}}-sel-children-{{sfx}}" class="form-label">{{i18n.lblChildrenTraversal}}</label>
+		<select id="{{dlgScope}}-sel-children-{{sfx}}" name="ChildrenTraversal" class="form-select">
 			{{#each i18n.lblTraversalOpt}}
 			<option value="{{@key}}" {{#cond @key '==' ../defaults/childrenTraversal}} selected{{/cond}}>{{.}}</option>
 			{{/each}}
@@ -53,20 +44,20 @@
 {{/inline}}
 
 {{#> partials/_DialogModal dlgScope='export-dlg' dlgClasses='modal-lg fade'}}
-{{> partials/_DialogModalHeaderDyn dlgScope='export-dlg'}}
+{{> partials/_DialogModalHeaderDyn dlgScope=dlgScope}}
 <form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
 	<div class="mb-3">
-		<label for="export-dlg-txt-name" class="form-label">{{i18n.lblName}}</label>
-		<input type="text" class="form-control" id="export-dlg-txt-name" name="NamePrefix" placeholder="{{i18n.phName}}" value="">
+		<label for="{{dlgScope}}-txt-name" class="form-label">{{i18n.lblName}}</label>
+		<input type="text" class="form-control" id="{{dlgScope}}-txt-name" name="NamePrefix" placeholder="{{i18n.phName}}" value="">
 	</div>
-	<button id="export-dlg-btn-add" type="button" class="btn btn-sm btn-secondary mb-3" title="{{i18n.btnAddAnchor}}">{{i18n.btnAddAnchor}}</button>
+	<button id="{{dlgScope}}-btn-add" type="button" class="btn btn-sm btn-secondary mb-3" title="{{i18n.btnAddAnchor}}">{{i18n.btnAddAnchor}}</button>
 	<span class="align-top badge bg-light text-secondary text-wrap mb-2">{{i18n.lblOrderNote}}</span>
-	<ul id="export-dlg-items" class="list-group">
+	<ul id="{{dlgScope}}-items" class="list-group">
 		{{> (concat "ExportItem" "") sfx=0}}
 	</ul>
 </form>
-<template id="export-dlg-tpl-item">
-	{{> (concat "ExportItem" "") sfx="REPLACE_ME"}}
+<template id="{{dlgScope}}-tpl-item">
+	{{> (concat "ExportItem" "") sfx="REPLACE_ME" dlgScope=dlgScope}}
 </template>
-{{> partials/_DialogFooterDyn dlgScope='export-dlg'}}
+{{> partials/_DialogFooterDyn dlgScope=dlgScope}}
 {{/partials/_DialogModal}}

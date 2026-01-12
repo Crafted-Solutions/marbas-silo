@@ -1,8 +1,8 @@
 {{#> partials/_DialogModal dlgScope='grain-edit-dlg' dlgClasses='modal-lg'}}
-{{> partials/_DialogModalHeader dlgScope='grain-edit-dlg' dlgTitle=(_ 'Grain Editor')}}
+{{> partials/_DialogModalHeader dlgScope=dlgScope dlgTitle=(_ 'Grain Editor')}}
 <form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
-	<span id="grain-edit-dlg-loading">{{_ 'Loading...'}}</span>
-	<div id="grain-edit-dlg-main"></div>
+	<span id="{{dlgScope}}-loading">{{_ 'Loading...'}}</span>
+	<div id="{{dlgScope}}-main"></div>
 </form>
-{{> partials/_DialogFooter dlgScope='grain-edit-dlg'}}
+{{> partials/_DialogFooter dlgScope=dlgScope}}
 {{/partials/_DialogModal}}

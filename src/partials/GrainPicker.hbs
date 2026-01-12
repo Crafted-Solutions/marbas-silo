@@ -1,20 +1,29 @@
 {{#> partials/_DialogModal dlgScope='grain-picker' dlgClasses='modal-over fade'}}
 <div class="modal-header">
-	<h5 class="modal-title" id="grain-picker-title">
+	<h5 class="modal-title" id="{{dlgScope}}-title">
 		<span>{{_ 'Select Grain'}} </span>
-		<div class="fs-6" id="grain-picker-subtitle"></div>
+		<div class="fs-6" id="{{dlgScope}}-subtitle"></div>
 	</h5>
-	<span class="btn-group ms-2 float-end">{{> partials/_ButtonReload dlgScope='grain-picker'}}</span>
+	<span id="{{dlgScope}}-actions" class="btn-group ms-2 float-end">
+		{{> partials/_ButtonReload dlgScope=dlgScope}}
+		<button class="btn btn-sm btn-outline-secondary bi-plus {{dlgScope}}-newact" id="{{dlgScope}}-btn-new" type="button" disabled>{{_ 'New'}}</button>
+		<button title="{{_ 'Select type of new grain'}}" type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split {{dlgScope}}-newact" id="{{dlgScope}}-btn-newsel" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+			<span class="visually-hidden">{{_ 'Select type of new grain'}}</span>
+		</button>
+		<ul id="{{dlgScope}}-dd-newsel" class="dropdown-menu {{dlgScope}}-newact">
+			<li></li>
+		</ul>
+	</span>
 	{{> partials/_DialogClose}}
 </div>
 <form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
 	<div class="mb-3">
-		<input type="hidden" id="grain-picker-validation" class="form-control" aria-describedby="grain-picker-validation-fb">
-		<div id="grain-picker-validation-fb" class="invalid-feedback">
+		<input type="hidden" id="{{dlgScope}}-validation" class="form-control" aria-describedby="{{dlgScope}}-validation-fb">
+		<div id="{{dlgScope}}-validation-fb" class="invalid-feedback">
 			{{_ 'Please select a grain'}}
 		</div>
-		<nav id="grain-picker-sel"></nav>
+		<nav id="{{dlgScope}}-sel"></nav>
 	</div>
 </form>
-{{> partials/_DialogFooter dlgScope='grain-picker'}}
+{{> partials/_DialogFooter dlgScope=dlgScope}}
 {{/partials/_DialogModal}}
