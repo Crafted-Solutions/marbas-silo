@@ -171,13 +171,13 @@ export class GrainEditor {
 			}
 			const schema = this._getSchema(this.grain, this.customProps);
 			const startval = {
-				_1: {
+				[EditorSchemaConfig.NAME_PRIMARY_GROUP]: {
 					_sys: {
 						id: this.grain.id,
 						api: this._apiSvc.baseUrl
 					}
 				},
-				_2: {}
+				[EditorSchemaConfig.NAME_SECONDARY_GROUP]: {}
 			};
 			for (const rootkey in schema.properties) {
 				for (const key in schema.properties[rootkey].properties) {
@@ -191,7 +191,7 @@ export class GrainEditor {
 			if (MarBasDefaults.ID_TYPE_PROPDEF == this.grain.typeDefId && EditorSchemaConfig[`PropDef_${this.grain.valueType}`]) {
 				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
 			}
-			const valGroup = startval._1;
+			const valGroup = startval[EditorSchemaConfig.NAME_PRIMARY_GROUP];
 			if (this.grain.valueType == MarBasTraitValueType.DateTime) {
 				valGroup.propDef.isDateOnly = GrainXAttrs.getAttr(this.grain, 'propMod') == "dateonly";
 			}
@@ -796,7 +796,7 @@ export class GrainEditor {
 	}
 
 	static _getTraitSchemaGroup(schema) {
-		return schema.properties._1;
+		return schema.properties[EditorSchemaConfig.NAME_PRIMARY_GROUP];
 	}
 
 	#updatePropDefEditorByValueType(valueType) {
@@ -885,31 +885,14 @@ export class GrainEditor {
 			if (!this.grain) {
 				this.grain = {};
 			}
-			const val = (editor || this.editor).getValue();
+			const editors = editor ? [editor] : Object.values(this.editor.editors).filter(x => x && x.schema && x.schema._store);
 			const valMod = (value) => {
 				return 'string' == typeof (value) && 0 == value.length ? null : value;
 			};
-			if ('object' == typeof (val)) {
-				for (const key in val) {
-					if (key.startsWith('_')) {
-						continue;
-					}
-					if (editor) {
-						this.grain[key] = valMod(val[key]);
-					} else {
-						for (const sub in val[key]) {
-							if (sub.startsWith('_')) {
-								continue;
-							}
-							this.grain[sub] = valMod(val[key][sub]);
-						}
-					}
-				}
-			} else if (editor) {
-				const pp = editor.path.split('.');
-				this.grain[pp[pp.length - 1]] = valMod(val);
+			for (const editor of editors) {
+				this.grain[editor.key] = valMod(editor.getValue());
 			}
-			// console.log('collectChanges', editor, this.grain);
+			// console.log('collectChanges', editors, this.grain);
 		}
 	}
 
