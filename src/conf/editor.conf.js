@@ -1,10 +1,14 @@
 import { t } from "ttag";
 import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
 
-const PATH_PRIMARY_GROUP = 'root._1.';
-const PATH_SECONDARY_GROUP = 'root._2.';
+const NAME_PRIMARY_GROUP = '_1';
+const NAME_SECONDARY_GROUP = '_2';
+const PATH_PRIMARY_GROUP = `root.${NAME_PRIMARY_GROUP}.`;
+const PATH_SECONDARY_GROUP = `root.${NAME_SECONDARY_GROUP}.`;
 
 export const EditorSchemaConfig = {
+	NAME_PRIMARY_GROUP: NAME_PRIMARY_GROUP,
+	NAME_SECONDARY_GROUP: NAME_SECONDARY_GROUP,
 	PATH_PRIMARY_GROUP: PATH_PRIMARY_GROUP,
 	PATH_SECONDARY_GROUP: PATH_SECONDARY_GROUP,
 	PATH_DEFAULT_GROUP: PATH_PRIMARY_GROUP,
@@ -12,13 +16,13 @@ export const EditorSchemaConfig = {
 	DEPTH_DATA_CARRIER: 3,
 	BASIC_CORE: {
 		get title() { return t`Grain Editor`; },
-		headerTemplate: '{{self._1.presentation.label}}{{self._1._sys.dirty}}',
+		headerTemplate: `{{self.${NAME_PRIMARY_GROUP}.presentation.label}}{{self.${NAME_PRIMARY_GROUP}._sys.dirty}}`,
 		type: 'object',
 		options: {
 			disable_collapse: true
 		},
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				get title() { return t`Basic`; },
 				type: 'object',
 				propertyOrder: 0,
@@ -47,16 +51,19 @@ export const EditorSchemaConfig = {
 				id: 'presentation',
 				properties: {
 					label: {
+						_store: true,
 						get title() { return t`Label`; },
 						type: "string",
 						minLength: 1
 					},
 					icon: {
+						_store: true,
 						get title() { return t`Icon`; },
 						type: 'string',
 						format: 'icon'
 					},
 					sortKey: {
+						_store: true,
 						get title() { return t`Sort Key`; },
 						type: 'string'
 					}
@@ -111,7 +118,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_TYPEDEF]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					typeDef: {
 						get title() { return t`Type Definition`; },
@@ -127,6 +134,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					defaultInstanceId: {
+						_store: true,
 						get title() { return t`Default Values`; },
 						type: 'string',
 						format: 'button',
@@ -153,6 +161,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					impl: {
+						_store: true,
 						get title() { return t`Implementation`; },
 						type: 'string',
 						required: false,
@@ -161,6 +170,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					mixInIds: {
+						_store: true,
 						get title() { return t`Type Mix-Ins`; },
 						type: 'array',
 						uniqueItems: true,
@@ -186,7 +196,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_PROPDEF]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					propDef: {
 						get title() { return `Property Definition`; },
@@ -202,6 +212,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					valueType: {
+						_store: true,
 						get title() { return t`Value Type`; },
 						type: 'string',
 						enum: MarBasTraitValueTypes,
@@ -211,6 +222,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMin: {
+						_store: true,
 						get title() { return t`Min. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
@@ -222,6 +234,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMax: {
+						_store: true,
 						get title() { return t`Max. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
@@ -235,6 +248,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					versionable: {
+						_store: true,
 						get title() { return t`Versionable`; },
 						type: 'boolean',
 						format: 'checkbox',
@@ -243,6 +257,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					localizable: {
+						_store: true,
 						get title() { return t`Localizable`; },
 						type: 'boolean',
 						format: 'checkbox',
@@ -252,6 +267,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					valueConstraintId: {
+						_store: true,
 						get title() { return t`Value Constraint`; },
 						type: 'string',
 						format: 'grain',
@@ -264,6 +280,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					constraintParams: {
+						_store: true,
 						get title() { return t`Value Constraint Parameters`; },
 						required: false,
 						type: 'string',
@@ -278,7 +295,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_FILE]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					file: {
 						get title() { return t`File`; },
@@ -354,7 +371,7 @@ export const EditorSchemaConfig = {
 
 EditorSchemaConfig.BASIC = structuredClone(EditorSchemaConfig.BASIC_CORE);
 EditorSchemaConfig.BASIC.format = 'categories';
-EditorSchemaConfig.BASIC.properties._2 = {
+EditorSchemaConfig.BASIC.properties[NAME_SECONDARY_GROUP] = {
 	get title() { return t`Advanced`; },
 	type: 'object',
 	propertyOrder: 2000,
@@ -399,7 +416,6 @@ EditorSchemaConfig.BASIC.definitions.meta = {
 			get title() { return t`Type Definition`; },
 			type: "string",
 			format: "grain",
-			readonly: true,
 			default: MarBasDefaults.ID_TYPE_TYPEDEF
 		}
 	}

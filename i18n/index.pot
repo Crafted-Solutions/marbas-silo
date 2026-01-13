@@ -346,15 +346,15 @@ msgstr ""
 msgid "Creating grain"
 msgstr ""
 
-#: src\conf\editor.conf.js:117
-#: src\conf\editor.conf.js:399
+#: src\conf\editor.conf.js:124
+#: src\conf\editor.conf.js:416
 #: src\js\SiloNavi.js:82
 #: src\js\cmn\GrainPicker.js:110
 msgid "Type Definition"
 msgstr ""
 
 #: src\js\SiloNavi.js:92
-#: src\js\cmn\GrainPicker.js:165
+#: src\js\cmn\GrainPicker.js:167
 msgid "Creating file"
 msgstr ""
 
@@ -469,12 +469,12 @@ msgstr ""
 msgid "Grain"
 msgstr ""
 
-#: src\js\cmn\GrainNewDialog.js:43
+#: src\js\cmn\GrainNewDialog.js:39
 #, javascript-format
 msgid "New ${ grainType.label }"
 msgstr ""
 
-#: src\js\cmn\GrainNewDialog.js:53
+#: src\js\cmn\GrainNewDialog.js:49
 msgid "Schema"
 msgstr ""
 
@@ -523,145 +523,145 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src\conf\editor.conf.js:14
+#: src\conf\editor.conf.js:18
 msgid "Grain Editor"
 msgstr ""
 
-#: src\conf\editor.conf.js:22
+#: src\conf\editor.conf.js:26
 msgid "Basic"
 msgstr ""
 
-#: src\conf\editor.conf.js:34
+#: src\conf\editor.conf.js:38
 msgid "Presentation"
 msgstr ""
 
-#: src\conf\editor.conf.js:50
+#: src\conf\editor.conf.js:55
 msgid "Label"
 msgstr ""
 
-#: src\conf\editor.conf.js:55
+#: src\conf\editor.conf.js:61
 msgid "Icon"
 msgstr ""
 
-#: src\conf\editor.conf.js:60
+#: src\conf\editor.conf.js:67
 msgid "Sort Key"
 msgstr ""
 
-#: src\conf\editor.conf.js:130
+#: src\conf\editor.conf.js:138
 msgid "Default Values"
 msgstr ""
 
-#: src\conf\editor.conf.js:148
+#: src\conf\editor.conf.js:156
 msgid ""
 "Open Grain editor with default values for this type (create the Grain if "
 "necessary)"
 msgstr ""
 
-#: src\conf\editor.conf.js:156
+#: src\conf\editor.conf.js:165
 msgid "Implementation"
 msgstr ""
 
-#: src\conf\editor.conf.js:164
+#: src\conf\editor.conf.js:174
 msgid "Type Mix-Ins"
 msgstr ""
 
-#: src\conf\editor.conf.js:205
+#: src\conf\editor.conf.js:216
 msgid "Value Type"
 msgstr ""
 
-#: src\conf\editor.conf.js:214
+#: src\conf\editor.conf.js:226
 msgid "Min. Number of Values"
 msgstr ""
 
-#: src\conf\editor.conf.js:225
+#: src\conf\editor.conf.js:238
 msgid "Max. Number of Values"
 msgstr ""
 
-#: src\conf\editor.conf.js:238
+#: src\conf\editor.conf.js:252
 msgid "Versionable"
 msgstr ""
 
-#: src\conf\editor.conf.js:246
+#: src\conf\editor.conf.js:261
 msgid "Localizable"
 msgstr ""
 
-#: src\conf\editor.conf.js:255
+#: src\conf\editor.conf.js:271
 msgid "Value Constraint"
 msgstr ""
 
-#: src\conf\editor.conf.js:267
+#: src\conf\editor.conf.js:284
 msgid "Value Constraint Parameters"
 msgstr ""
 
-#: src\conf\editor.conf.js:284
+#: src\conf\editor.conf.js:301
 msgid "File"
 msgstr ""
 
-#: src\conf\editor.conf.js:297
+#: src\conf\editor.conf.js:314
 msgid "Content"
 msgstr ""
 
-#: src\conf\editor.conf.js:318
+#: src\conf\editor.conf.js:335
 msgid "Content Type"
 msgstr ""
 
-#: src\conf\editor.conf.js:328
+#: src\conf\editor.conf.js:345
 msgid "Size"
 msgstr ""
 
-#: src\conf\editor.conf.js:343
+#: src\conf\editor.conf.js:360
 msgid "Date Only"
 msgstr ""
 
-#: src\conf\editor.conf.js:350
+#: src\conf\editor.conf.js:367
 msgid "Rich Text"
 msgstr ""
 
-#: src\conf\editor.conf.js:358
+#: src\conf\editor.conf.js:375
 msgid "Advanced"
 msgstr ""
 
-#: src\conf\editor.conf.js:370
+#: src\conf\editor.conf.js:387
 msgid "Metadata"
 msgstr ""
 
-#: src\conf\editor.conf.js:375
+#: src\conf\editor.conf.js:392
 msgid "Statistics"
 msgstr ""
 
-#: src\conf\editor.conf.js:387
+#: src\conf\editor.conf.js:404
 msgid "ID"
 msgstr ""
 
-#: src\conf\editor.conf.js:391
+#: src\conf\editor.conf.js:408
 msgid "Name"
 msgstr ""
 
-#: src\conf\editor.conf.js:395
+#: src\conf\editor.conf.js:412
 msgid "Path"
 msgstr ""
 
-#: src\conf\editor.conf.js:413
+#: src\conf\editor.conf.js:429
 msgid "Revision"
 msgstr ""
 
-#: src\conf\editor.conf.js:417
+#: src\conf\editor.conf.js:433
 msgid "Created"
 msgstr ""
 
-#: src\conf\editor.conf.js:421
+#: src\conf\editor.conf.js:437
 msgid "Modified"
 msgstr ""
 
-#: src\conf\editor.conf.js:425
+#: src\conf\editor.conf.js:441
 msgid "Owner"
 msgstr ""
 
-#: src\conf\editor.conf.js:436
+#: src\conf\editor.conf.js:452
 msgid "Select File"
 msgstr ""
 
-#: src\conf\editor.conf.js:442
+#: src\conf\editor.conf.js:458
 msgid "Select Type"
 msgstr ""
 
