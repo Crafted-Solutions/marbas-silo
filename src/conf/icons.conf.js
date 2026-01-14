@@ -5,7 +5,8 @@ export const IconMaps = {
 	ById: {
 		[MarBasDefaults.ID_ROOT]: 'bi-database',
 		[MarBasDefaults.ID_SCHEMA]: 'bi-gear',
-		[MarBasDefaults.ID_FILES]: 'bi-collection'
+		[MarBasDefaults.ID_FILES]: 'bi-collection',
+		[MarBasDefaults.ID_TYPEDEFSPEC]: 'bi-back'
 	},
 	ByType: {
 		[MarBasDefaults.ID_TYPE_CONTAINER]: 'bi-folder2',

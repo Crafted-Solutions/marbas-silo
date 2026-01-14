@@ -19,9 +19,6 @@ import { FieldEditorPropConstraints } from "./jed/FieldEditorPropConstraints";
 import { GrainPropConstraints } from "./cmn/GrainPropConstraints";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
-const FieldValueType = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.valueType`;
-const FieldRtf = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isRtf`;
-const FieldDateOnly = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}propDef.isDateOnly`;
 const GuidPattern = /[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i;
 const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.(${GuidPattern.source})`, 'i');
 
@@ -192,12 +189,6 @@ export class GrainEditor {
 				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
 			}
 			const valGroup = startval[EditorSchemaConfig.NAME_PRIMARY_GROUP];
-			if (this.grain.valueType == MarBasTraitValueType.DateTime) {
-				valGroup.propDef.isDateOnly = GrainXAttrs.getAttr(this.grain, 'propMod') == "dateonly";
-			}
-			else if (this.grain.valueType == MarBasTraitValueType.Memo) {
-				valGroup.propDef.isRtf = GrainXAttrs.getAttr(this.grain, 'propMod') == "rtf";
-			}
 			if (this.customProps.def.length && this.customProps.traits) {
 				const schemaGroup = GrainEditor._getTraitSchemaGroup(schema);
 				this.customProps.def.forEach((prop) => {
@@ -375,14 +366,6 @@ export class GrainEditor {
 		}
 		if (FieldIcon == editorKey) {
 			this.updateIcon();
-		} else if (sub) {
-			if (FieldRtf == editorKey) {
-				GrainXAttrs.setAttr(this.grain, 'propMod', sub.getValue() ? 'rtf' : null);
-			} else if (FieldDateOnly == editorKey) {
-				GrainXAttrs.setAttr(this.grain, 'propMod', sub.getValue() ? 'dateonly' : null);
-			} else if (FieldValueType == editorKey) {
-				this.#updatePropDefEditorByValueType(sub.getValue());
-			}
 		}
 		if (makeDirty && !this.#markTraitChange(editorKey)) {
 			this.#collectChanges(sub);
@@ -691,11 +674,6 @@ export class GrainEditor {
 			let propSchema = {
 				type: 'string'
 			};
-			let configKey = `TRAIT_${prop.valueType}`;
-			const mod = GrainXAttrs.getAttr(prop, 'propMod');
-			if (mod) {
-				configKey = `${configKey}_${mod}`;
-			}
 			switch (prop.valueType) {
 				case MarBasTraitValueType.Number:
 					propSchema.type = 'number';
@@ -708,6 +686,7 @@ export class GrainEditor {
 					propSchema.format = 'datetime-local';
 					break;
 			}
+			let configKey = `TRAIT_${prop.valueType}`;
 			if (EditorSchemaConfig[configKey]) {
 				merge(propSchema, EditorSchemaConfig[configKey]);
 			}
@@ -761,7 +740,7 @@ export class GrainEditor {
 			propSchema.title = prop.label;
 			propSchema.propertyOrder = GrainEditor.makeOrderKey(prop.sortKey, prop.name);
 
-			const constrHandler = GrainPropConstraints.createHandler(prop.constraintParams);
+			const constrHandler = GrainPropConstraints.createHandler(prop.constraintParams, GrainXAttrs.getAttr(prop, 'propMod'));
 			if (constrHandler) {
 				constrHandler.tweakTargetSchema(prop, propSchema);
 			}
@@ -797,35 +776,6 @@ export class GrainEditor {
 
 	static _getTraitSchemaGroup(schema) {
 		return schema.properties[EditorSchemaConfig.NAME_PRIMARY_GROUP];
-	}
-
-	#updatePropDefEditorByValueType(valueType) {
-		const ed = this.editor.getEditor(FieldValueType).parent;
-		const customProps = EditorSchemaConfig[`PropDef_${valueType}`];
-		const extList = { [MarBasTraitValueType.Memo]: EditorSchemaConfig.PropDef_Memo, [MarBasTraitValueType.DateTime]: EditorSchemaConfig.PropDef_DateTime };
-		if (customProps) {
-			delete extList[valueType];
-			if (ed) {
-				this.editor.schema.definitions.propDef.additionalProperties = true;
-				ed.schema.properties = merge({}, ed.schema.properties, customProps);
-				for (const k in customProps) {
-					ed.addObjectProperty(k);
-					this._addEditorListener(`${ed.path}.${k}`);
-				}
-			}
-		} else {
-			GrainXAttrs.setAttr(this.grain, 'propMod', null);
-		}
-		for (const ext in extList) {
-			for (const k in extList[ext]) {
-				delete this.grain[k];
-				if (ed) {
-					this._removeEditorListener(`${ed.path}.${k}`);
-					ed.removeObjectProperty(k);
-					delete ed.cached_editors[k];
-				}
-			}
-		}
 	}
 
 	#updateSessionLinks() {

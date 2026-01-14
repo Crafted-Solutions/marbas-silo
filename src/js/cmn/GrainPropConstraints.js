@@ -2,10 +2,36 @@ import { t } from "ttag";
 import { InputDialog } from "./InputDialog";
 import { MarBasDefaults, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
 
-class PickerConfig {
+
+class AbstractConstraintHandler {
+	tweakTargetSchema(propDef, schema) { }
+
+	toString() {
+		return `use=${this.use}`;
+	}
+
+	get isReady() {
+		return true;
+	}
+
+	get requiredValueTypes() {
+		return [];
+	}
+
+	get use() {
+		return this.constructor.name;
+	}
+
+	static get title() {
+		return this.use;
+	}
+}
+
+class PickerConfig extends AbstractConstraintHandler {
 	setRoot = true;
 
 	constructor(params) {
+		super();
 		if ('false' == params.setRoot) {
 			this.setRoot = false;
 		}
@@ -34,23 +60,15 @@ class PickerConfig {
 	}
 
 	toString() {
-		let result = `use=${this.use}`;
+		let result = super.toString();
 		if (!this.setRoot) {
 			result += "&setRoot=false";
 		}
 		return result;
 	}
 
-	get isValid() {
-		return true;
-	}
-
 	get requiredValueTypes() {
 		return [MarBasTraitValueType.Grain, MarBasTraitValueType.File];
-	}
-
-	get use() {
-		return this.constructor.name;
 	}
 
 	static get title() {
@@ -85,8 +103,8 @@ class PickerConfigByPath extends PickerConfig {
 		return `${super.toString()}&root=${encodeURIComponent(this.root)}`;
 	}
 
-	get isValid() {
-		return !!this.root && super.isValid;
+	get isReady() {
+		return !!this.root && super.isReady;
 	}
 
 	async configure(apiSvc) {
@@ -104,8 +122,50 @@ class PickerConfigByPath extends PickerConfig {
 	}
 }
 
+class FormatRichText extends AbstractConstraintHandler {
+
+	tweakTargetSchema(propDef, schema) {
+		schema.format = 'jodit';
+		console.log("tweakTargetSchema", schema);
+	}
+
+	get requiredValueTypes() {
+		return [MarBasTraitValueType.Text, MarBasTraitValueType.Memo];
+	}
+
+	static get title() {
+		return t`Format: rich text`;
+	}
+}
+
+class FormatDateOnly extends AbstractConstraintHandler {
+
+	tweakTargetSchema(propDef, schema) {
+		schema.format = 'date';
+	}
+
+	get requiredValueTypes() {
+		return [MarBasTraitValueType.DateTime];
+	}
+
+	static get title() {
+		return t`Format: date only`;
+	}
+}
+
 export const GrainPropConstraints = {
-	createHandler: function createHandler(paramString) {
+	createHandler: function createHandler(paramString, modXAttr) {
+		if (!paramString && modXAttr) {
+			console.warn(`xAttr '${modXAttr}' should be migrated to constraintParams`);
+			// propMod XAttr compatibility, please delete after all Grains are migrated
+			switch (modXAttr) {
+				case 'rtf':
+					paramString = 'use=FormatRichText'
+					break;
+				case 'dateonly':
+					paramString = 'use=FormatDateOnly'
+			}
+		}
 		if (paramString) {
 			const params = Object.fromEntries(new URLSearchParams(paramString));
 			if (params.use && params.use in GrainPropConstraints.handlers) {
@@ -116,6 +176,8 @@ export const GrainPropConstraints = {
 	},
 	handlers: {
 		PickerConfig: PickerConfig,
-		PickerConfigByPath: PickerConfigByPath
+		PickerConfigByPath: PickerConfigByPath,
+		FormatRichText: FormatRichText,
+		FormatDateOnly: FormatDateOnly
 	}
 };

@@ -94,12 +94,6 @@ export const EditorSchemaConfig = {
 	TRAIT_Memo: {
 		format: 'textarea'
 	},
-	TRAIT_Memo_rtf: {
-		format: 'jodit'
-	},
-	TRAIT_DateTime_dateonly: {
-		format: 'date'
-	},
 	TRAIT_Grain: {
 		format: "grain",
 		options: {
@@ -351,20 +345,6 @@ export const EditorSchemaConfig = {
 					}
 				}
 			}
-		}
-	},
-	PropDef_DateTime: {
-		isDateOnly: {
-			type: "boolean",
-			format: "checkbox",
-			get title() { return t`Date Only`; }
-		}
-	},
-	PropDef_Memo: {
-		isRtf: {
-			type: "boolean",
-			format: "checkbox",
-			get title() { return t`Rich Text`; }
 		}
 	}
 };

@@ -7,11 +7,13 @@ import { IconMaps } from "../../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
 import { MbDomUtils } from "./MbDomUtils";
 
+const GRAINTYPE_DEFAULT = {
+	id: MarBasDefaults.ID_TYPE_ELEMENT,
+	get label() { return t`Grain` }
+};
+
 export class GrainNewDialog extends _NewDialog {
-	_grainType = {
-		id: MarBasDefaults.ID_TYPE_ELEMENT,
-		label: t`Grain`
-	};
+	_grainType = GRAINTYPE_DEFAULT;
 	static #instances = {};
 
 	constructor(scope, apiSvc) {
@@ -32,11 +34,15 @@ export class GrainNewDialog extends _NewDialog {
 	}
 
 	show(parentGrainId, grainType = null, options = {}) {
-		delete this._grainType._external;
+		this._grainType = grainType || GRAINTYPE_DEFAULT;
 		if (grainType) {
-			this._grainType = grainType;
 			this._grainType._external = true;
 			options.title = t`New ${grainType.label}`;
+		} else if (this.typeSelector) {
+			const sel = this.typeSelector.getSelected();
+			if (sel && sel.length) {
+				this.#setTypeFromNode(sel[0]);
+			}
 		}
 		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-type-fields`), !!grainType);
 		super.show(parentGrainId, options);
@@ -64,10 +70,14 @@ export class GrainNewDialog extends _NewDialog {
 				typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER]
 			});
 			this.typeSelector.addEventListener(EVENT_NODE_SELECTED, (evt) => {
-				this._grainType.id = evt.detail.node.dataAttr.grain;
-				this._grainType.label = evt.detail.node.text;
+				this.#setTypeFromNode(evt.detail.node);
 			});
 		}
+	}
+
+	#setTypeFromNode(node) {
+		this._grainType.id = node.dataAttr.grain;
+		this._grainType.label = node.text;
 	}
 
 	static instance(apiSvc, scope = "grain-new") {

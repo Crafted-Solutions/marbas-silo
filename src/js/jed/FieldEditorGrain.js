@@ -94,7 +94,9 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	setValue(value, initial, fromTemplate) {
 		const result = super.setValue(value, initial, fromTemplate);
 		if (result && result.changed) {
-			this.is_dirty = true;
+			if (!initial) {
+				this.is_dirty = true;
+			}
 			this.inputMod.value = result.value;
 			this.inputMod.title = '';
 			this.icon.title = this._lblEmpty;
