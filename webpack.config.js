@@ -70,7 +70,7 @@ module.exports = async (env) => {
 
 	const pageBase = {
 		chunksSortMode: 'manual',
-		excludeAssets: [/bs.*.js/],
+		excludeAssets: [/\bbs\..*\.js$/],
 		meta: {
 			viewport: 'width=device-width,initial-scale=1'
 		}

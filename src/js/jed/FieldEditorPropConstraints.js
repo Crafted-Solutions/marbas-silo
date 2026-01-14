@@ -4,10 +4,11 @@ import { t } from "ttag";
 
 import { GrainPropConstraints } from "../cmn/GrainPropConstraints";
 import { MbUtils } from "@crafted.solutions/marbas-core";
+import { GrainXAttrs } from "../cmn/GrainXAttrs";
 
 export class FieldEditorPropConstraints extends JSONEditor.AbstractEditor {
 	build() {
-		if (!this.jsoneditor._grainEditor) {
+		if (!this.#grainEditor) {
 			throw new Error("This editor is only usable as part of GrainEditor");
 		}
 
@@ -56,8 +57,8 @@ export class FieldEditorPropConstraints extends JSONEditor.AbstractEditor {
 
 	async onConfigureHandler() {
 		let changed = false;
-		if (this.handler && 'function' == typeof this.handler.configure) {
-			changed = await this.handler.configure(this.jsoneditor._grainEditor._apiSvc);
+		if (this.#hasConfiguration) {
+			changed = await this.handler.configure(this.#grainEditor._apiSvc);
 		}
 		if (changed) {
 			this.is_dirty = true;
@@ -75,18 +76,31 @@ export class FieldEditorPropConstraints extends JSONEditor.AbstractEditor {
 		this.value = this.input.value;
 		this.handler = this.value ? GrainPropConstraints.createHandler(`use=${this.value}`) : null;
 
-		const hasConfig = this.handler && 'function' == typeof this.handler.configure;
+		const hasConfig = this.#hasConfiguration;
 		this.btnConfigureHandler.disabled = !hasConfig;
-		if (hasConfig && !this.handler.isValid) {
-			await this.handler.configure(this.jsoneditor._grainEditor._apiSvc);
+		if (hasConfig && !this.handler.isReady) {
+			await this.handler.configure(this.#grainEditor._apiSvc);
 		}
 
 		this.onChange(true);
 	}
 
 	setValue(value, initial) {
-		this.handler = GrainPropConstraints.createHandler(value);
+		if (initial && this.handler) {
+			return;
+		}
+		let propMod;
+		if (initial) {
+			// propMod XAttr compatibility, please delete after all Grains are migrated
+			propMod = GrainXAttrs.getAttr(this.#grainEditor.grain, 'propMod');
+			if (propMod) {
+				GrainXAttrs.setAttr(this.#grainEditor.grain, 'propMod');
+			}
+		}
+		this.handler = GrainPropConstraints.createHandler(value, propMod);
 		this.value = this.input.value = this.handler ? this.handler.use : '';
+
+		this.btnConfigureHandler.disabled = !this.#hasConfiguration;
 
 		if (!initial) {
 			this.is_dirty = true;
@@ -130,7 +144,7 @@ export class FieldEditorPropConstraints extends JSONEditor.AbstractEditor {
 				if (value && !this.handler) {
 					result.push({ path: this.path, property: 'value', message: t`Unknown constraint handler ${this.value}` });
 				} else if (this.handler) {
-					if (!this.handler.isValid) {
+					if (!this.handler.isReady) {
 						result.push({ path: this.path, property: 'format', message: t`Handler ${this.handler.use} requires configuration` });
 					} else {
 						const valTypes = this.handler.requiredValueTypes;
@@ -185,6 +199,14 @@ export class FieldEditorPropConstraints extends JSONEditor.AbstractEditor {
 	activate() { }
 
 	deactivate() { }
+
+	get #grainEditor() {
+		return this.jsoneditor._grainEditor;
+	}
+
+	get #hasConfiguration() {
+		return this.handler && 'function' == typeof this.handler.configure;
+	}
 
 	#createFieldAction(name, title, icon) {
 		const icoHolder = document.createElement('span');
