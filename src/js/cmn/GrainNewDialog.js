@@ -39,7 +39,7 @@ export class GrainNewDialog extends _NewDialog {
 			this._grainType._external = true;
 			options.title = t`New ${grainType.label}`;
 		} else if (this.typeSelector) {
-			const sel = this.typeSelector.getSelected();
+			const sel = this.typeSelector.tree.getSelected();
 			if (sel && sel.length) {
 				this.#setTypeFromNode(sel[0]);
 			}
@@ -76,8 +76,10 @@ export class GrainNewDialog extends _NewDialog {
 	}
 
 	#setTypeFromNode(node) {
-		this._grainType.id = node.dataAttr.grain;
-		this._grainType.label = node.text;
+		this._grainType = {
+			id: node.dataAttr.grain,
+			label: node.text
+		};
 	}
 
 	static instance(apiSvc, scope = "grain-new") {
