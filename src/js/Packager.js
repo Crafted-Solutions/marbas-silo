@@ -122,7 +122,7 @@ class ExportDialog extends _Dialog {
 
 	#initGrainPicker(container) {
 		if (!this.#grainPicker) {
-			this.#grainPicker = GrainPicker.instance('grain-picker', this.#apiSvc);
+			this.#grainPicker = GrainPicker.instance(this.#apiSvc);
 		}
 		const btn = (container || this._element).querySelector('.grain-picker');
 		btn.addEventListener('click', () => {

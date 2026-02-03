@@ -1,0 +1,10 @@
+<label for="{{scope}}-{{name}}{{sfx}}" class="form-label">{{lbl}}</label>
+<input type="hidden" name="{{#if formname}}{{formname}}{{else}}{{name}}{{/if}}Id" value="" aria-describedby="{{scope}}-{{name}}-fb{{sfx}}" required>
+<div class="input-group has-validation">
+	<span class="input-group-text {{scope}}-{{name}}-icon bi-question-diamond"></span>
+	<input type="text" id="{{scope}}-{{name}}{{sfx}}" name="{{#if formname}}{{formname}}{{else}}{{name}}{{/if}}" value="" class="form-control readonly" placeholder="{{ph}}" aria-describedby="{{scope}}-{{name}}-fb{{sfx}}" required>
+	<button class="btn btn-outline-secondary grain-picker" type="button" title="{{btn}}">...</button>
+	<div id="{{scope}}-{{name}}-fb{{sfx}}" class="invalid-feedback">
+		{{fb}}
+	</div>
+</div>

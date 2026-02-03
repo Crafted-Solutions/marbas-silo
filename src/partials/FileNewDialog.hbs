@@ -1,18 +1,18 @@
-{{#> partials/_DialogModal dlgScope='file-new'}}
-{{> partials/_DialogModalHeader dlgScope='file-new' dlgTitle=(_ 'New File')}}
+{{#> partials/_DialogModal dlgScope='file-new' dlgClasses='modal-over fade'}}
+{{> partials/_DialogModalHeader dlgScope=dlgScope dlgTitle=(_ 'New File')}}
 <form class="modal-body needs-validation" action="#" onsubmit="return false;" enctype="multipart/form-data" novalidate>
-	<input type="hidden" id="file-new-parent-id" name="ParentId">
+	<input type="hidden" id="{{dlgScope}}-parent-id" name="ParentId">
 	<div class="mb-3">
-		<label for="file-new-txt-name" class="form-label">{{_ 'Name'}}</label>
-		<input type="text" class="form-control" id="file-new-txt-name" name="Name" placeholder="{{_ '(Optional) name for the new grain'}}" value="">
+		<label for="{{dlgScope}}-txt-name" class="form-label">{{_ 'Name'}}</label>
+		<input type="text" class="form-control" id="{{dlgScope}}-txt-name" name="Name" placeholder="{{_ '(Optional) name for the new grain'}}" value="">
 	</div>
 	<div class="mb-3">
-		<label for="file-new-file" class="form-label">{{_ 'File'}}</label>
-		<input class="form-control" name="File" type="file" id="file-new-file" aria-describedby="file-new-file-fb" required>
-		<div id="file-new-file-fb" class="invalid-feedback">
+		<label for="{{dlgScope}}-file" class="form-label">{{_ 'File'}}</label>
+		<input class="form-control" name="File" type="file" id="{{dlgScope}}-file" aria-describedby="{{dlgScope}}-file-fb" required>
+		<div id="{{dlgScope}}-file-fb" class="invalid-feedback">
 			{{_ 'Please provide a file'}}
 		</div>
 	</div>
 </form>
-{{> partials/_DialogFooter dlgScope='file-new'}}
+{{> partials/_DialogFooter dlgScope=dlgScope}}
 {{/partials/_DialogModal}}

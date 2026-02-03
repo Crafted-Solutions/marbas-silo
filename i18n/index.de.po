@@ -11,44 +11,44 @@ msgstr ""
 msgid "Connected to ${ info.brokerName } ${ info.brokerVersion } as ${ info.user }"
 msgstr "Verbunden mit ${ info.brokerName } ${ info.brokerVersion } als ${ info.user }"
 
-#: src\js\BasicAuthenticator.js:74
+#: src\js\BasicAuthenticator.js:77
 msgid "Login Onto Broker"
 msgstr "Beim Broker anmelden"
 
-#: src\js\cmn\_Dialog.js:80
+#: src\js\cmn\_Dialog.js:112
 msgid "Close"
 msgstr "Schlißen"
 
-#: src\js\cmn\_Dialog.js:81
+#: src\js\cmn\_Dialog.js:113
 msgid "Ok"
 msgstr "Ok"
 
 #: src\conf\vendor.i18n.js:14
-#: src\js\cmn\_Dialog.js:82
+#: src\js\cmn\_Dialog.js:114
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src\js\BasicAuthenticator.js:75
+#: src\js\BasicAuthenticator.js:78
 msgid "User"
 msgstr "Benutzer"
 
-#: src\js\BasicAuthenticator.js:76
+#: src\js\BasicAuthenticator.js:79
 msgid "Login user name"
 msgstr "Anmeldename"
 
-#: src\js\BasicAuthenticator.js:77
+#: src\js\BasicAuthenticator.js:80
 msgid "Please provide a valid user name"
 msgstr "Bitte einen gültigen Benutzernamen angeben"
 
-#: src\js\BasicAuthenticator.js:78
+#: src\js\BasicAuthenticator.js:81
 msgid "Password"
 msgstr "Passwort"
 
-#: src\js\BasicAuthenticator.js:79
+#: src\js\BasicAuthenticator.js:82
 msgid "Login password"
 msgstr "Anmeldepasswort"
 
-#: src\js\BasicAuthenticator.js:80
+#: src\js\BasicAuthenticator.js:83
 msgid "Please provide a valid password"
 msgstr "Bitten ein gültigen Passwort angeben"
 
@@ -62,47 +62,47 @@ msgstr "Diese App erfordert Zugriff auf Sitzungsspeicher, bitte in der Browser-K
 msgid "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
 msgstr "Unerwarteter Fehler aufgereten im Vorgang \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
 
-#: src\js\jed\FieldEditorGrain.js:20
+#: src\js\jed\FieldEditorGrain.js:22
 msgid "Empty"
 msgstr "Leer"
 
-#: src\js\jed\FieldEditorGrain.js:21
+#: src\js\jed\FieldEditorGrain.js:23
 msgid "Type"
 msgstr "Typ"
 
-#: src\js\jed\FieldEditorGrain.js:50
+#: src\js\jed\FieldEditorGrain.js:53
 msgid "Go To Grain"
 msgstr "Zum Grain"
 
-#: src\js\jed\FieldEditorGrain.js:51
+#: src\js\jed\FieldEditorGrain.js:55
 msgid "Select"
 msgstr "Auswählen"
 
-#: src\js\jed\FieldEditorGrain.js:54
+#: src\js\jed\FieldEditorGrain.js:57
 msgid "Delete"
 msgstr "Löschen"
 
-#: src\js\jed\FieldEditorGrain.js:170
+#: src\js\jed\FieldEditorGrain.js:207
 msgid "Other Options"
 msgstr "Weitere Optionen"
 
-#: src\js\jed\FieldEditorGrain.js:189
+#: src\js\jed\FieldEditorGrain.js:226
 msgid "Copy ID"
 msgstr "ID kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:194
+#: src\js\jed\FieldEditorGrain.js:231
 msgid "Copy Path"
 msgstr "Pfad kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:199
+#: src\js\jed\FieldEditorGrain.js:236
 msgid "Copy URL"
 msgstr "URL kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:214
+#: src\js\jed\FieldEditorGrain.js:251
 msgid "<Self>"
 msgstr "<Dieses Objekt>"
 
-#: src\js\jed\FieldEditorGrain.js:240
+#: src\js\jed\FieldEditorGrain.js:279
 msgid "Open (new window)"
 msgstr "Öffnen (im neuen Fenster)"
 
@@ -161,157 +161,131 @@ msgstr "In der Navigation auswählen"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: src\conf\editor.conf.js:14
+#: src\conf\editor.conf.js:18
 msgid "Grain Editor"
 msgstr "Grain-Editor"
 
-#: src\conf\editor.conf.js:23
+#: src\conf\editor.conf.js:26
 msgid "Basic"
 msgstr "Grundlegend"
 
-#: src\conf\editor.conf.js:35
+#: src\conf\editor.conf.js:38
 msgid "Presentation"
 msgstr "Präsentation"
 
-#: src\conf\editor.conf.js:45
-msgid "Advanced"
-msgstr "Erweitert"
-
-#: src\conf\editor.conf.js:57
-msgid "Metadata"
-msgstr "Metadaten"
-
-#: src\conf\editor.conf.js:62
-msgid "Statistics"
-msgstr "Statistik"
-
-#: src\conf\editor.conf.js:76
+#: src\conf\editor.conf.js:384
 msgid "ID"
 msgstr "ID"
 
-#: src\conf\editor.conf.js:80
+#: src\conf\editor.conf.js:388
 msgid "Name"
 msgstr "Name"
 
-#: src\conf\editor.conf.js:84
+#: src\conf\editor.conf.js:392
 msgid "Path"
 msgstr "Pfad"
 
-#: src\conf\editor.conf.js:88
-#: src\conf\editor.conf.js:188
+#: src\conf\editor.conf.js:118
+#: src\conf\editor.conf.js:396
+#: src\js\SiloNavi.js:82
+#: src\js\cmn\GrainPicker.js:110
 msgid "Type Definition"
 msgstr "Typdefinition"
 
-#: src\conf\editor.conf.js:101
+#: src\conf\editor.conf.js:55
 msgid "Label"
 msgstr "Beschriftung"
 
-#: src\conf\editor.conf.js:106
+#: src\conf\editor.conf.js:61
 msgid "Icon"
 msgstr "Symbol"
 
-#: src\conf\editor.conf.js:111
+#: src\conf\editor.conf.js:67
 msgid "Sort Key"
 msgstr "Sortierungsschlüssel"
 
-#: src\conf\editor.conf.js:122
+#: src\conf\editor.conf.js:409
 msgid "Revision"
 msgstr "Revision"
 
-#: src\conf\editor.conf.js:126
+#: src\conf\editor.conf.js:413
 msgid "Created"
 msgstr "Erstellt"
 
-#: src\conf\editor.conf.js:130
+#: src\conf\editor.conf.js:417
 msgid "Modified"
 msgstr "Geändert"
 
-#: src\conf\editor.conf.js:134
+#: src\conf\editor.conf.js:421
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: src\conf\editor.conf.js:201
+#: src\conf\editor.conf.js:132
 msgid "Default Values"
 msgstr "Standardwerte"
 
-#: src\conf\editor.conf.js:219
+#: src\conf\editor.conf.js:150
 msgid "Open Grain editor with default values for this type (create the Grain if necessary)"
 msgstr "Grain-Editor mit Standardwerten diesen Typs öffnen (Grain erstellen, wenn nötig)"
 
-#: src\conf\editor.conf.js:227
+#: src\conf\editor.conf.js:159
 msgid "Implementation"
 msgstr "Implementierung"
 
-#: src\conf\editor.conf.js:235
+#: src\conf\editor.conf.js:168
 msgid "Type Mix-Ins"
 msgstr "Beigemischte Typen"
 
-#: src\conf\editor.conf.js:276
+#: src\conf\editor.conf.js:210
 msgid "Value Type"
 msgstr "Werttyp"
 
-#: src\conf\editor.conf.js:285
+#: src\conf\editor.conf.js:220
 msgid "Min. Number of Values"
 msgstr "Min. Werteanzahl"
 
-#: src\conf\editor.conf.js:296
+#: src\conf\editor.conf.js:232
 msgid "Max. Number of Values"
 msgstr "Max. Werteanzahl"
 
-#: src\conf\editor.conf.js:309
+#: src\conf\editor.conf.js:246
 msgid "Versionable"
 msgstr "Verionierbar"
 
-#: src\conf\editor.conf.js:317
+#: src\conf\editor.conf.js:255
 msgid "Localizable"
 msgstr "Lokalisierbar"
 
-#: src\conf\editor.conf.js:326
+#: src\conf\editor.conf.js:265
 msgid "Value Constraint"
 msgstr "Werteeinschränkung"
 
-#: src\conf\editor.conf.js:338
-msgid "Value Constraint Parameters"
-msgstr "Parmeter für Werteeinschränkung"
-
-#: src\conf\editor.conf.js:354
-msgid "Configure grain picker"
-msgstr "Grain-Picker konfigurieren"
-
-#: src\conf\editor.conf.js:370
+#: src\conf\editor.conf.js:295
 msgid "File"
 msgstr "Datei"
 
-#: src\conf\editor.conf.js:383
+#: src\conf\editor.conf.js:308
 msgid "Content"
 msgstr "Inhalt"
 
-#: src\conf\editor.conf.js:404
+#: src\conf\editor.conf.js:329
 msgid "Content Type"
 msgstr "Inhaltstyp"
 
-#: src\conf\editor.conf.js:414
+#: src\conf\editor.conf.js:339
 msgid "Size"
 msgstr "Größe"
 
-#: src\conf\editor.conf.js:429
-msgid "Date Only"
-msgstr "Nur Datum"
-
-#: src\conf\editor.conf.js:436
-msgid "Rich Text"
-msgstr "Rich-Text"
-
-#: src\conf\editor.conf.js:446
+#: src\conf\editor.conf.js:432
 msgid "Select File"
 msgstr "Datei auswählen"
 
-#: src\conf\editor.conf.js:452
+#: src\conf\editor.conf.js:438
 msgid "Select Type"
 msgstr "Typ auswählen"
 
-#: src\conf\editor.conf.js:350
 #: src\js\Packager.js:38
+#: src\js\jed\FieldEditorPropConstraints.js:25
 msgid "None"
 msgstr "Keine"
 
@@ -424,55 +398,57 @@ msgstr "Ihr Browser blockiert Popups, bitte diese für ${ window.location.protoc
 msgid "Timeout attempting authorization"
 msgstr "Zeitlimitüberschreitung beim Authorisierungsversuch"
 
-#: src\js\SiloNavi.js:49
+#: src\js\SiloNavi.js:54
 msgid "Deleting grain"
 msgstr "Grain löschen"
 
-#: src\js\SiloNavi.js:68
+#: src\js\SiloNavi.js:72
+#: src\js\cmn\GrainPicker.js:146
 msgid "Creating grain"
 msgstr "Grain erstellen"
 
-#: src\js\SiloNavi.js:83
+#: src\js\SiloNavi.js:92
+#: src\js\cmn\GrainPicker.js:167
 msgid "Creating file"
 msgstr "Datei erstellen"
 
-#: src\js\SiloNavi.js:98
+#: src\js\SiloNavi.js:106
 #, javascript-format
 msgid "Rename \"${ oldName }\""
 msgstr "\"${ oldName }\" umbenennen"
 
-#: src\js\SiloNavi.js:99
+#: src\js\SiloNavi.js:107
 msgid "New Grain Name"
 msgstr "Neuer Name fürs Grain"
 
-#: src\js\SiloNavi.js:190
+#: src\js\SiloNavi.js:198
 msgid "Moving grain"
 msgstr "Grain verschieben"
 
-#: src\js\SiloNavi.js:190
+#: src\js\SiloNavi.js:198
 msgid "Copying grain"
 msgstr "Grain kopieren"
 
-#: src\js\SiloNavi.js:218
+#: src\js\SiloNavi.js:226
 msgid "Creating link"
 msgstr "Link erstellen"
 
-#: src\js\SiloNavi.js:266
+#: src\js\SiloTree.js:197
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr "Neuladen von ${ grain.parentId } fehlgeschlagen, Grund: ${ reason }"
 
-#: src\js\SiloNavi.js:288
+#: src\js\SiloNavi.js:253
 #, javascript-format
 msgid "Path for ${ grainOrId } is empty"
 msgstr "Pfad für ${ grainOrId } ist leer"
 
-#: src\js\SiloNavi.js:309
+#: src\js\SiloNavi.js:274
 #, javascript-format
 msgid "Path to ${ id } is unreachable"
 msgstr "Pfad to ${ id } ist unerreichbar"
 
-#: src\js\SiloTree.js:155
+#: src\js\SiloTree.js:224
 msgid "Loading grains"
 msgstr "Grains laden"
 
@@ -493,31 +469,31 @@ msgstr "Systemvorgaben"
 msgid "Move up"
 msgstr "Nach oben"
 
-#: src\js\GrainEditor.js:112
+#: src\js\GrainEditor.js:50
 msgid "Grain was modified, close anyway?"
 msgstr "Grain wurde geändert, trotzdem schließen?"
 
-#: src\js\GrainEditor.js:271
+#: src\js\GrainEditor.js:203
 msgid " (Default Value)"
 msgstr " (Vorgabewert)"
 
-#: src\js\GrainEditor.js:317
+#: src\js\GrainEditor.js:250
 msgid "Grain was modified, save?"
 msgstr "Grain wurde geändert, speichern?"
 
-#: src\js\GrainEditor.js:385
+#: src\js\GrainEditor.js:318
 msgid "Please correct input errors first"
 msgstr "Bitte zuerst die Eingabefehler korrigieren"
 
-#: src\js\GrainEditor.js:539
+#: src\js\GrainEditor.js:462
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
-#: src\js\GrainEditor.js:672
+#: src\js\GrainEditor.js:596
 msgid "Field Info"
 msgstr "Feld-Info"
 
-#: src\js\SiloNavi.js:48
+#: src\js\SiloNavi.js:53
 #, javascript-format
 msgid "Delete ${ node.text }?"
 msgstr "${ node.text } löschen?"
@@ -534,7 +510,7 @@ msgstr "Dieses Fenster kann geschlossen werden"
 msgid "Export Package"
 msgstr "Paketexport"
 
-#: src\js\cmn\GrainPicker.js:38
+#: src\js\cmn\GrainPicker.js:44
 msgid "Select Grain"
 msgstr "Grain Auswählen"
 
@@ -707,3 +683,79 @@ msgstr " (durchgeführt mit Warnungen)"
 #: src\js\Packager.js:310
 msgid " (completed with errors)"
 msgstr " (durchgeführt mit Fehlern)"
+
+#: src\js\jed\FieldEditorGrain.js:52
+msgid "Quick Edit Grain"
+msgstr "Grain bearbeiten"
+
+#: src\conf\editor.conf.js:355
+msgid "Advanced"
+msgstr "Erweitert"
+
+#: src\conf\editor.conf.js:367
+msgid "Metadata"
+msgstr "Metadaten"
+
+#: src\conf\editor.conf.js:372
+msgid "Statistics"
+msgstr "Statistik"
+
+#: src\js\jed\FieldEditorPropConstraints.js:145
+#, javascript-format
+msgid "Unknown constraint handler ${ this.value }"
+msgstr "Unbekannter Werteeinschränkungs-Handler  ${ this.value }"
+
+#: src\js\cmn\GrainPropConstraints.js:75
+msgid "Configure grain picker"
+msgstr "Grain-Picker konfigurieren"
+
+#: src\conf\editor.conf.js:278
+msgid "Value Constraint Parameters"
+msgstr "Parmeter für Werteeinschränkung"
+
+#: src\js\cmn\GrainPropConstraints.js:121
+msgid "Configure grain picker by relative path"
+msgstr "Grain-Picker mit Relativpfad konfigurieren"
+
+#: src\js\cmn\GrainPropConstraints.js:113
+msgid "Grain Picker Root Folder"
+msgstr "Wurzel-Container für Grain-Picker"
+
+#: src\js\cmn\GrainPropConstraints.js:114
+msgid "Path relative to grain instance"
+msgstr "Pfad relativ zur Grain-Instanz"
+
+#: src\js\jed\FieldEditorPropConstraints.js:41
+msgid "Configure"
+msgstr "Konfigurieren"
+
+#: src\js\jed\FieldEditorPropConstraints.js:148
+#, javascript-format
+msgid "Handler ${ this.handler.use } requires configuration"
+msgstr "Handler ${ this.handler.use } erfordert Konfiguration"
+
+#: src\js\jed\FieldEditorPropConstraints.js:152
+#, javascript-format
+msgid "Handler ${ this.handler.use } requires value type ${ valTypes }"
+msgstr "Handler ${ this.handler.use } erfordert Wertetyp ${ valTypes }"
+
+#: src\js\cmn\GrainNewDialog.js:12
+msgid "Grain"
+msgstr "Grain"
+
+#: src\js\cmn\GrainNewDialog.js:40
+#, javascript-format
+msgid "New ${ grainType.label }"
+msgstr "New ${ grainType.label }"
+
+#: src\js\cmn\GrainNewDialog.js:55
+msgid "Schema"
+msgstr "Schema"
+
+#: src\js\cmn\GrainPropConstraints.js:137
+msgid "Format: rich text"
+msgstr "Format: Rich-Text"
+
+#: src\js\cmn\GrainPropConstraints.js:152
+msgid "Format: nur Datum"
+msgstr ""

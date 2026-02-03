@@ -1,11 +1,20 @@
+import { t } from "ttag";
+import { EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
+
 import { SiloTree } from "../SiloTree";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { IconMaps } from "../../conf/icons.conf";
 import { _NewDialog } from "./_NewDialog";
 import { MbDomUtils } from "./MbDomUtils";
 
+const GRAINTYPE_DEFAULT = {
+	id: MarBasDefaults.ID_TYPE_ELEMENT,
+	get label() { return t`Grain` }
+};
+
 export class GrainNewDialog extends _NewDialog {
-	#mode = 'generic';
+	_grainType = GRAINTYPE_DEFAULT;
+	static #instances = {};
 
 	constructor(scope, apiSvc) {
 		super(scope, apiSvc);
@@ -17,37 +26,36 @@ export class GrainNewDialog extends _NewDialog {
 	}
 
 	get grainType() {
-		if ('type' == this.#mode) {
-			return MarBasDefaults.ID_TYPE_TYPEDEF;
-		}
-		if ('container' == this.#mode) {
-			return MarBasDefaults.ID_TYPE_CONTAINER;
-		}
-		if (this.typeSelector) {
-			const selNodes = this.typeSelector.tree.getSelected();
-			if (selNodes.length) {
-				return selNodes[0].dataAttr.grain;
-			}
-		}
-		return super.grainType;
+		return this._grainType.id;
 	}
 
-	show(parentGrainId, mode = 'generic') {
-		this.#mode = mode;
-		this._element.querySelectorAll(`.${this._scope}-mode`).forEach((elm) => {
-			MbDomUtils.hideNode(elm, !elm.classList.contains(`${this._scope}-mode-${mode}`));
-		});
-		super.show(parentGrainId);
+	get typeLabel() {
+		return this._grainType.label;
+	}
+
+	show(parentGrainId, grainType = null, options = {}) {
+		this._grainType = grainType || GRAINTYPE_DEFAULT;
+		if (grainType) {
+			this._grainType._external = true;
+			options.title = t`New ${grainType.label}`;
+		} else if (this.typeSelector) {
+			const sel = this.typeSelector.tree.getSelected();
+			if (sel && sel.length) {
+				this.#setTypeFromNode(sel[0]);
+			}
+		}
+		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-type-fields`), !!grainType);
+		super.show(parentGrainId, options);
 	}
 
 	async _load(parentGrainId) {
 		await super._load(parentGrainId);
-		if (!this.typeSelector) {
+		if (!this.typeSelector && !this._grainType._external) {
 			this.typeSelector = new SiloTree(`${this._scope}-sel-type`, this._apiSvc, [{
-				text: "Schema",
+				text: t`Schema`,
 				lazyLoad: true,
 				icon: IconMaps.ById[MarBasDefaults.ID_SCHEMA],
-				id: `n-${MarBasDefaults.ID_SCHEMA}`,
+				id: `${this._scope}-sel-type-${MarBasDefaults.ID_SCHEMA}`,
 				dataAttr: {
 					grain: MarBasDefaults.ID_SCHEMA
 				},
@@ -61,6 +69,23 @@ export class GrainNewDialog extends _NewDialog {
 				selectableTypes: [MarBasDefaults.ID_TYPE_TYPEDEF],
 				typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER]
 			});
+			this.typeSelector.addEventListener(EVENT_NODE_SELECTED, (evt) => {
+				this.#setTypeFromNode(evt.detail.node);
+			});
 		}
+	}
+
+	#setTypeFromNode(node) {
+		this._grainType = {
+			id: node.dataAttr.grain,
+			label: node.text
+		};
+	}
+
+	static instance(apiSvc, scope = "grain-new") {
+		if (!GrainNewDialog.#instances[scope]) {
+			GrainNewDialog.#instances[scope] = new GrainNewDialog(scope, apiSvc);
+		}
+		return GrainNewDialog.#instances[scope];
 	}
 }

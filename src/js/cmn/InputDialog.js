@@ -17,7 +17,7 @@ export class InputDialog extends _Dialog {
 	show(options) {
 		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || 'Input Request';
 		this._element.querySelector(`label[for="${this._scope}-txt"]`).textContent = options.prompt || 'Input';
-		super.show();
+		super.show(true, options.parent, options.restoreParent);
 		this.#input.value = options.defaultValue || '';
 	}
 
@@ -27,7 +27,7 @@ export class InputDialog extends _Dialog {
 		}
 		return new Promise((resolve) => {
 			InputDialog.#inst._element.addEventListener('hidden.bs.modal', () => {
-				resolve(InputDialog.#inst.accepted ? InputDialog.#inst.inputValue : '');
+				resolve(InputDialog.#inst.accepted ? InputDialog.#inst.inputValue : options.defaultValue || '');
 			}, { once: true });
 			InputDialog.#inst.show(options);
 		});

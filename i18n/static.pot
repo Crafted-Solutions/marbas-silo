@@ -2,6 +2,7 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 #: src/partials/AuthModuleDynamic.hbs:2
+#: src/partials/GrainEditorDialog.hbs:4
 msgid "Loading..."
 msgstr ""
 
@@ -57,64 +58,77 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: src/partials/GrainPicker.hbs:4
-msgid "Select Grain"
+#: src/partials/FileNewDialog.hbs:2
+msgid "New File"
 msgstr ""
 
-#: src/partials/GrainPicker.hbs:14
-msgid "Please select a grain"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:4
-msgid "New Grain"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:5
-msgid "New Grain Type"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:6
-msgid "New Container"
-msgstr ""
-
-#: src/partials/GrainNewDialog.hbs:13
 #: src/partials/FileNewDialog.hbs:6
+#: src/partials/GrainNewDialog.hbs:5
 msgid "Name"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:14
+#: src/partials/FileNewDialog.hbs:7
+msgid "(Optional) name for the new grain"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:10
+#: src/partials/_SiloNaviButton.hbs:4
+msgid "File"
+msgstr ""
+
+#: src/partials/FileNewDialog.hbs:13
+msgid "Please provide a file"
+msgstr ""
+
+#: src/partials/GrainEditorDialog.hbs:2
+msgid "Grain Editor"
+msgstr ""
+
+#: src/partials/GrainNewDialog.hbs:2
+msgid "New Grain"
+msgstr ""
+
+#: src/partials/GrainNewDialog.hbs:6
 msgid "Name for the new element"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:16
+#: src/partials/GrainNewDialog.hbs:8
 msgid "Please provide a name for the element"
 msgstr ""
 
-#: src/partials/GrainNewDialog.hbs:21
+#: src/partials/GrainNewDialog.hbs:13
 #: src/partials/_SiloNaviButton.hbs:5
 msgid "Type"
 msgstr ""
 
-#: src/partials/LangManager.hbs:2
-#: src/partials/LangManager.hbs:3
-msgid "Content Language"
+#: src/partials/InputDialog.hbs:2
+msgid "Input Request"
 msgstr ""
 
-#: src/partials/LangManager.hbs:4
-#: src/partials/LocaleSwitch.hbs:4
-msgid "English (en)"
+#: src/partials/InputDialog.hbs:5
+msgid "Input"
 msgstr ""
 
-#: src/partials/LangManager.hbs:6
-msgid "Manage languages"
+#: src/partials/InputDialog.hbs:8
+msgid "Value is required"
 msgstr ""
 
-#: src/partials/LangManager.hbs:7
-msgid "Add Language"
+#: src/partials/GrainPicker.hbs:4
+msgid "Select Grain"
 msgstr ""
 
-#: src/partials/LangManager.hbs:8
-msgid "Delete Selected Language"
+#: src/partials/GrainPicker.hbs:9
+#: src/partials/SiloNaviMenu.hbs:7
+msgid "New"
+msgstr ""
+
+#: src/partials/GrainPicker.hbs:10
+#: src/partials/GrainPicker.hbs:11
+msgid "Select type of new grain"
+msgstr ""
+
+#: src/partials/GrainPicker.hbs:23
+msgid "Please select a grain"
 msgstr ""
 
 #: src/partials/GrainSecurityDialog.hbs:4
@@ -168,33 +182,26 @@ msgstr ""
 msgid "Restrict"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:2
-msgid "Input Request"
+#: src/partials/LangManager.hbs:2
+#: src/partials/LangManager.hbs:3
+msgid "Content Language"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:5
-msgid "Input"
+#: src/partials/LangManager.hbs:4
+#: src/partials/LocaleSwitch.hbs:4
+msgid "English (en)"
 msgstr ""
 
-#: src/partials/InputDialog.hbs:8
-msgid "Value is required"
+#: src/partials/LangManager.hbs:6
+msgid "Manage languages"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:2
-msgid "New File"
+#: src/partials/LangManager.hbs:7
+msgid "Add Language"
 msgstr ""
 
-#: src/partials/FileNewDialog.hbs:7
-msgid "(Optional) name for the new grain"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:10
-#: src/partials/_SiloNaviButton.hbs:4
-msgid "File"
-msgstr ""
-
-#: src/partials/FileNewDialog.hbs:13
-msgid "Please provide a file"
+#: src/partials/LangManager.hbs:8
+msgid "Delete Selected Language"
 msgstr ""
 
 #: src/partials/LocaleSwitch.hbs:3
@@ -209,30 +216,10 @@ msgstr ""
 msgid "Switch Language"
 msgstr ""
 
-#: src/partials/ToolsMenu.hbs:4
-msgid "Tools"
-msgstr ""
-
-#: src/partials/ToolsMenu.hbs:9
-msgid "Export Package"
-msgstr ""
-
-#: src/partials/ToolsMenu.hbs:14
-msgid "Import Package"
-msgstr ""
-
-#: src/partials/_DialogClose.hbs:1
 #: src/partials/MsgBox.hbs:10
 #: src/partials/TaskLayer.hbs:4
+#: src/partials/_DialogClose.hbs:1
 msgid "Close"
-msgstr ""
-
-#: src/partials/SiloNaviMenu.hbs:3
-msgid "Navi Menu"
-msgstr ""
-
-#: src/partials/SiloNaviMenu.hbs:7
-msgid "New"
 msgstr ""
 
 #: src/partials/MsgBox.hbs:11
@@ -257,6 +244,27 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: src/partials/_ButtonReload.hbs:1
+#: src/partials/_SiloNaviButton.hbs:1
+msgid "Reload"
+msgstr ""
+
+#: src/partials/ToolsMenu.hbs:4
+msgid "Tools"
+msgstr ""
+
+#: src/partials/ToolsMenu.hbs:9
+msgid "Export Package"
+msgstr ""
+
+#: src/partials/ToolsMenu.hbs:14
+msgid "Import Package"
+msgstr ""
+
+#: src/partials/SiloNaviMenu.hbs:3
+msgid "Navi Menu"
+msgstr ""
+
 #: src/partials/TaskLayer.hbs:3
 msgid "In Progress"
 msgstr ""
@@ -277,11 +285,6 @@ msgstr ""
 msgid "Cacnel"
 msgstr ""
 
-#: src/partials/_ButtonReload.hbs:1
-#: src/partials/_SiloNaviButton.hbs:1
-msgid "Reload"
-msgstr ""
-
 #: src/partials/_SiloNaviButton.hbs:2
 msgid "Of Type..."
 msgstr ""
@@ -295,29 +298,33 @@ msgid "Rename"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:7
-msgid "Cut"
+msgid "Quick Edit"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:8
-msgid "Copy"
+msgid "Cut"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:9
-msgid "Paste"
+msgid "Copy"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:10
-msgid "Paste Link"
+msgid "Paste"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:11
-msgid "Clear Clipboard"
+msgid "Paste Link"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:12
-msgid "Delete"
+msgid "Clear Clipboard"
 msgstr ""
 
 #: src/partials/_SiloNaviButton.hbs:13
+msgid "Delete"
+msgstr ""
+
+#: src/partials/_SiloNaviButton.hbs:14
 msgid "Security"
 msgstr ""

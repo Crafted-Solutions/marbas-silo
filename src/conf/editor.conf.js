@@ -1,25 +1,28 @@
 import { t } from "ttag";
 import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
 
-const PATH_PRIMARY_GROUP = 'root._1.';
-const PATH_SECONDARY_GROUP = 'root._2.';
+const NAME_PRIMARY_GROUP = '_1';
+const NAME_SECONDARY_GROUP = '_2';
+const PATH_PRIMARY_GROUP = `root.${NAME_PRIMARY_GROUP}.`;
+const PATH_SECONDARY_GROUP = `root.${NAME_SECONDARY_GROUP}.`;
 
 export const EditorSchemaConfig = {
+	NAME_PRIMARY_GROUP: NAME_PRIMARY_GROUP,
+	NAME_SECONDARY_GROUP: NAME_SECONDARY_GROUP,
 	PATH_PRIMARY_GROUP: PATH_PRIMARY_GROUP,
 	PATH_SECONDARY_GROUP: PATH_SECONDARY_GROUP,
 	PATH_DEFAULT_GROUP: PATH_PRIMARY_GROUP,
 	PATH_SYS_OBJECT: `${PATH_PRIMARY_GROUP}_sys`,
 	DEPTH_DATA_CARRIER: 3,
-	BASIC: {
+	BASIC_CORE: {
 		get title() { return t`Grain Editor`; },
-		headerTemplate: '{{self._1.presentation.label}}{{self._1._sys.dirty}}',
+		headerTemplate: `{{self.${NAME_PRIMARY_GROUP}.presentation.label}}{{self.${NAME_PRIMARY_GROUP}._sys.dirty}}`,
 		type: 'object',
-		format: 'categories',
 		options: {
 			disable_collapse: true
 		},
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				get title() { return t`Basic`; },
 				type: 'object',
 				propertyOrder: 0,
@@ -40,100 +43,30 @@ export const EditorSchemaConfig = {
 						"$ref": '#/definitions/_sys'
 					}
 				}
-			},
-			_2: {
-				get title() { return t`Advanced`; },
-				type: 'object',
-				propertyOrder: 2000,
-				options: {
-					disable_collapse: true,
-					titleHidden: true,
-					containerAttributes: {
-						'class': 'mb-tab-container'
-					}
-				},
-				properties: {
-					meta: {
-						get title() { return t`Metadata`; },
-						"$ref": '#/definitions/meta',
-						propertyOrder: 1000
-					},
-					stats: {
-						get title() { return t`Statistics`; },
-						"$ref": '#/definitions/stats',
-						propertyOrder: 2000
-					}
-				}
 			}
 		},
 		definitions: {
-			meta: {
-				type: "object",
-				id: "meta",
-				readonly: true,
-				properties: {
-					id: {
-						get title() { return t`ID`; },
-						type: "string"
-					},
-					name: {
-						get title() { return t`Name`; },
-						type: "string"
-					},
-					path: {
-						get title() { return t`Path`; },
-						type: "string"
-					},
-					typeDefId: {
-						get title() { return t`Type Definition`; },
-						type: "string",
-						format: "grain",
-						readonly: true,
-						default: MarBasDefaults.ID_TYPE_TYPEDEF
-					}
-				}
-			},
 			presentation: {
 				type: 'object',
 				id: 'presentation',
 				properties: {
 					label: {
+						_store: true,
 						get title() { return t`Label`; },
 						type: "string",
 						minLength: 1
 					},
 					icon: {
+						_store: true,
 						get title() { return t`Icon`; },
 						type: 'string',
 						format: 'icon'
 					},
 					sortKey: {
+						_store: true,
 						get title() { return t`Sort Key`; },
 						type: 'string'
 					}
-				}
-			},
-			stats: {
-				type: 'object',
-				id: "stats",
-				readonly: true,
-				properties: {
-					revision: {
-						get title() { return t`Revision`; },
-						type: "integer"
-					},
-					cTime: {
-						get title() { return t`Created`; },
-						type: "string"
-					},
-					mTime: {
-						get title() { return t`Modified`; },
-						type: "string"
-					},
-					owner: {
-						get title() { return t`Owner`; },
-						type: "string"
-					},
 				}
 			},
 			_sys: {
@@ -144,6 +77,9 @@ export const EditorSchemaConfig = {
 					titleHidden: true
 				},
 				properties: {
+					id: {
+						type: 'string'
+					},
 					dirty: {
 						type: 'string',
 						default: ''
@@ -157,12 +93,6 @@ export const EditorSchemaConfig = {
 	},
 	TRAIT_Memo: {
 		format: 'textarea'
-	},
-	TRAIT_Memo_rtf: {
-		format: 'jodit'
-	},
-	TRAIT_DateTime_dateonly: {
-		format: 'date'
 	},
 	TRAIT_Grain: {
 		format: "grain",
@@ -182,7 +112,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_TYPEDEF]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					typeDef: {
 						get title() { return t`Type Definition`; },
@@ -198,6 +128,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					defaultInstanceId: {
+						_store: true,
 						get title() { return t`Default Values`; },
 						type: 'string',
 						format: 'button',
@@ -224,6 +155,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					impl: {
+						_store: true,
 						get title() { return t`Implementation`; },
 						type: 'string',
 						required: false,
@@ -232,6 +164,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					mixInIds: {
+						_store: true,
 						get title() { return t`Type Mix-Ins`; },
 						type: 'array',
 						uniqueItems: true,
@@ -257,7 +190,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_PROPDEF]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					propDef: {
 						get title() { return `Property Definition`; },
@@ -273,6 +206,7 @@ export const EditorSchemaConfig = {
 				format: 'grid-strict',
 				properties: {
 					valueType: {
+						_store: true,
 						get title() { return t`Value Type`; },
 						type: 'string',
 						enum: MarBasTraitValueTypes,
@@ -282,6 +216,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMin: {
+						_store: true,
 						get title() { return t`Min. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
@@ -293,6 +228,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					cardinalityMax: {
+						_store: true,
 						get title() { return t`Max. Number of Values`; },
 						type: 'integer',
 						format: 'stepper',
@@ -306,6 +242,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					versionable: {
+						_store: true,
 						get title() { return t`Versionable`; },
 						type: 'boolean',
 						format: 'checkbox',
@@ -314,6 +251,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					localizable: {
+						_store: true,
 						get title() { return t`Localizable`; },
 						type: 'boolean',
 						format: 'checkbox',
@@ -323,6 +261,7 @@ export const EditorSchemaConfig = {
 						}
 					},
 					valueConstraintId: {
+						_store: true,
 						get title() { return t`Value Constraint`; },
 						type: 'string',
 						format: 'grain',
@@ -334,29 +273,15 @@ export const EditorSchemaConfig = {
 							}
 						}
 					},
-					_constraintParams: {
+					constraintParams: {
+						_store: true,
 						get title() { return t`Value Constraint Parameters`; },
-						required: true,
+						required: false,
 						type: 'string',
+						format: 'contstraints',
 						options: {
 							grid_columns: 12
-						},
-						format: "select",
-						enumSource: [{
-							// A watched field source
-							source: [
-								{
-									value: '',
-									get title() { return t`None`; }
-								},
-								{
-									value: 'PickerConfig',
-									get title() { return t`Configure grain picker`; }
-								}
-							],
-							title: "{{item.title}}",
-							value: "{{item.value}}"
-						}]
+						}
 					}
 				}
 			}
@@ -364,7 +289,7 @@ export const EditorSchemaConfig = {
 	},
 	[MarBasDefaults.ID_TYPE_FILE]: {
 		properties: {
-			_1: {
+			[NAME_PRIMARY_GROUP]: {
 				properties: {
 					file: {
 						get title() { return t`File`; },
@@ -391,7 +316,7 @@ export const EditorSchemaConfig = {
 							'class': 'mb-grain-file'
 						}],
 						watch: {
-							id: `${PATH_SECONDARY_GROUP}meta.id`,
+							id: `${PATH_PRIMARY_GROUP}_sys.id`,
 							apiPfx: `${PATH_PRIMARY_GROUP}_sys.api`
 						},
 						options: {
@@ -421,20 +346,81 @@ export const EditorSchemaConfig = {
 				}
 			}
 		}
-	},
-	PropDef_DateTime: {
-		isDateOnly: {
-			type: "boolean",
-			format: "checkbox",
-			get title() { return t`Date Only`; }
+	}
+};
+
+EditorSchemaConfig.BASIC = structuredClone(EditorSchemaConfig.BASIC_CORE);
+EditorSchemaConfig.BASIC.format = 'categories';
+EditorSchemaConfig.BASIC.properties[NAME_SECONDARY_GROUP] = {
+	get title() { return t`Advanced`; },
+	type: 'object',
+	propertyOrder: 2000,
+	options: {
+		disable_collapse: true,
+		titleHidden: true,
+		containerAttributes: {
+			'class': 'mb-tab-container'
 		}
 	},
-	PropDef_Memo: {
-		isRtf: {
-			type: "boolean",
-			format: "checkbox",
-			get title() { return t`Rich Text`; }
+	properties: {
+		meta: {
+			get title() { return t`Metadata`; },
+			"$ref": '#/definitions/meta',
+			propertyOrder: 1000
+		},
+		stats: {
+			get title() { return t`Statistics`; },
+			"$ref": '#/definitions/stats',
+			propertyOrder: 2000
 		}
+	}
+};
+EditorSchemaConfig.BASIC.definitions.meta = {
+	type: "object",
+	id: "meta",
+	readonly: true,
+	properties: {
+		id: {
+			get title() { return t`ID`; },
+			type: "string"
+		},
+		name: {
+			get title() { return t`Name`; },
+			type: "string"
+		},
+		path: {
+			get title() { return t`Path`; },
+			type: "string"
+		},
+		typeDefId: {
+			get title() { return t`Type Definition`; },
+			type: "string",
+			format: "grain",
+			default: MarBasDefaults.ID_TYPE_TYPEDEF
+		}
+	}
+};
+EditorSchemaConfig.BASIC.definitions.stats = {
+	type: 'object',
+	id: "stats",
+	readonly: true,
+	properties: {
+		revision: {
+			get title() { return t`Revision`; },
+			type: "integer"
+		},
+		cTime: {
+			get title() { return t`Created`; },
+			type: "string"
+		},
+		mTime: {
+			get title() { return t`Modified`; },
+			type: "string"
+		},
+		owner: {
+			get title() { return t`Owner`; },
+			type: "string"
+		},
 	}
 };
 

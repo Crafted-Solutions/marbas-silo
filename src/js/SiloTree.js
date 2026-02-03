@@ -6,7 +6,7 @@ import { default as BSTreeViewTemplate } from "@jbtronics/bs-treeview/build/modu
 	origNode.setAttribute('tabindex', '0');
 	BSTreeViewTemplate.node = origNode;
 })();
-import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED } from "@jbtronics/bs-treeview";
+import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED, EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED, EVENT_RENDERED } from "@jbtronics/bs-treeview";
 
 import { GrainXAttrs } from "./cmn/GrainXAttrs";
 import { Task } from "./cmn/Task";
@@ -16,11 +16,13 @@ export class SiloTree {
 	_element;
 	_apiSvc;
 	_seed;
+	_scope;
 	_listeners = {};
 	_options = {};
 
 	constructor(elementId, apiSvc, rootNodes, initCallback = null, options = null) {
 		this._initPromise = new Promise(resolve => this._initialized = resolve);
+		this._scope = elementId;
 		this._element = document.getElementById(elementId);
 		this._element.classList.add('silo-tree');
 		this._apiSvc = apiSvc;
@@ -58,6 +60,9 @@ export class SiloTree {
 				initCallback();
 			}
 			this._initialized(true);
+		});
+		this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
+			evt.target.scrollIntoView(true);
 		});
 
 		for (const key in this._listeners) {
@@ -124,6 +129,11 @@ export class SiloTree {
 		return !!this._focusedNode;
 	}
 
+	isNodeSelected(grainOrId) {
+		const node = this._getNodeByGrain(grainOrId.id || grainOrId);
+		return node && node.state && node.state.selected;
+	}
+
 	async reloadNode(grainOrId, restoreSelection = true) {
 		const id = grainOrId.id || grainOrId;
 		const node = this._getNodeByGrain(id);
@@ -149,6 +159,65 @@ export class SiloTree {
 		}
 	}
 
+	async revealAndSelectNode(grain) {
+		let node = this._getNodeByGrain(grain);
+		let parent = this._getNodeByGrain(grain.parentId);
+
+		const result = new Promise((resolve, reject) => {
+			this._element.addEventListener(EVENT_NODE_SELECTED, (evt) => {
+				this._afterNodeRendered(node, (node) => {
+					node._domElement.scrollIntoView();
+				});
+			}, { once: true });
+			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
+				if (evt.detail.node == parent) {
+					if (!node) {
+						node = this._getNodeByGrain(grain);
+					}
+					if (node) {
+						this.tree.selectNode(node, { silent: true });
+						this.tree._triggerEvent(EVENT_NODE_SELECTED, node, { silent: false });
+					}
+					resolve(node);
+				}
+			}, { once: true });
+
+			if (node) {
+				this.tree.revealNode(node);
+				node.setSelected(true);
+				resolve(node);
+			} else if (parent) {
+				this.reloadNode(grain.parentId, false)
+					.then(n => {
+						parent = n;
+						this.tree.expandNode(parent);
+					})
+					.catch(reason => {
+						console.error(reason);
+						reject(t`Failed to reload ${grain.parentId} due to: ${reason}`);
+					});
+			} else {
+				resolve(null);
+			}
+		});
+
+		return await result;
+	}
+
+	_afterNodeRendered(node, callback) {
+		if (node._domElement) {
+			callback(node);
+		} else {
+			this._element.addEventListener(EVENT_RENDERED, (evt) => {
+				setTimeout(() => {
+					callback(node);
+				}, evt.detail.data.length * 2);
+			}, { once: true });
+
+		}
+
+	}
+
 	async _loadNodeChildren(node, renderer) {
 		const grainId = (node.dataAttr || {}).grain;
 		const flags = MarBasDefaults.ID_ROOT == grainId ? Task.Flag.DEFAULT | Task.Flag.REPORT_START : Task.Flag.REPORT_ERROR | Task.Flag.REPORT_START;
@@ -167,12 +236,13 @@ export class SiloTree {
 				}
 			}
 			this._restoreFocus();
+			node._domElement.scrollIntoView(true);
 		}, flags);
 	}
 
 	async _getNodeProperties(grain, node) {
 		const result = node || {
-			id: `n-${grain.id}`,
+			id: `${this._scope}-${grain.id}`,
 			lazyLoad: 0 < grain.childCount
 		};
 		result.selectable = !this._options.selectableTypes || await this._apiSvc.isGrainInstanceOf(grain, this._options.selectableTypes);
@@ -219,7 +289,7 @@ export class SiloTree {
 	}
 
 	_getNodeByGrain(grainOrId) {
-		const nodes = this.tree.findNodes(`n-${(grainOrId || {}).id || grainOrId}`, 'id');
+		const nodes = this.tree.findNodes(`${this._scope}-${(grainOrId || {}).id || grainOrId}`, 'id');
 		return nodes.length ? nodes[0] : null;
 	}
 
