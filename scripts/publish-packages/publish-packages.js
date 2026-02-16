@@ -60,6 +60,9 @@ export async function publish(options = {}) {
 		await new Promise((resolve, reject) => {
 			const errHandler = (err) => {
 				console.error("NPM error", err);
+				if (!process.exitCode) {
+					process.exitCode = 1;
+				}
 				reject(err);
 			};
 			try {
@@ -88,6 +91,14 @@ export async function publish(options = {}) {
 				}
 				const proc = spawn(cmd, cmdArgs, spawnOpts);
 				proc.on('error', errHandler);
+				proc.on('exit', (code, signal) => {
+					if (code || signal) {
+						console.error(`NPM exited with ${code || signal}`);
+						if (!process.exitCode) {
+							process.exitCode = code || 1;
+						}
+					}
+				});
 				proc.on('close', resolve);
 			} catch (e) {
 				errHandler(e);

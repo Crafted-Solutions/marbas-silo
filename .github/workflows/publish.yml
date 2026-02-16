@@ -65,7 +65,7 @@ jobs:
         tar czvf "marbas-silo-drop-in-basic-${VERSION}.tar.gz" -C "./dist/" .
 
     - name: Publish drop-in to GitHub
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v2.4.2
       with:
         files: "marbas-silo-drop-in-*"
       env:
