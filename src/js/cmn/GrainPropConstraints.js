@@ -126,7 +126,6 @@ class FormatRichText extends AbstractConstraintHandler {
 
 	tweakTargetSchema(propDef, schema) {
 		schema.format = 'jodit';
-		console.log("tweakTargetSchema", schema);
 	}
 
 	get requiredValueTypes() {

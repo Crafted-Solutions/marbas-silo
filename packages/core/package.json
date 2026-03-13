@@ -1,6 +1,6 @@
 {
 	"name": "@crafted.solutions/marbas-core",
-	"version": "0.1.18-2",
+	"version": "0.1.19",
 	"publishConfig": {
 		"tag": "latest"
 	},
@@ -38,6 +38,6 @@
 		"lodash.merge": "^4.6.2"
 	},
 	"devDependencies": {
-		"rollup": "^4.54.0"
+		"rollup": "^4.59.0"
 	}
 }
