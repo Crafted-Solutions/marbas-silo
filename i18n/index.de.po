@@ -62,47 +62,47 @@ msgstr "Diese App erfordert Zugriff auf Sitzungsspeicher, bitte in der Browser-K
 msgid "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
 msgstr "Unerwarteter Fehler aufgereten im Vorgang \"${ evt.detail.task.name }\": ${ evt.detail.payload }"
 
-#: src\js\jed\FieldEditorGrain.js:22
+#: src\js\jed\FieldEditorGrain.js:21
 msgid "Empty"
 msgstr "Leer"
 
-#: src\js\jed\FieldEditorGrain.js:23
+#: src\js\jed\FieldEditorGrain.js:22
 msgid "Type"
 msgstr "Typ"
 
-#: src\js\jed\FieldEditorGrain.js:53
+#: src\js\jed\FieldEditorGrain.js:52
 msgid "Go To Grain"
 msgstr "Zum Grain"
 
-#: src\js\jed\FieldEditorGrain.js:55
+#: src\js\jed\FieldEditorGrain.js:54
 msgid "Select"
 msgstr "Auswählen"
 
-#: src\js\jed\FieldEditorGrain.js:57
+#: src\js\jed\FieldEditorGrain.js:56
 msgid "Delete"
 msgstr "Löschen"
 
-#: src\js\jed\FieldEditorGrain.js:207
+#: src\js\jed\FieldEditorGrain.js:206
 msgid "Other Options"
 msgstr "Weitere Optionen"
 
-#: src\js\jed\FieldEditorGrain.js:226
+#: src\js\jed\FieldEditorGrain.js:225
 msgid "Copy ID"
 msgstr "ID kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:231
+#: src\js\jed\FieldEditorGrain.js:230
 msgid "Copy Path"
 msgstr "Pfad kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:236
+#: src\js\jed\FieldEditorGrain.js:235
 msgid "Copy URL"
 msgstr "URL kopieren"
 
-#: src\js\jed\FieldEditorGrain.js:251
+#: src\js\jed\FieldEditorGrain.js:250
 msgid "<Self>"
 msgstr "<Dieses Objekt>"
 
-#: src\js\jed\FieldEditorGrain.js:279
+#: src\js\jed\FieldEditorGrain.js:278
 msgid "Open (new window)"
 msgstr "Öffnen (im neuen Fenster)"
 
@@ -161,126 +161,126 @@ msgstr "In der Navigation auswählen"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: src\conf\editor.conf.js:18
+#: src\conf\editor.conf.js:20
 msgid "Grain Editor"
 msgstr "Grain-Editor"
 
-#: src\conf\editor.conf.js:26
+#: src\conf\editor.conf.js:28
 msgid "Basic"
 msgstr "Grundlegend"
 
-#: src\conf\editor.conf.js:38
+#: src\conf\editor.conf.js:40
 msgid "Presentation"
 msgstr "Präsentation"
 
-#: src\conf\editor.conf.js:384
+#: src\conf\editor.conf.js:133
 msgid "ID"
 msgstr "ID"
 
-#: src\conf\editor.conf.js:388
+#: src\conf\editor.conf.js:137
 msgid "Name"
 msgstr "Name"
 
-#: src\conf\editor.conf.js:392
+#: src\conf\editor.conf.js:141
 msgid "Path"
 msgstr "Pfad"
 
-#: src\conf\editor.conf.js:118
-#: src\conf\editor.conf.js:396
+#: src\conf\editor.conf.js:145
+#: src\conf\editor.conf.js:202
 #: src\js\SiloNavi.js:82
 #: src\js\cmn\GrainPicker.js:110
 msgid "Type Definition"
 msgstr "Typdefinition"
 
-#: src\conf\editor.conf.js:55
+#: src\conf\editor.conf.js:57
 msgid "Label"
 msgstr "Beschriftung"
 
-#: src\conf\editor.conf.js:61
+#: src\conf\editor.conf.js:63
 msgid "Icon"
 msgstr "Symbol"
 
-#: src\conf\editor.conf.js:67
+#: src\conf\editor.conf.js:70
 msgid "Sort Key"
 msgstr "Sortierungsschlüssel"
 
-#: src\conf\editor.conf.js:409
+#: src\conf\editor.conf.js:158
 msgid "Revision"
 msgstr "Revision"
 
-#: src\conf\editor.conf.js:413
+#: src\conf\editor.conf.js:162
 msgid "Created"
 msgstr "Erstellt"
 
-#: src\conf\editor.conf.js:417
+#: src\conf\editor.conf.js:166
 msgid "Modified"
 msgstr "Geändert"
 
-#: src\conf\editor.conf.js:421
+#: src\conf\editor.conf.js:170
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: src\conf\editor.conf.js:132
+#: src\conf\editor.conf.js:216
 msgid "Default Values"
 msgstr "Standardwerte"
 
-#: src\conf\editor.conf.js:150
+#: src\conf\editor.conf.js:234
 msgid "Open Grain editor with default values for this type (create the Grain if necessary)"
 msgstr "Grain-Editor mit Standardwerten diesen Typs öffnen (Grain erstellen, wenn nötig)"
 
-#: src\conf\editor.conf.js:159
+#: src\conf\editor.conf.js:243
 msgid "Implementation"
 msgstr "Implementierung"
 
-#: src\conf\editor.conf.js:168
+#: src\conf\editor.conf.js:252
 msgid "Type Mix-Ins"
 msgstr "Beigemischte Typen"
 
-#: src\conf\editor.conf.js:210
+#: src\conf\editor.conf.js:294
 msgid "Value Type"
 msgstr "Werttyp"
 
-#: src\conf\editor.conf.js:220
+#: src\conf\editor.conf.js:304
 msgid "Min. Number of Values"
 msgstr "Min. Werteanzahl"
 
-#: src\conf\editor.conf.js:232
+#: src\conf\editor.conf.js:316
 msgid "Max. Number of Values"
 msgstr "Max. Werteanzahl"
 
-#: src\conf\editor.conf.js:246
+#: src\conf\editor.conf.js:330
 msgid "Versionable"
 msgstr "Verionierbar"
 
-#: src\conf\editor.conf.js:255
+#: src\conf\editor.conf.js:339
 msgid "Localizable"
 msgstr "Lokalisierbar"
 
-#: src\conf\editor.conf.js:265
+#: src\conf\editor.conf.js:349
 msgid "Value Constraint"
 msgstr "Werteeinschränkung"
 
-#: src\conf\editor.conf.js:295
+#: src\conf\editor.conf.js:379
 msgid "File"
 msgstr "Datei"
 
-#: src\conf\editor.conf.js:308
+#: src\conf\editor.conf.js:392
 msgid "Content"
 msgstr "Inhalt"
 
-#: src\conf\editor.conf.js:329
+#: src\conf\editor.conf.js:413
 msgid "Content Type"
 msgstr "Inhaltstyp"
 
-#: src\conf\editor.conf.js:339
+#: src\conf\editor.conf.js:423
 msgid "Size"
 msgstr "Größe"
 
-#: src\conf\editor.conf.js:432
+#: src\conf\editor.conf.js:444
 msgid "Select File"
 msgstr "Datei auswählen"
 
-#: src\conf\editor.conf.js:438
+#: src\conf\editor.conf.js:450
 msgid "Select Type"
 msgstr "Typ auswählen"
 
@@ -469,27 +469,27 @@ msgstr "Systemvorgaben"
 msgid "Move up"
 msgstr "Nach oben"
 
-#: src\js\GrainEditor.js:50
+#: src\js\GrainEditor.js:52
 msgid "Grain was modified, close anyway?"
 msgstr "Grain wurde geändert, trotzdem schließen?"
 
-#: src\js\GrainEditor.js:203
+#: src\js\GrainEditor.js:229
 msgid " (Default Value)"
 msgstr " (Vorgabewert)"
 
-#: src\js\GrainEditor.js:250
+#: src\js\GrainEditor.js:276
 msgid "Grain was modified, save?"
 msgstr "Grain wurde geändert, speichern?"
 
-#: src\js\GrainEditor.js:318
+#: src\js\GrainEditor.js:344
 msgid "Please correct input errors first"
 msgstr "Bitte zuerst die Eingabefehler korrigieren"
 
-#: src\js\GrainEditor.js:462
+#: src\js\GrainEditor.js:520
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
-#: src\js\GrainEditor.js:596
+#: src\js\GrainEditor.js:656
 msgid "Field Info"
 msgstr "Feld-Info"
 
@@ -684,19 +684,19 @@ msgstr " (durchgeführt mit Warnungen)"
 msgid " (completed with errors)"
 msgstr " (durchgeführt mit Fehlern)"
 
-#: src\js\jed\FieldEditorGrain.js:52
+#: src\js\jed\FieldEditorGrain.js:51
 msgid "Quick Edit Grain"
 msgstr "Grain bearbeiten"
 
-#: src\conf\editor.conf.js:355
+#: src\conf\editor.conf.js:104
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: src\conf\editor.conf.js:367
+#: src\conf\editor.conf.js:116
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: src\conf\editor.conf.js:372
+#: src\conf\editor.conf.js:121
 msgid "Statistics"
 msgstr "Statistik"
 
@@ -709,7 +709,7 @@ msgstr "Unbekannter Werteeinschränkungs-Handler  ${ this.value }"
 msgid "Configure grain picker"
 msgstr "Grain-Picker konfigurieren"
 
-#: src\conf\editor.conf.js:278
+#: src\conf\editor.conf.js:362
 msgid "Value Constraint Parameters"
 msgstr "Parmeter für Werteeinschränkung"
 
@@ -752,10 +752,10 @@ msgstr "New ${ grainType.label }"
 msgid "Schema"
 msgstr "Schema"
 
-#: src\js\cmn\GrainPropConstraints.js:137
+#: src\js\cmn\GrainPropConstraints.js:136
 msgid "Format: rich text"
 msgstr "Format: Rich-Text"
 
-#: src\js\cmn\GrainPropConstraints.js:152
-msgid "Format: nur Datum"
-msgstr ""
+#: src\js\cmn\GrainPropConstraints.js:151
+msgid "Format: date only"
+msgstr "Format: nur Datum"

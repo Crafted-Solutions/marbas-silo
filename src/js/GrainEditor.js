@@ -19,8 +19,11 @@ import { FieldEditorPropConstraints } from "./jed/FieldEditorPropConstraints";
 import { GrainPropConstraints } from "./cmn/GrainPropConstraints";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
+const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
 const GuidPattern = /[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}/i;
 const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.(${GuidPattern.source})`, 'i');
+
+EditorSchemaConfig.reset();
 
 export class GrainEditor {
 	#readyCb;
@@ -28,7 +31,6 @@ export class GrainEditor {
 	#addRowCb;
 	#watches = {};
 	#dateFields;
-	#ignoreChanges;
 	#labelResolvers = {};
 	#grainPicker;
 	_apiSvc;
@@ -43,7 +45,6 @@ export class GrainEditor {
 		this.#changeCb = () => this.onEditorChange();
 		this.#readyCb = () => this.onEditorReady();
 		this.#addRowCb = (editor) => this.onEditorAddRow(editor);
-		this.#ignoreChanges = false;
 		window.addEventListener('beforeunload', (evt) => {
 			if (this.dirty) {
 				evt.preventDefault();
@@ -65,30 +66,33 @@ export class GrainEditor {
 	static setup = async function setup() {
 		GrainEditor.setup = async function () { };
 
-		JSONEditor.defaults.options.theme = 'bootstrap5rev';
-		JSONEditor.defaults.options.iconlib = 'bootstrap';
-		JSONEditor.defaults.options.disable_edit_json = true;
-		JSONEditor.defaults.options.no_additional_properties = true;
-		JSONEditor.defaults.options.remove_empty_properties = false;
-		JSONEditor.defaults.options.disable_properties = true;
-		JSONEditor.defaults.options.array_controls_top = false;
-		JSONEditor.defaults.options.required_by_default = true;
-		JSONEditor.defaults.options.display_required_only = false;
-		JSONEditor.defaults.options.show_opt_in = true;
-		JSONEditor.defaults.options.disable_array_delete_last_row = true;
-		// JSONEditor.defaults.translateProperty = function (txt) {
+		const jedDefaults = JSONEditor.defaults;
+
+		jedDefaults.options.theme = 'bootstrap5rev';
+		jedDefaults.options.iconlib = 'bootstrap';
+		jedDefaults.options.disable_edit_json = true;
+		jedDefaults.options.no_additional_properties = true;
+		jedDefaults.options.remove_empty_properties = false;
+		jedDefaults.options.disable_properties = true;
+		jedDefaults.options.array_controls_top = false;
+		jedDefaults.options.required_by_default = true;
+		jedDefaults.options.display_required_only = false;
+		jedDefaults.options.show_opt_in = true;
+		jedDefaults.options.disable_array_delete_last_row = true;
+		jedDefaults.options.use_default_values = false;
+		// jedDefaults.translateProperty = function (txt) {
 		// 	if (_DEVELOPMENT_) {
 		// 		return UILocale.tranlsate(txt, undefined, "JSONEditor.translateProperty");
 		// 	}
 		// 	return UILocale.tranlsate(txt);
 		// };
-		JSONEditor.defaults.translate = function (key, variables, schema) {
+		jedDefaults.translate = function (key, variables, schema) {
 			let schemaMessages = {};
-			if (schema && schema.options && schema.options.error_messages && schema.options.error_messages[JSONEditor.defaults.language]) {
-				schemaMessages = schema.options.error_messages[JSONEditor.defaults.language];
+			if (schema && schema.options && schema.options.error_messages && schema.options.error_messages[jedDefaults.language]) {
+				schemaMessages = schema.options.error_messages[jedDefaults.language];
 			}
-			const lang = JSONEditor.defaults.languages[JSONEditor.defaults.language] || EnvConfig.defaultLocale;
-			let result = schemaMessages[key] || lang[key] || JSONEditor.defaults.languages[EnvConfig.defaultLocale][key] || key;
+			const lang = jedDefaults.languages[jedDefaults.language] || EnvConfig.defaultLocale;
+			let result = schemaMessages[key] || lang[key] || jedDefaults.languages[EnvConfig.defaultLocale][key] || key;
 			if (_DEVELOPMENT_) {
 				result = UILocale.tranlsate(result, undefined, "JSONEditor.translate");
 			} else {
@@ -101,18 +105,18 @@ export class GrainEditor {
 			}
 			return result;
 		}
-		JSONEditor.defaults.callbacks.upload = {
+		jedDefaults.callbacks.upload = {
 			uploadHandler: (jseditor, path, file, cbs) => {
 				jseditor.jsoneditor._grainEditor.uploadHandler(jseditor, path, file, cbs);
 			}
 		};
-		JSONEditor.defaults.callbacks.template = {
+		jedDefaults.callbacks.template = {
 			fileSizeFormatter: (_, e) => {
 				const baseT = Math.log(e.val) / Math.log(1024) | 0;
 				return `${(e.val / Math.pow(1024, baseT)).toFixed(2)} ${(baseT ? 'KMGTPEZY'[baseT - 1] + 'iB' : 'Bytes')}`;
 			}
 		};
-		JSONEditor.defaults.callbacks.button = {
+		jedDefaults.callbacks.button = {
 			showTypeDefDefaults: (jseditor, e) => {
 				jseditor.jsoneditor._grainEditor.onTypeDefDefaults(jseditor);
 			}
@@ -122,6 +126,26 @@ export class GrainEditor {
 		FieldEditorIcon.install();
 		FieldEditorPropConstraints.install();
 		Bootstrap5RevTheme.install();
+
+		// BEGIN Jodit bug patch https://github.com/json-editor/json-editor/issues/1691
+		// TODO remove when 1691 fixed
+		jedDefaults.editors.jodit.prototype.enable = function () {
+			jedDefaults.editors.string.prototype.enable.apply(this, arguments);
+			this.input.readOnly = false;
+			if (!this.always_disabled && this.jodit_instance) {
+				this.jodit_instance.setDisabled(false);
+				this.jodit_instance.setReadOnly(false);
+			}
+		};
+		jedDefaults.editors.jodit.prototype.disable = function (alwaysDisabled) {
+			if (this.jodit_instance) {
+				this.jodit_instance.setDisabled(true);
+				this.jodit_instance.setReadOnly(true);
+			}
+			this.input.readOnly = true;
+			jedDefaults.editors.string.prototype.disable.apply(this, arguments);
+		};
+		// END Jodit bug patch
 
 		await ExtensionLoader.installExtension('GrainEditorStatic', {
 			version: _PACKAGE_VERSION_,
@@ -171,7 +195,8 @@ export class GrainEditor {
 				[EditorSchemaConfig.NAME_PRIMARY_GROUP]: {
 					_sys: {
 						id: this.grain.id,
-						api: this._apiSvc.baseUrl
+						api: this._apiSvc.baseUrl,
+						dirty: ' '
 					}
 				},
 				[EditorSchemaConfig.NAME_SECONDARY_GROUP]: {}
@@ -274,14 +299,14 @@ export class GrainEditor {
 		if (this.customProps && this.customProps.changes) {
 			for (const k in this.customProps.changes) {
 				const sub = this.editor.getEditor(k);
-				if (sub && sub.is_dirty && sub.isActive()) {
+				if (sub && sub.is_dirty) {
 					const m = TraitPattern.exec(k);
 					if (m && 2 < m.length) {
 						await this._apiSvc.storeTraitValues(this.grain, {
 							id: m[2],
 							valueType: sub.schema._origType,
 							localizable: sub.schema._localizable
-						}, TraitUtils.getStorableValues(sub.getValue(), sub.schema._origType));
+						}, TraitUtils.getStorableValues(sub.isActive() ? sub.getValue() : undefined, sub.schema._origType));
 					}
 					sub.is_dirty = false;
 				}
@@ -344,10 +369,6 @@ export class GrainEditor {
 			delete this.editor.initializing;
 			return;
 		}
-		if (this.#ignoreChanges) return;
-		this.#ignoreChanges = true;
-		// this.editor.is_dirty = true;
-		this.#ignoreChanges = false;
 	}
 
 	onRelevantChange(editorKey) {
@@ -366,6 +387,9 @@ export class GrainEditor {
 		}
 		if (FieldIcon == editorKey) {
 			this.updateIcon();
+		} else if (FieldLabel == editorKey && !sub.getValue()) {
+			sub.value = this.grain.name;
+			sub.setValueToInputField(sub.value);
 		}
 		if (makeDirty && !this.#markTraitChange(editorKey)) {
 			this.#collectChanges(sub);
@@ -394,6 +418,23 @@ export class GrainEditor {
 		}
 	}
 
+	onOptInChange(editor) {
+		if (editor && !editor.optInCheckbox.checked) {
+			const val = editor.getValue();
+			if (undefined != val && ('string' != typeof val || val.length)) {
+				editor.setValue(undefined);
+				if ('function' == typeof editor.setValueToInputField) {
+					editor.setValueToInputField(undefined);
+					editor.refreshValue();
+					if (!editor.is_dirty) {
+						editor.onChange(true);
+					}
+				}
+				return true;
+			}
+		}
+	}
+
 	onEditorReady() {
 		try {
 			this.#dateFields.forEach((key) => {
@@ -416,6 +457,11 @@ export class GrainEditor {
 					}
 				} else if (!key.startsWith(EditorSchemaConfig.PATH_SYS_OBJECT) && EditorSchemaConfig.DEPTH_DATA_CARRIER + 1 == key.split('.').length) {
 					this._addEditorListener(key);
+					if (!sub.isRequired() && sub.optInAppended && sub.optInCheckbox) {
+						sub.optInCheckbox.addEventListener('change', () => {
+							this.onOptInChange(sub);
+						});
+					}
 				}
 			}
 
@@ -476,13 +522,15 @@ export class GrainEditor {
 	}
 
 	_setDirty(dirty = true) {
+		this._ignoreChange = true;
 		this.editor.was_dirty = this.editor.is_dirty;
 		const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SYS_OBJECT}.dirty`);
 		if (sub) {
-			sub.setValue(dirty ? '*' : '');
+			sub.setValue(dirty ? '*' : ' ');
 		}
 		this.editor.is_dirty = dirty;
 		this.editor.root.header.parentNode.querySelectorAll('.mb-grain-edit-save, .mb-grain-edit-reset').forEach(btn => btn.disabled = !dirty);
+		delete this._ignoreChange;
 	}
 
 	_notify() {

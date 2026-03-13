@@ -139,7 +139,7 @@ module.exports = async (env) => {
 			port: 5500,
 			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css', 'packages/**/src/**/*.js']
 		},
-		devtool: 'production' == mode ? false : "eval-cheap-source-map",
+		devtool: 'production' == mode ? false : "eval-cheap-module-source-map",
 		resolve: {
 			alias: resolveAlias,
 			fallback: { path: false }

@@ -4,7 +4,6 @@ import { JSONEditor } from "@json-editor/json-editor";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 
 import { GrainXAttrs } from "../cmn/GrainXAttrs";
-import { GrainEditor } from "../GrainEditor";
 import { IconMaps } from "../../conf/icons.conf";
 import { GrainEditorDialog } from "../cmn/GrainEditorDialog";
 

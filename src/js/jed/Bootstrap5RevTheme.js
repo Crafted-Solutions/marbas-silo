@@ -1,6 +1,10 @@
 import { JSONEditor } from "@json-editor/json-editor";
 
 export class Bootstrap5RevTheme extends JSONEditor.defaults.themes.bootstrap5 {
+	constructor(jsoneditor, options = { disable_theme_rules: false }) {
+		super(jsoneditor, options);
+		this.options.tooltip = '';
+	}
 	getButtonHolder() {
 		const result = super.getButtonHolder();
 		result.classList.replace('btn-group', 'btn-group-rev');
