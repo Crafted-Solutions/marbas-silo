@@ -51,9 +51,16 @@ export class GrainEditor {
 				evt.returnValue = t`Grain was modified, close anyway?`;
 			}
 		});
-		document.addEventListener('mb-silo:grain-deleted', (evt) => {
-			if (this.editor && this.grain.defaultInstanceId == evt.detail) {
-				delete this.grain.defaultInstanceId;
+		document.addEventListener('mb-silo:grain-deleted', async (evt) => {
+			if (this.editor && this.grain) {
+				if (this.grain.id == evt.detail) {
+					if (!this.isPopup) {
+						this.editor.is_dirty = false;
+						await this.unloadEditor();
+					}
+				} else if (this.grain.defaultInstanceId == evt.detail) {
+					delete this.grain.defaultInstanceId;
+				}
 			}
 		});
 		document.addEventListener('mb-silo:grain-renamed', (evt) => {
@@ -137,7 +144,7 @@ export class GrainEditor {
 				this.jodit_instance.setReadOnly(false);
 			}
 		};
-		jedDefaults.editors.jodit.prototype.disable = function (alwaysDisabled) {
+		jedDefaults.editors.jodit.prototype.disable = function () {
 			if (this.jodit_instance) {
 				this.jodit_instance.setDisabled(true);
 				this.jodit_instance.setReadOnly(true);
@@ -146,6 +153,14 @@ export class GrainEditor {
 			jedDefaults.editors.string.prototype.disable.apply(this, arguments);
 		};
 		// END Jodit bug patch
+
+		// Jodit doesn't understand 'undefined' values
+		jedDefaults.editors.jodit.prototype.setValueToInputField = function (value) {
+			jedDefaults.editors.string.prototype.setValueToInputField.apply(this, arguments);
+			if (this.jodit_instance) {
+				this.jodit_instance.setEditorValue(value || '');
+			}
+		};
 
 		await ExtensionLoader.installExtension('GrainEditorStatic', {
 			version: _PACKAGE_VERSION_,
@@ -295,7 +310,6 @@ export class GrainEditor {
 			console.warn("editor.errors", errors);
 			return this.grain;
 		}
-		this.#collectChanges();
 		if (this.customProps && this.customProps.changes) {
 			for (const k in this.customProps.changes) {
 				const sub = this.editor.getEditor(k);
@@ -313,11 +327,16 @@ export class GrainEditor {
 				delete this.customProps.changes[k];
 			}
 		}
-		if (await this._apiSvc.storeGrain(this.grain)) {
+		const storeGrain = this.#collectChanges();
+		let setClean = !storeGrain;
+		if (storeGrain && (await this._apiSvc.storeGrain(this.grain))) {
 			const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
 			if (sub) {
 				sub.setValueToInputField((new Date()).toLocaleString());
 			}
+			setClean = true;
+		}
+		if (setClean) {
 			this._setDirty(false);
 		}
 		return this.grain;
@@ -879,6 +898,7 @@ export class GrainEditor {
 	}
 
 	#collectChanges(editor) {
+		let result = false;
 		if (this.editor && this.editor.is_dirty) {
 			if (!this.grain) {
 				this.grain = {};
@@ -887,11 +907,18 @@ export class GrainEditor {
 			const valMod = (value) => {
 				return 'string' == typeof (value) && 0 == value.length ? null : value;
 			};
-			for (const editor of editors) {
-				this.grain[editor.key] = valMod(editor.getValue());
+			for (const sub of editors) {
+				if (sub.is_dirty) {
+					this.grain[sub.key] = valMod(sub.getValue());
+					if (!editor) {
+						sub.is_dirty = false;
+					}
+					result = true;
+				}
 			}
 			// console.log('collectChanges', editors, this.grain);
 		}
+		return result;
 	}
 
 	#markTraitChange(sourceKey) {

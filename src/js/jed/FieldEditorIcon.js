@@ -54,7 +54,11 @@ export class FieldEditorIcon extends JSONEditor.defaults.editors.string {
 			}
 			this.onChange(true);
 		});
-		this.#subclassInput();
+		document.addEventListener(BsIconPicker.EVENT_ICON_SELECTED, (evt) => {
+			if (evt.detail && evt.detail.owner == this.input) {
+				this.setValue(evt.detail.icon);
+			}
+		});
 
 		if (this.jsoneditor.options.use_name_attributes) {
 			this.input.setAttribute('name', this.formname);
@@ -92,23 +96,6 @@ export class FieldEditorIcon extends JSONEditor.defaults.editors.string {
 			this.iconPicker.destroy();
 		}
 		super.destroy();
-	}
-
-	#subclassInput() {
-		const { get, set } = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-		Object.defineProperty(this.input, 'value', {
-			get() {
-				return get.call(this);
-			},
-			set(newVal) {
-				const disp = newVal != this.value;
-				const result = set.call(this, newVal);
-				if (disp) {
-					this.dispatchEvent(new Event('change', { bubbles: true }));
-				}
-				return result;
-			}
-		});
 	}
 
 	static install() {

@@ -469,27 +469,27 @@ msgstr "Systemvorgaben"
 msgid "Move up"
 msgstr "Nach oben"
 
-#: src\js\GrainEditor.js:52
+#: src\js\GrainEditor.js:51
 msgid "Grain was modified, close anyway?"
 msgstr "Grain wurde geändert, trotzdem schließen?"
 
-#: src\js\GrainEditor.js:229
+#: src\js\GrainEditor.js:243
 msgid " (Default Value)"
 msgstr " (Vorgabewert)"
 
-#: src\js\GrainEditor.js:276
+#: src\js\GrainEditor.js:290
 msgid "Grain was modified, save?"
 msgstr "Grain wurde geändert, speichern?"
 
-#: src\js\GrainEditor.js:344
+#: src\js\GrainEditor.js:362
 msgid "Please correct input errors first"
 msgstr "Bitte zuerst die Eingabefehler korrigieren"
 
-#: src\js\GrainEditor.js:520
+#: src\js\GrainEditor.js:527
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
-#: src\js\GrainEditor.js:656
+#: src\js\GrainEditor.js:663
 msgid "Field Info"
 msgstr "Feld-Info"
 
