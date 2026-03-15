@@ -9,6 +9,12 @@ export class GrainEditorDialog extends _Dialog {
 	constructor(scope, apiSvc) {
 		super(scope);
 		this.#editor = new GrainEditor(`${this._scope}-main`, apiSvc, 'BASIC_CORE');
+		document.addEventListener('mb-silo:grain-deleted', (evt) => {
+			if (this.#editor.editor && this.#editor.grain && this.#editor.grain.id == evt.detail) {
+				this.#editor.is_dirty = false;
+				this.modal.hide();
+			}
+		});
 	}
 
 	show(grainOrId) {

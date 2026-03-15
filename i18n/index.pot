@@ -67,27 +67,27 @@ msgstr ""
 msgid "Please provide a valid password"
 msgstr ""
 
-#: src\js\GrainEditor.js:52
+#: src\js\GrainEditor.js:51
 msgid "Grain was modified, close anyway?"
 msgstr ""
 
-#: src\js\GrainEditor.js:229
+#: src\js\GrainEditor.js:243
 msgid " (Default Value)"
 msgstr ""
 
-#: src\js\GrainEditor.js:276
+#: src\js\GrainEditor.js:290
 msgid "Grain was modified, save?"
 msgstr ""
 
-#: src\js\GrainEditor.js:344
+#: src\js\GrainEditor.js:362
 msgid "Please correct input errors first"
 msgstr ""
 
-#: src\js\GrainEditor.js:515
+#: src\js\GrainEditor.js:527
 msgid "No file selected"
 msgstr ""
 
-#: src\js\GrainEditor.js:651
+#: src\js\GrainEditor.js:663
 msgid "Field Info"
 msgstr ""
 

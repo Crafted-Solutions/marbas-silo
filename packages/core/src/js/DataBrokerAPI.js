@@ -7,15 +7,6 @@ const NoOp = () => { };
 
 const FETCH_YIELD_FAILMSG = 'API reported failure';
 
-const TierAPI = {
-	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
-	[MarBasDefaults.ID_TYPE_TYPEDEF]: 'TypeDef'
-};
-
-const ResolverAPI = Object.assign({}, TierAPI, {
-	[MarBasDefaults.ID_TYPE_FILE]: 'File'
-});
-
 const BackgroundJobStatus = {
 	'Pending': 0, 'Running': 1, 'Paused': 2, 'Complete': 3, 'Cancelled': 4, 'Error': 5
 };
@@ -26,9 +17,9 @@ export class DataBrokerAPI {
 	#grains = {};
 	#subtypes = {};
 	#resolvers = {
-		[MarBasDefaults.ID_TYPE_FILE]: {},
-		[MarBasDefaults.ID_TYPE_PROPDEF]: {},
-		[MarBasDefaults.ID_TYPE_TYPEDEF]: {}
+		[MarBasDefaults.TIER_FILE]: {},
+		[MarBasDefaults.TIER_PROPDEF]: {},
+		[MarBasDefaults.TIER_TYPEDEF]: {}
 	};
 	#rejects = [];
 	#currentRoles = {
@@ -195,6 +186,10 @@ export class DataBrokerAPI {
 		});
 	}
 
+	isRootGrain(grain) {
+		return (grain.id || grain) == MarBasDefaults.ID_ROOT;
+	}
+
 	getGrain(id = null, ignoreCache = false) {
 		const effectiveId = id || MarBasDefaults.ID_ROOT;
 		if (!ignoreCache && this.#grains[effectiveId]) {
@@ -269,12 +264,16 @@ export class DataBrokerAPI {
 		if ((!useGrainCulture || !grain.culture) && this.#lang) {
 			grain.culture = this.#lang;
 		}
-		let tier = useBasicTier ? 'Grain' : TierAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain';
-		const result = this.#fetchSendJson(`${this.baseUrl}/${tier}`, grain, false);
-		result.then(_ => {
-			delete grain._siloAttrsMod;
-		}).catch(NoOp);
-		return result;
+		return new Promise((resolve, reject) => {
+			(useBasicTier ? Promise.resolve('IGrain') : this.getGrainTierName(grain)).then(tier => {
+				this.#fetchSendJson(`${this.baseUrl}/${tier ? tier.substring(1) : 'Grain'}`, grain, false)
+					.then(result => {
+						delete grain._siloAttrsMod;
+						resolve(result);
+					})
+					.catch(reject);
+			});
+		});
 	}
 
 	deleteGrain(grain) {
@@ -321,23 +320,26 @@ export class DataBrokerAPI {
 				},
 				body: JSON.stringify(data)
 			}).then(opts => {
-				fetch(`${this.baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, opts)
-					.then(res => {
-						if (res.ok) {
-							return res.json();
-						}
-						reject(DataBrokerAPI.makeFetchErr(res));
-					})
-					.then(json => {
-						if (json.success) {
-							inv.then(() => {
-								resolve(this.#addGrainToCache(json.yield));
-							}).catch(() => resolve(json.yield));
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
-					})
-					.catch(reject);
+				this.getGrainTierName(typeId).then(tier => {
+					fetch(`${this.baseUrl}/${(tier ? tier.substring(1) : null) || 'Grain'}`, opts)
+						.then(res => {
+							if (res.ok) {
+								return res.json();
+							}
+							reject(DataBrokerAPI.makeFetchErr(res));
+						})
+						.then(json => {
+							if (json.success) {
+								inv.then(() => {
+									resolve(this.#addGrainToCache(json.yield));
+								}).catch(() => resolve(json.yield));
+							} else {
+								reject(FETCH_YIELD_FAILMSG);
+							}
+						})
+						.catch(reject);
+
+				}).catch(reject);
 
 			}).catch(reject);
 
@@ -449,6 +451,10 @@ export class DataBrokerAPI {
 		return result;
 	}
 
+	verifyGrainsExist(grainIds) {
+		return this.#fetchSendJson(`${this.baseUrl}/Grain/VerifyExist`, grainIds);
+	}
+
 	getGrainPropDefs(grain) {
 		return this.getTypePropDefs(grain.typeDefId);
 	}
@@ -554,36 +560,71 @@ export class DataBrokerAPI {
 		return result;
 	}
 
-	resolveGrainTier(grain) {
-		const typeRes = this.#resolvers[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
-		if (2 == grain._resolved || !typeRes) {
-			return Promise.resolve(grain);
+	getGrainTierName(grainOrId) {
+		const isGrain = grainOrId.id && "typeDefId" in grainOrId;
+		if (isGrain) {
+			if ("_tier" in grainOrId) {
+				return Promise.resolve(grainOrId._tier);
+			}
+			const tier = ((typeDefId) => {
+				switch (typeDefId) {
+					case MarBasDefaults.ID_TYPE_FILE:
+						return MarBasDefaults.TIER_FILE;
+					case MarBasDefaults.ID_TYPE_PROPDEF:
+						return MarBasDefaults.TIER_PROPDEF;
+					case null:
+						return MarBasDefaults.TIER_TYPEDEF;
+				}
+			})(grainOrId.typeDefId);
+			if (tier) {
+				grainOrId._tier = tier;
+				return Promise.resolve(tier);
+			}
 		}
-		if (!typeRes[grain.id] || !typeRes[grain.id]._fulfilled) {
-			typeRes[grain.id] = new Promise((resolve, reject) => {
-				grain._resolved = 1;
-				this.#fetchGet(`${this.baseUrl}/${ResolverAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || grain.typeName}/${grain.id}?lang=${this.#lang || grain.culture}`)
-					.then(value => {
-						value._resolved = 2;
-						if (value.mixInIds) {
-							value.mixInIds.forEach(typeId => {
-								this.#registerSubtype(grain.id, typeId);
-							});
-						}
-						resolve(merge(grain, value));
-					})
-					.catch(reject);
-			});
-			typeRes[grain.id].then((grain) => {
-				typeRes[grain.id]._fulfilled = true;
+		const result = this.#fetchGet(`${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Tier`);
+		if (isGrain) {
+			result.then(tier => {
+				grainOrId._tier = tier;
 			}).catch(NoOp);
-			return typeRes[grain.id];
 		}
-		return Promise.resolve(typeRes[grain.id]);
+		return result;
 	}
 
-	isRootGrain(grain) {
-		return (grain.id || grain) == MarBasDefaults.ID_ROOT;
+	resolveGrainTier(grain) {
+		if (2 == grain._resolved) {
+			return Promise.resolve(grain);
+		}
+		return new Promise((resolve, reject) => {
+			this.getGrainTierName(grain).then(tier => {
+				const typeRes = this.#resolvers[tier];
+				if (!typeRes) {
+					grain._resolved = 2;
+					resolve(grain);
+					return;
+				}
+				if (!typeRes[grain.id] || !typeRes[grain.id]._fulfilled) {
+					typeRes[grain.id] = new Promise((resolve, reject) => {
+						grain._resolved = 1;
+						this.#fetchGet(`${this.baseUrl}/${tier.substring(1)}/${grain.id}?lang=${this.#lang || grain.culture}`)
+							.then(value => {
+								value._resolved = 2;
+								if (value.mixInIds) {
+									value.mixInIds.forEach(typeId => {
+										this.#registerSubtype(grain.id, typeId);
+									});
+								}
+								resolve(merge(grain, value));
+							})
+							.catch(reject);
+					});
+				}
+				typeRes[grain.id].then(() => {
+					typeRes[grain.id]._fulfilled = true;
+					resolve(typeRes[grain.id]);
+				}).catch(NoOp);
+
+			}).catch(reject);
+		});
 	}
 
 	isGrainInstanceOf(grainOrId, baseTypeId) {
@@ -752,18 +793,20 @@ export class DataBrokerAPI {
 			if (recursive && MarBasDefaults.ID_ROOT == id) {
 				this.#grains = {};
 				this.#resolvers = {
-					[MarBasDefaults.ID_TYPE_FILE]: {},
-					[MarBasDefaults.ID_TYPE_PROPDEF]: {},
-					[MarBasDefaults.ID_TYPE_TYPEDEF]: {}
+					[MarBasDefaults.TIER_FILE]: {},
+					[MarBasDefaults.TIER_PROPDEF]: {},
+					[MarBasDefaults.TIER_TYPEDEF]: {}
 				};
 				this.#subtypes = {};
 				return Promise.resolve(id);
 			}
-			return new Promise((resolve) => {
-				const typeId = grainOrId.typeDefId || this.#grains[id].typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
-				if (typeId && this.#resolvers[typeId] && this.#resolvers[typeId][id]) {
-					delete this.#resolvers[typeId][id];
-				}
+			return new Promise((resolve, reject) => {
+				this.getGrainTierName(this.#grains[id]).then(tier => {
+					if (this.#resolvers[tier][id]) {
+						delete this.#resolvers[tier].id;
+					}
+				}).catch(reject);
+
 				const results = [Promise.resolve(id)];
 				if (recursive && this.#grains[id]._listed) {
 					for (const key in this.#grains) {
