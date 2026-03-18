@@ -1,6 +1,7 @@
 import { GrainEditor } from "../GrainEditor";
 import { _Dialog } from "./_Dialog";
 import { MbDomUtils } from "./MbDomUtils";
+import { SiloEvtGrainDeleted } from "./SiloEvtGrainDeleted";
 
 export class GrainEditorDialog extends _Dialog {
 	#editor;
@@ -9,12 +10,12 @@ export class GrainEditorDialog extends _Dialog {
 	constructor(scope, apiSvc) {
 		super(scope);
 		this.#editor = new GrainEditor(`${this._scope}-main`, apiSvc, 'BASIC_CORE');
-		document.addEventListener('mb-silo:grain-deleted', (evt) => {
-			if (this.#editor.editor && this.#editor.grain && this.#editor.grain.id == evt.detail) {
+		SiloEvtGrainDeleted.on((grainId) => {
+			if (this.#editor.grain && this.#editor.grain.id == grainId) {
 				this.#editor.is_dirty = false;
 				this.modal.hide();
 			}
-		});
+		}, false);
 	}
 
 	show(grainOrId) {

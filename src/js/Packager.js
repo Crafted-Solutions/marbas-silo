@@ -9,6 +9,7 @@ import { Task } from "./cmn/Task";
 import { MsgBox } from "./cmn/MsgBox";
 import { GrainPicker } from "./cmn/GrainPicker";
 import { GrainXAttrs } from "./cmn/GrainXAttrs";
+import { SiloEvtReload } from "./cmn/SiloEvtReload";
 
 class ExportDialog extends _Dialog {
 	#apiSvc;
@@ -130,14 +131,11 @@ class ExportDialog extends _Dialog {
 		});
 	}
 
-	#showGrainPicker(trigger) {
-		this.#grainPicker.show({});
-		this.#grainPicker.addEventListener('hidden.bs.modal', async () => {
-			if (this.#grainPicker.accepted) {
-				const grain = await this.#apiSvc.getGrain(this.#grainPicker.selectedGrain);
-				this.#setAnchor(trigger.closest(`.${this._scope}-item`), grain);
-			}
-		}, { once: true });
+	async #showGrainPicker(trigger) {
+		if (await this.#grainPicker.showModal({})) {
+			const grain = await this.#apiSvc.getGrain(this.#grainPicker.selectedGrain);
+			this.#setAnchor(trigger.closest(`.${this._scope}-item`), grain);
+		}
 	}
 
 	#initAnchorActions(container) {
@@ -311,11 +309,12 @@ export class Packager {
 				}
 				MsgBox.invoke(msg, {
 					title: t`Package Import`,
-					icon: hasBads ? 'warning' : 'info'
+					icon: hasBads ? 'warning' : 'info',
+					buttons: { ok: true }
 				});
 			}
 			console.info("Import result", result.result);
-			document.dispatchEvent(new CustomEvent('mb-silo:reload', { detail: { navigate: true } }));
+			SiloEvtReload.trigger(null, true);
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START | Task.Flag.REPORT_STATUS);
 	}
 
