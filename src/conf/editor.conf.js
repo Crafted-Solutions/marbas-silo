@@ -415,13 +415,14 @@ export const EditorSchemaConfig = {
 						readonly: true
 					},
 					size: {
+						type: "integer",
 						options: {
 							hidden: true
 						}
 					},
 					_size: {
 						get title() { return t`Size`; },
-						type: "integer",
+						type: "string",
 						template: "fileSizeFormatter",
 						watch: {
 							val: `${PATH_PRIMARY_GROUP}file.size`

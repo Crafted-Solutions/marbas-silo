@@ -79,7 +79,7 @@ export class LangManager {
 		if (isoCode) {
 			let option = Array.prototype.find.call(this.#selector.options, elm => elm.value == isoCode);
 			if (option) {
-				MsgBox.invoke(t`Language '${isoCode}' - ${option.textContent} exists already`);
+				MsgBox.invokeInfo(t`Language '${isoCode}' - ${option.textContent} exists already`);
 				return;
 			}
 			const res = await this.#apiSvc.createLanguage(isoCode);
@@ -94,10 +94,7 @@ export class LangManager {
 
 	async #deleteSelected() {
 		if (LangManager.isDefaultLang(LangManager.activeLang)
-			|| 'yes' != await MsgBox.invoke(t`Deleting language '${LangManager.activeLang}' would also delete all data associated with it. Are you sure?`, {
-				icon: 'primary',
-				buttons: { 'yes': true, 'no': true }
-			})) {
+			|| 'yes' != await MsgBox.invokeYesNo(t`Deleting language '${LangManager.activeLang}' would also delete all data associated with it. Are you sure?`)) {
 			return;
 		}
 		if (await this.#apiSvc.deleteLanguage(LangManager.activeLang)) {

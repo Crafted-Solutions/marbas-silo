@@ -17,6 +17,7 @@ import { StorageUtils } from "./cmn/StorageUtils";
 import { UILocale } from "./UILocale";
 import { MbDomUtils } from "./cmn/MbDomUtils";
 import { SiloTools } from "./SiloTools";
+import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
 
 global.NoOp = () => { };
 
@@ -42,8 +43,7 @@ if (!redirected) {
 			const grainId = (new URLSearchParams(window.location.search)).get('grain');
 			if (grainId) {
 				MbDomUtils.cleanBrowserLocation(['grain']);
-				const evt = new CustomEvent('mb-silo:navigate', { detail: grainId });
-				document.dispatchEvent(evt);
+				SiloEvtNavigate.trigger(grainId);
 			}
 		}
 	};

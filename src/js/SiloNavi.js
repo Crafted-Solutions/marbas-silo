@@ -11,6 +11,12 @@ import { MsgBox } from "./cmn/MsgBox";
 import { GrainSecurityDialog } from "./cmn/GrainSecurityDialog";
 import { Task } from "./cmn/Task";
 import { GrainEditorDialog } from "./cmn/GrainEditorDialog";
+import { SiloEvtGrainModified } from "./cmn/SiloEvtGrainModified";
+import { SiloEvtReload } from "./cmn/SiloEvtReload";
+import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
+import { SiloEvtGrainDeleted } from "./cmn/SiloEvtGrainDeleted";
+import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
+import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
 
 export class SiloNavi extends SiloTree {
 
@@ -20,61 +26,47 @@ export class SiloNavi extends SiloTree {
 	constructor(elementId, apiSvc, rootNodes, initCallback = null) {
 		super(elementId, apiSvc, rootNodes, initCallback);
 		this.#buildContextMenu();
-		document.addEventListener('mb-silo:navigate', async (evt) => {
+		SiloEvtNavigate.on(async (grainId) => {
 			await this.initialized;
-			await this.navigateToNode(evt.detail || MarBasDefaults.ID_ROOT);
+			await this.navigateToNode(grainId || MarBasDefaults.ID_ROOT);
 		});
-		document.addEventListener('mb-silo:reload', async (evt) => {
-			let id = MarBasDefaults.ID_ROOT;
-			let navigate = false;
-			if (evt.detail) {
-				id = evt.detail.id || id;
-				navigate = evt.detail.navigate;
-			}
+		SiloEvtReload.on(async (grainId, navigate) => {
+			const id = grainId || MarBasDefaults.ID_ROOT;
 			await this.reloadNode(id);
 			if (navigate) {
 				await this.navigateToNode(id);
 			}
 		});
-		document.addEventListener('mb-silo:typdef-defaults', async (evt) => {
-			if (evt.detail) {
-				await this.openTypeDefDefaults(evt.detail.typeDefId, evt.detail.defaultsId);
-			}
+		SiloEvtTypeDefDefaults.on(async (typeDefId, defaultsId) => {
+			await this.openTypeDefDefaults(typeDefId, defaultsId);
 		});
-		document.addEventListener('mb-silo:grain-modified', (evt) => {
-			if (evt.detail) {
-				this.updateNode(evt.detail);
-			}
-		});
+		SiloEvtGrainModified.on((grain) => {
+			this.updateNode(grain);
+		}, false);
 	}
 
 	async deleteNode(grainOrId) {
 		const node = this._getNodeByGrain(grainOrId);
-		if (node && 'yes' == await MsgBox.invoke(t`Delete ${node.text}?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
-			await Task.nowAsync(t`Deleting grain`, async () => {
+		if (node && 'yes' == await MsgBox.invokeYesNo(t`Delete ${node.text}?`)) {
+			return await Task.nowAsync(t`Deleting grain`, async () => {
 				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
 				this.tree.removeNode(node);
 				if (parents.length) {
 					this.tree.selectNode(parents);
 				}
-				await this._apiSvc.deleteGrain(grainOrId.id || grainOrId);
-				document.dispatchEvent(new CustomEvent('mb-silo:grain-deleted', {
-					detail: grainOrId.id || grainOrId
-				}));
+				const id = grainOrId.id || grainOrId;
+				const result = await this._apiSvc.deleteGrain(id);
+				if (result) {
+					SiloEvtGrainDeleted.trigger(id);
+				}
+				return result;
 			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 		}
+		return false;
 	}
 
 	async createNode(parentOrId, typeDefId = MarBasDefaults.ID_TYPE_ELEMENT) {
 		const dlg = GrainNewDialog.instance(this._apiSvc);
-		dlg.addEventListener('hidden.bs.modal', async () => {
-			if (dlg.accepted) {
-				await Task.nowAsync(t`Creating grain`, async () => {
-					const grain = await this._apiSvc.createGrain(dlg.parentGrain, dlg.grainType, dlg.grainName);
-					await this.revealAndSelectNode(grain);
-				}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-			}
-		}, { once: true });
 		let grainType;
 		if (MarBasDefaults.ID_TYPE_ELEMENT != typeDefId) {
 			grainType = {
@@ -82,20 +74,24 @@ export class SiloNavi extends SiloTree {
 				label: MarBasDefaults.ID_TYPE_TYPEDEF == typeDefId ? t`Type Definition` : await this._apiSvc.resolveGrainLabel(typeDefId)
 			};
 		}
-		dlg.show(parentOrId.id || parentOrId, grainType);
+		if (await dlg.showModal(parentOrId.id || parentOrId, grainType)) {
+			return await Task.nowAsync(t`Creating grain`, async (_, err) => {
+				const grain = await this._apiSvc.createGrain(dlg.parentGrain, dlg.grainType, dlg.grainName);
+				return await this.revealAndSelectNode(grain);
+			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+		}
+		return null;
 	}
 
-	createFile(parentOrId) {
+	async createFile(parentOrId) {
 		const dlg = FileNewDialog.instance(this._apiSvc);
-		dlg.addEventListener('hidden.bs.modal', async () => {
-			if (dlg.accepted) {
-				await Task.nowAsync(t`Creating file`, async () => {
-					const grain = await this._apiSvc.createFile(dlg.formData);
-					await this.revealAndSelectNode(grain);
-				}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
-			}
-		}, { once: true });
-		dlg.show(parentOrId.id || parentOrId);
+		if (await dlg.showModal(parentOrId.id || parentOrId)) {
+			return await Task.nowAsync(t`Creating file`, async (_, err) => {
+				const grain = await this._apiSvc.createFile(dlg.formData);
+				return await this.revealAndSelectNode(grain);
+			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
+		}
+		return null;
 	}
 
 	async renameNode(grainOrId) {
@@ -113,10 +109,8 @@ export class SiloNavi extends SiloTree {
 					name: newName
 				};
 				await this._apiSvc.storeGrain(mod, true);
-				document.dispatchEvent(new CustomEvent('mb-silo:grain-renamed', {
-					detail: mod
-				}));
-				await this.reloadNode(grainOrId, true);
+				SiloEvtGrainRenamed.triggerMod(mod);
+				return await this.reloadNode(grainOrId, true);
 			}
 		}
 	}
@@ -124,43 +118,40 @@ export class SiloNavi extends SiloTree {
 	async editNodeSecurity(grainOrId) {
 		if (!this.#securityDlg) {
 			this.#securityDlg = new GrainSecurityDialog(this._apiSvc);
-			this.#securityDlg.addEventListener('hidden.bs.modal', async () => {
-				if (this.#securityDlg.accepted) {
-					let mod = false;
-					for (const k in this.#securityDlg.addedEntries) {
-						const entry = this.#securityDlg.addedEntries[k];
-						try {
-							await this._apiSvc.createAclEntry(entry);
-							mod = true;
-						} catch (e) {
-							console.error(e);
-						}
-					}
-					for (const k in this.#securityDlg.deletedEntries) {
-						const entry = this.#securityDlg.deletedEntries[k];
-						try {
-							await this._apiSvc.deleteAclEntry(entry.grainId, entry.roleId);
-							mod = true;
-						} catch (e) {
-							console.error(e);
-						}
-					}
-					for (const k in this.#securityDlg.modifiedEntries) {
-						const entry = this.#securityDlg.modifiedEntries[k];
-						try {
-							await this._apiSvc.storeAclEntry(entry);
-							mod = true;
-						} catch (e) {
-							console.error(e);
-						}
-					}
-					if (mod) {
-						await this.reloadNode(grainOrId);
-					}
-				}
-			});
 		}
-		this.#securityDlg.show(grainOrId);
+		if (await this.#securityDlg.showModal(grainOrId)) {
+			let mod = false;
+			for (const k in this.#securityDlg.addedEntries) {
+				const entry = this.#securityDlg.addedEntries[k];
+				try {
+					await this._apiSvc.createAclEntry(entry);
+					mod = true;
+				} catch (e) {
+					console.error(e);
+				}
+			}
+			for (const k in this.#securityDlg.deletedEntries) {
+				const entry = this.#securityDlg.deletedEntries[k];
+				try {
+					await this._apiSvc.deleteAclEntry(entry.grainId, entry.roleId);
+					mod = true;
+				} catch (e) {
+					console.error(e);
+				}
+			}
+			for (const k in this.#securityDlg.modifiedEntries) {
+				const entry = this.#securityDlg.modifiedEntries[k];
+				try {
+					await this._apiSvc.storeAclEntry(entry);
+					mod = true;
+				} catch (e) {
+					console.error(e);
+				}
+			}
+			if (mod) {
+				await this.reloadNode(grainOrId);
+			}
+		}
 	}
 
 	async addNodeToClipboard(grainOrId, operation = 'copy') {

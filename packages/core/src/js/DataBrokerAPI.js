@@ -320,7 +320,7 @@ export class DataBrokerAPI {
 				},
 				body: JSON.stringify(data)
 			}).then(opts => {
-				this.getGrainTierName(typeId).then(tier => {
+				this.getTypeDefTierName(typeId).then(tier => {
 					fetch(`${this.baseUrl}/${(tier ? tier.substring(1) : null) || 'Grain'}`, opts)
 						.then(res => {
 							if (res.ok) {
@@ -560,34 +560,49 @@ export class DataBrokerAPI {
 		return result;
 	}
 
+	getTypeDefTierName(typeDefId) {
+		// TODO call /api/marbas/TypeDef/{id}/Tier when implemented
+		const result = (() => {
+			switch (typeDefId) {
+				case MarBasDefaults.ID_TYPE_FILE:
+					return MarBasDefaults.TIER_FILE;
+				case MarBasDefaults.ID_TYPE_PROPDEF:
+					return MarBasDefaults.TIER_PROPDEF;
+				case MarBasDefaults.ID_TYPE_TYPEDEF:
+				case null:
+					return MarBasDefaults.TIER_TYPEDEF;
+			}
+		})();
+		return Promise.resolve(result);
+	}
+
 	getGrainTierName(grainOrId) {
 		const isGrain = grainOrId.id && "typeDefId" in grainOrId;
-		if (isGrain) {
-			if ("_tier" in grainOrId) {
-				return Promise.resolve(grainOrId._tier);
-			}
-			const tier = ((typeDefId) => {
-				switch (typeDefId) {
-					case MarBasDefaults.ID_TYPE_FILE:
-						return MarBasDefaults.TIER_FILE;
-					case MarBasDefaults.ID_TYPE_PROPDEF:
-						return MarBasDefaults.TIER_PROPDEF;
-					case null:
-						return MarBasDefaults.TIER_TYPEDEF;
-				}
-			})(grainOrId.typeDefId);
-			if (tier) {
-				grainOrId._tier = tier;
-				return Promise.resolve(tier);
-			}
+		if (isGrain && "_tier" in grainOrId) {
+			return Promise.resolve(grainOrId._tier);
 		}
-		const result = this.#fetchGet(`${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Tier`);
-		if (isGrain) {
-			result.then(tier => {
-				grainOrId._tier = tier;
-			}).catch(NoOp);
-		}
-		return result;
+		return new Promise((resolve, reject) => {
+			const apiCall = () => {
+				this.#fetchGet(`${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Tier`).then(tier => {
+					if (isGrain) {
+						grainOrId._tier = tier;
+					}
+					resolve(tier);
+				}).catch(reject);
+			};
+			if (isGrain) {
+				this.getTypeDefTierName(grainOrId.typeDefId).then(tier => {
+					if (tier) {
+						grainOrId._tier = tier;
+						resolve(tier);
+						return;
+					}
+					apiCall();
+				}).catch(reject);
+			} else {
+				apiCall();
+			}
+		});
 	}
 
 	resolveGrainTier(grain) {
@@ -801,12 +816,12 @@ export class DataBrokerAPI {
 				return Promise.resolve(id);
 			}
 			return new Promise((resolve, reject) => {
-				this.getGrainTierName(this.#grains[id]).then(tier => {
-					if (this.#resolvers[tier][id]) {
-						delete this.#resolvers[tier].id;
+				for (const tier in this.#resolvers) {
+					if (this.#resolvers[tier] && this.#resolvers[tier][id]) {
+						delete this.#resolvers[tier][id];
+						break;
 					}
-				}).catch(reject);
-
+				}
 				const results = [Promise.resolve(id)];
 				if (recursive && this.#grains[id]._listed) {
 					for (const key in this.#grains) {
@@ -816,7 +831,7 @@ export class DataBrokerAPI {
 					}
 				}
 				delete this.#grains[id];
-				Promise.all(results).then(resolve(id));
+				Promise.all(results).then(resolve(id)).catch(reject);
 			});
 		}
 		return Promise.resolve(id);

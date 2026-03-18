@@ -6,6 +6,8 @@ import { MarBasDefaults } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "../cmn/GrainXAttrs";
 import { IconMaps } from "../../conf/icons.conf";
 import { GrainEditorDialog } from "../cmn/GrainEditorDialog";
+import { SiloEvtGrainModified } from "../cmn/SiloEvtGrainModified";
+import { SiloEvtNavigate } from "../cmn/SiloEvtNavigate";
 
 export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	build() {
@@ -82,12 +84,12 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 			}
 		});
 
-		document.addEventListener('mb-silo:grain-modified', (evt) => {
-			if (evt.detail && this.grain && evt.detail.id == this.grain.id) {
-				this.grain = Object.assign(this.grain, evt.detail);
+		SiloEvtGrainModified.on((grain) => {
+			if (this.grain && grain.id == this.grain.id) {
+				this.grain = Object.assign(this.grain, grain);
 				this.#updateGrainView();
 			}
-		});
+		}, false);
 	}
 
 	setValue(value, initial, fromTemplate) {
@@ -152,8 +154,7 @@ export class FieldEditorGrain extends JSONEditor.defaults.editors.string {
 	}
 
 	onGoToGrain() {
-		const evt = new CustomEvent('mb-silo:navigate', { detail: this.getValue() });
-		document.dispatchEvent(evt);
+		SiloEvtNavigate.trigger(this.getValue());
 	}
 
 	onEditGrain() {

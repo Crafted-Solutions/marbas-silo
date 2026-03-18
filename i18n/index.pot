@@ -67,38 +67,38 @@ msgstr ""
 msgid "Please provide a valid password"
 msgstr ""
 
-#: src\js\GrainEditor.js:51
+#: src\js\GrainEditor.js:58
 msgid "Grain was modified, close anyway?"
 msgstr ""
 
-#: src\js\GrainEditor.js:243
+#: src\js\GrainEditor.js:239
 msgid " (Default Value)"
 msgstr ""
 
-#: src\js\GrainEditor.js:290
+#: src\js\GrainEditor.js:286
 msgid "Grain was modified, save?"
 msgstr ""
 
-#: src\js\GrainEditor.js:362
+#: src\js\GrainEditor.js:358
 msgid "Please correct input errors first"
 msgstr ""
 
-#: src\js\GrainEditor.js:527
+#: src\js\GrainEditor.js:524
 msgid "No file selected"
 msgstr ""
 
-#: src\js\GrainEditor.js:663
+#: src\js\GrainEditor.js:693
 msgid "Field Info"
 msgstr ""
 
-#: src\js\index.js:26
+#: src\js\index.js:27
 #, javascript-format
 msgid ""
 "This app requires access to session storage, configure your browser to "
 "accept cookies for ${ location.protocol }//${ location.host }"
 msgstr ""
 
-#: src\js\index.js:31
+#: src\js\index.js:32
 #, javascript-format
 msgid ""
 "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
@@ -149,242 +149,242 @@ msgstr ""
 msgid "Timeout attempting authorization"
 msgstr ""
 
-#: src\js\Packager.js:21
+#: src\js\Packager.js:22
 msgid "Export Package"
 msgstr ""
 
-#: src\js\Packager.js:22
+#: src\js\Packager.js:23
 msgid "Package Name"
 msgstr ""
 
-#: src\js\Packager.js:23
+#: src\js\Packager.js:24
 msgid "(Optional) name for package file"
 msgstr ""
 
-#: src\js\Packager.js:24
+#: src\js\Packager.js:25
 msgid ""
 "Note: grains are added to the package in order of appearance, this order is "
 "applied when the package is imported"
 msgstr ""
 
-#: src\js\Packager.js:25
+#: src\js\Packager.js:26
 msgid "Add another grain"
 msgstr ""
 
-#: src\js\Packager.js:26
+#: src\js\Packager.js:27
 msgid "Remove this grain"
 msgstr ""
 
-#: src\js\Packager.js:27
+#: src\js\Packager.js:28
 msgid "Move this grain up"
 msgstr ""
 
-#: src\js\Packager.js:28
+#: src\js\Packager.js:29
 msgid "Move this grain down"
 msgstr ""
 
-#: src\js\Packager.js:29
+#: src\js\Packager.js:30
 msgid "Anchor Grain"
 msgstr ""
 
-#: src\js\Packager.js:30
+#: src\js\Packager.js:31
 msgid "Grain to export"
 msgstr ""
 
-#: src\js\Packager.js:31
+#: src\js\Packager.js:32
 msgid "Browse grains"
 msgstr ""
 
-#: src\js\Packager.js:32
+#: src\js\Packager.js:33
 msgid "Please select a grain"
 msgstr ""
 
-#: src\js\Packager.js:33
+#: src\js\Packager.js:34
 msgid "Include Linked Grains"
 msgstr ""
 
-#: src\js\Packager.js:34
+#: src\js\Packager.js:35
 msgid "Include Type Information"
 msgstr ""
 
-#: src\js\Packager.js:35
+#: src\js\Packager.js:36
 msgid "Include Parent Grains"
 msgstr ""
 
-#: src\js\Packager.js:36
+#: src\js\Packager.js:37
 msgid "Include Children"
 msgstr ""
 
-#: src\js\Packager.js:38
+#: src\js\Packager.js:39
 #: src\js\jed\FieldEditorPropConstraints.js:25
 msgid "None"
 msgstr ""
 
-#: src\js\Packager.js:39
+#: src\js\Packager.js:40
 msgid "Immediate only"
 msgstr ""
 
-#: src\js\Packager.js:40
+#: src\js\Packager.js:41
 msgid "All recursively"
 msgstr ""
 
-#: src\js\Packager.js:207
+#: src\js\Packager.js:205
 msgid "Import Package"
 msgstr ""
 
-#: src\js\Packager.js:208
+#: src\js\Packager.js:206
 msgid "Package"
 msgstr ""
 
-#: src\js\Packager.js:209
+#: src\js\Packager.js:207
 msgid "Please provide a package"
 msgstr ""
 
-#: src\js\Packager.js:210
+#: src\js\Packager.js:208
 msgid "Duplicate Grains Handling"
 msgstr ""
 
-#: src\js\Packager.js:212
+#: src\js\Packager.js:210
 msgid "Ignore"
 msgstr ""
 
-#: src\js\Packager.js:213
+#: src\js\Packager.js:211
 msgid "Merge (skip if newer)"
 msgstr ""
 
-#: src\js\Packager.js:214
+#: src\js\Packager.js:212
 msgid "Merge"
 msgstr ""
 
-#: src\js\Packager.js:215
+#: src\js\Packager.js:213
 msgid "Overwrite (skip if newer)"
 msgstr ""
 
-#: src\js\Packager.js:216
+#: src\js\Packager.js:214
 msgid "Overwrite"
 msgstr ""
 
-#: src\js\Packager.js:217
+#: src\js\Packager.js:215
 msgid "Overwrite recursively"
 msgstr ""
 
-#: src\js\Packager.js:219
+#: src\js\Packager.js:217
 msgid "Missing Dependencies Handling"
 msgstr ""
 
-#: src\js\Packager.js:221
+#: src\js\Packager.js:219
 msgid "Warn and continue"
 msgstr ""
 
-#: src\js\Packager.js:222
+#: src\js\Packager.js:220
 msgid "Create placeholder (dummy) grain"
 msgstr ""
 
-#: src\js\Packager.js:223
+#: src\js\Packager.js:221
 msgid "Abort operation"
 msgstr ""
 
-#: src\js\Packager.js:324
+#: src\js\Packager.js:323
 msgid "Caching"
 msgstr ""
 
-#: src\js\Packager.js:329
+#: src\js\Packager.js:328
 #, javascript-format
 msgid "Processing grain \"${ name }\" (${ id })"
 msgstr ""
 
-#: src\js\Packager.js:331
+#: src\js\Packager.js:330
 msgid "Processing"
 msgstr ""
 
-#: src\js\Packager.js:275
+#: src\js\Packager.js:273
 msgid "Exporting package"
 msgstr ""
 
-#: src\js\Packager.js:282
+#: src\js\Packager.js:280
 msgid "Importing package"
 msgstr ""
 
-#: src\js\Packager.js:285
+#: src\js\Packager.js:283
 msgid "Pending"
 msgstr ""
 
-#: src\js\Packager.js:292
+#: src\js\Packager.js:290
 msgid "Cancelled"
 msgstr ""
 
-#: src\js\Packager.js:306
+#: src\js\Packager.js:304
 #, javascript-format
 msgid ""
 "Import results: ${ importResult.importedCount } grains imported, ${ "
 "importResult.ignoredCount } grains skipped"
 msgstr ""
 
-#: src\js\Packager.js:308
+#: src\js\Packager.js:306
 msgid " (completed with warnings)"
 msgstr ""
 
-#: src\js\Packager.js:310
+#: src\js\Packager.js:308
 msgid " (completed with errors)"
 msgstr ""
 
-#: src\js\Packager.js:313
+#: src\js\Packager.js:311
 msgid "Package Import"
 msgstr ""
 
-#: src\js\SiloNavi.js:53
+#: src\js\SiloNavi.js:50
 #, javascript-format
 msgid "Delete ${ node.text }?"
 msgstr ""
 
-#: src\js\SiloNavi.js:54
+#: src\js\SiloNavi.js:51
 msgid "Deleting grain"
-msgstr ""
-
-#: src\js\SiloNavi.js:72
-#: src\js\cmn\GrainPicker.js:146
-msgid "Creating grain"
 msgstr ""
 
 #: src\conf\editor.conf.js:145
 #: src\conf\editor.conf.js:202
-#: src\js\SiloNavi.js:82
+#: src\js\SiloNavi.js:74
 #: src\js\cmn\GrainPicker.js:110
 msgid "Type Definition"
 msgstr ""
 
-#: src\js\SiloNavi.js:92
+#: src\js\SiloNavi.js:78
+#: src\js\cmn\GrainPicker.js:146
+msgid "Creating grain"
+msgstr ""
+
+#: src\js\SiloNavi.js:89
 #: src\js\cmn\GrainPicker.js:167
 msgid "Creating file"
 msgstr ""
 
-#: src\js\SiloNavi.js:106
+#: src\js\SiloNavi.js:102
 #, javascript-format
 msgid "Rename \"${ oldName }\""
 msgstr ""
 
-#: src\js\SiloNavi.js:107
+#: src\js\SiloNavi.js:103
 msgid "New Grain Name"
 msgstr ""
 
-#: src\js\SiloNavi.js:198
+#: src\js\SiloNavi.js:189
 msgid "Moving grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:198
+#: src\js\SiloNavi.js:189
 msgid "Copying grain"
 msgstr ""
 
-#: src\js\SiloNavi.js:226
+#: src\js\SiloNavi.js:217
 msgid "Creating link"
 msgstr ""
 
-#: src\js\SiloNavi.js:253
+#: src\js\SiloNavi.js:244
 #, javascript-format
 msgid "Path for ${ grainOrId } is empty"
 msgstr ""
 
-#: src\js\SiloNavi.js:274
+#: src\js\SiloNavi.js:265
 #, javascript-format
 msgid "Path to ${ id } is unreachable"
 msgstr ""
@@ -398,51 +398,51 @@ msgstr ""
 msgid "Loading grains"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:21
+#: src\js\jed\FieldEditorGrain.js:23
 msgid "Empty"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:22
+#: src\js\jed\FieldEditorGrain.js:24
 msgid "Type"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:51
+#: src\js\jed\FieldEditorGrain.js:53
 msgid "Quick Edit Grain"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:52
+#: src\js\jed\FieldEditorGrain.js:54
 msgid "Go To Grain"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:54
+#: src\js\jed\FieldEditorGrain.js:56
 msgid "Select"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:56
+#: src\js\jed\FieldEditorGrain.js:58
 msgid "Delete"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:206
+#: src\js\jed\FieldEditorGrain.js:207
 msgid "Other Options"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:225
+#: src\js\jed\FieldEditorGrain.js:226
 msgid "Copy ID"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:230
+#: src\js\jed\FieldEditorGrain.js:231
 msgid "Copy Path"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:235
+#: src\js\jed\FieldEditorGrain.js:236
 msgid "Copy URL"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:250
+#: src\js\jed\FieldEditorGrain.js:251
 msgid "<Self>"
 msgstr ""
 
-#: src\js\jed\FieldEditorGrain.js:278
+#: src\js\jed\FieldEditorGrain.js:279
 msgid "Open (new window)"
 msgstr ""
 
@@ -518,16 +518,16 @@ msgstr ""
 msgid "System defaults"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:112
+#: src\js\cmn\_Dialog.js:122
 msgid "Close"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:113
+#: src\js\cmn\_Dialog.js:123
 msgid "Ok"
 msgstr ""
 
 #: src\conf\vendor.i18n.js:14
-#: src\js\cmn\_Dialog.js:114
+#: src\js\cmn\_Dialog.js:124
 msgid "Cancel"
 msgstr ""
 
@@ -653,15 +653,15 @@ msgstr ""
 msgid "Content Type"
 msgstr ""
 
-#: src\conf\editor.conf.js:423
+#: src\conf\editor.conf.js:424
 msgid "Size"
 msgstr ""
 
-#: src\conf\editor.conf.js:444
+#: src\conf\editor.conf.js:445
 msgid "Select File"
 msgstr ""
 
-#: src\conf\editor.conf.js:450
+#: src\conf\editor.conf.js:451
 msgid "Select Type"
 msgstr ""
 

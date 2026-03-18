@@ -55,6 +55,16 @@ export class _Dialog {
 		this.modal.show();
 	}
 
+	showModal() {
+		const result = new Promise((resolve) => {
+			addEventListener('hidden.bs.modal', () => {
+				resolve(this.accepted);
+			}, { once: true });
+		});
+		this.show.apply(this, arguments);
+		return result;
+	}
+
 	async validate() {
 		const form = this._element.querySelector('form');
 		form.classList.toggle('was-validated', true);

@@ -1,3 +1,5 @@
+import { SiloEvtNavigate } from "./SiloEvtNavigate";
+
 const INPUT_EVENTS = ['keydown', 'paste', 'focus', 'mousedown'];
 
 function handleReadonlyInput(evt) {
@@ -36,8 +38,7 @@ export const MbDomUtils = {
 		link.onclick = () => {
 			const g = gid();
 			if (g) {
-				const evt = new CustomEvent('mb-silo:navigate', { detail: g });
-				document.dispatchEvent(evt);
+				SiloEvtNavigate.trigger(g);
 			}
 			return false;
 		};

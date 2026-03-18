@@ -17,6 +17,11 @@ import { FieldEditorIcon } from "./jed/FieldEditorIcon";
 import { UILocale } from "./UILocale";
 import { FieldEditorPropConstraints } from "./jed/FieldEditorPropConstraints";
 import { GrainPropConstraints } from "./cmn/GrainPropConstraints";
+import { SiloEvtGrainModified } from "./cmn/SiloEvtGrainModified";
+import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
+import { SiloEvtGrainDeleted } from "./cmn/SiloEvtGrainDeleted";
+import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
+import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
@@ -24,6 +29,8 @@ const GuidPattern = /[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-
 const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.(${GuidPattern.source})`, 'i');
 
 EditorSchemaConfig.reset();
+
+const BASE_TITLE = document.title;
 
 export class GrainEditor {
 	#readyCb;
@@ -51,23 +58,12 @@ export class GrainEditor {
 				evt.returnValue = t`Grain was modified, close anyway?`;
 			}
 		});
-		document.addEventListener('mb-silo:grain-deleted', async (evt) => {
-			if (this.editor && this.grain) {
-				if (this.grain.id == evt.detail) {
-					if (!this.isPopup) {
-						this.editor.is_dirty = false;
-						await this.unloadEditor();
-					}
-				} else if (this.grain.defaultInstanceId == evt.detail) {
-					delete this.grain.defaultInstanceId;
-				}
+		SiloEvtGrainDeleted.on(this.onGrainDeleted.bind(this));
+		SiloEvtGrainRenamed.on((grainId, newName) => {
+			if (this.editor && this.grain.id == grainId) {
+				this.grain.name = newName;
 			}
-		});
-		document.addEventListener('mb-silo:grain-renamed', (evt) => {
-			if (this.editor && this.grain.id == evt.detail.id) {
-				this.grain.name = evt.detail.name;
-			}
-		});
+		}, false);
 	}
 
 	static setup = async function setup() {
@@ -287,7 +283,7 @@ export class GrainEditor {
 
 	async verifySaved(disposing = false) {
 		if (this.dirty) {
-			if ('yes' == await MsgBox.invoke(t`Grain was modified, save?`, { icon: 'primary', buttons: { 'yes': true, 'no': true } })) {
+			if ('yes' == await MsgBox.invokeYesNo(t`Grain was modified, save?`)) {
 				await this.save();
 				return true;
 			}
@@ -456,6 +452,7 @@ export class GrainEditor {
 
 	onEditorReady() {
 		try {
+			document.title = `${this.grain.label} - ${BASE_TITLE}`;
 			this.#dateFields.forEach((key) => {
 				const sub = this.editor.getEditor(key);
 				if (sub && sub.getValue()) {
@@ -531,13 +528,36 @@ export class GrainEditor {
 	}
 
 	onTypeDefDefaults(editor) {
-		const evt = new CustomEvent('mb-silo:typdef-defaults', {
-			detail: {
-				typeDefId: this.grain.id,
-				defaultsId: this.grain.defaultInstanceId
+		SiloEvtTypeDefDefaults.trigger(this.grain.id, this.grain.defaultInstanceId);
+	}
+
+	async onGrainDeleted(grainId) {
+		if (this.editor && this.grain) {
+			if (this.grain.id == grainId) {
+				if (!this.isPopup) {
+					this.editor.is_dirty = false;
+					await this.unloadEditor();
+				}
+			} else if (this.grain.defaultInstanceId == grainId) {
+				delete this.grain.defaultInstanceId;
+			} else {
+				const prop = this._getCustomProperty(grainId);
+				if (prop) {
+					const sub = this._getTraitEditor(prop);
+					if (sub) {
+						if (sub.parent) {
+							delete sub.parent.editors[sub.key];
+						}
+						sub.destroy();
+					}
+					this.customProps.def.splice(this.customProps.def.indexOf(prop), 1);
+					delete this.customProps.traits[prop.name];
+					if (this.customProps.changes) {
+						delete this.customProps.changes[GrainEditor.makeTraitPath(prop)];
+					}
+				}
 			}
-		});
-		document.dispatchEvent(evt);
+		}
 	}
 
 	_setDirty(dirty = true) {
@@ -553,8 +573,7 @@ export class GrainEditor {
 	}
 
 	_notify() {
-		const evt = new CustomEvent('mb-silo:grain-modified', { detail: this.grain });
-		document.dispatchEvent(evt);
+		SiloEvtGrainModified.trigger(this.grain);
 	}
 
 	_addEditorListener(editorKey) {
@@ -590,6 +609,20 @@ export class GrainEditor {
 		return this._element.querySelector(`[data-schemapath="${groupPath}"]`);
 	}
 
+	_getCustomProperty(propDefId) {
+		return this.customProps.def.find((element) => element.id == propDefId)
+	}
+
+	_getTraitEditor(propDefOrId) {
+		if (this.editor) {
+			const prop = propDefOrId.id ? propDefOrId : this._getCustomProperty(propDefOrId);
+			if (prop) {
+				return this.editor.getEditor(GrainEditor.makeTraitPath(prop));
+			}
+		}
+		return undefined;
+	}
+
 	async _createActions() {
 		if (this.editor) {
 			const btnHolder = this.editor.root.theme.getHeaderButtonHolder();
@@ -599,8 +632,7 @@ export class GrainEditor {
 				btn.classList.add('btn-outline-secondary');
 				btn.classList.remove('btn-secondary', 'btn-sm');
 				btn.addEventListener('click', () => {
-					const evt = new CustomEvent('mb-silo:navigate', { detail: this.grain.id });
-					document.dispatchEvent(evt);
+					SiloEvtNavigate.trigger(this.grain.id);
 				});
 				btnHolder.appendChild(btn);
 			}
@@ -654,9 +686,7 @@ export class GrainEditor {
 				this._apiSvc.getTraitValues(prop, MarBasDefaults.ID_PROPDEF_COMMENT).then((comments) => {
 					if (comments && comments.length && comments[0].value) {
 						const lbl = this.editor.element.querySelector(
-							1 == prop.cardinalityMax
-								? `[data-schemapath="${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] label`
-								: `[data-schemapath="${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_${TraitUtils.getContainerName(prop)}.${prop.id}"] .card-title`
+							`[data-schemapath="${GrainEditor.makeTraitPath(prop)}"] ${1 == prop.cardinalityMax ? 'label' : '.card-title'}`
 						);
 						if (lbl) {
 							const elm = this.editor.theme.getInfoButton(comments[0].value);
@@ -940,6 +970,10 @@ export class GrainEditor {
 			return Number(sortKey);
 		}
 		return Array.from(sortKey || name).reduce((res, curr, i) => res + (10 ** 16) / ((257 - (curr.charCodeAt(0) % 256)) * (256 ** (i + 1))), 0);
+	}
+
+	static makeTraitPath(prop) {
+		return `${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_${TraitUtils.getContainerName(prop)}.${prop.id}`;
 	}
 
 	getGrainPickerOptions(elm) {

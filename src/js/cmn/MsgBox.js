@@ -114,6 +114,18 @@ export class MsgBox {
 		return MsgBox.invoke(text, { icon: 'danger', buttons: { ok: true } });
 	}
 
+	static invokeWarn(text) {
+		return MsgBox.invoke(text, { icon: 'warning', buttons: { ok: true } });
+	}
+
+	static invokeInfo(text) {
+		return MsgBox.invoke(text, { icon: 'info', buttons: { ok: true } });
+	}
+
+	static invokeYesNo(text) {
+		return MsgBox.invoke(text, { icon: 'primary', buttons: { 'yes': true, 'no': true } });
+	}
+
 	#onAction(id) {
 		this.#result = id;
 		this.modal.hide();
