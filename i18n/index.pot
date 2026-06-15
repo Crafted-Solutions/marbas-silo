@@ -3,150 +3,70 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\AbstractAuthModule.js:7
-msgid "Invalid URL"
-msgstr ""
-
-#: src\js\AbstractAuthModule.js:8
-msgid "Data broker is offline, please try again later"
-msgstr ""
-
-#: src\js\AbstractAuthModule.js:11
-msgid "Invalid user or password"
-msgstr ""
-
-#: src\js\AbstractAuthModule.js:102
+#: src\js\SiloTree.js:232
 #, javascript-format
-msgid "Connected to ${ info.brokerName } ${ info.brokerVersion } as ${ info.user }"
+msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:132
+#: src\js\SiloTree.js:259
+msgid "Loading grains"
+msgstr ""
+
+#: src\js\SiloNavi.js:50
 #, javascript-format
-msgid "Request failed (${ res.status } ${ res.statusText })"
+msgid "Delete ${ node.text }?"
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:145
+#: src\js\SiloNavi.js:51
+msgid "Deleting grain"
+msgstr ""
+
+#: src\conf\editor.conf.js:145
+#: src\conf\editor.conf.js:202
+#: src\js\SiloNavi.js:74
+#: src\js\cmn\GrainPicker.js:118
+msgid "Type Definition"
+msgstr ""
+
+#: src\js\SiloNavi.js:78
+#: src\js\cmn\GrainPicker.js:154
+msgid "Creating grain"
+msgstr ""
+
+#: src\js\SiloNavi.js:89
+#: src\js\cmn\GrainPicker.js:175
+msgid "Creating file"
+msgstr ""
+
+#: src\js\SiloNavi.js:102
 #, javascript-format
-msgid ""
-"Incompatible schema version: ${ info.schemaVersion } (${ "
-"MarBasDefaults.MinSchemaVersion } is expected)"
+msgid "Rename \"${ oldName }\""
 msgstr ""
 
-#: src\js\AbstractAuthModule.js:149
+#: src\js\SiloNavi.js:103
+msgid "New Grain Name"
+msgstr ""
+
+#: src\js\SiloNavi.js:189
+msgid "Moving grain"
+msgstr ""
+
+#: src\js\SiloNavi.js:189
+msgid "Copying grain"
+msgstr ""
+
+#: src\js\SiloNavi.js:217
+msgid "Creating link"
+msgstr ""
+
+#: src\js\SiloNavi.js:244
 #, javascript-format
-msgid ""
-"Incompatible API version: ${ info.version } (${ "
-"MarBasDefaults.MinAPIVersion } is expected)"
+msgid "Path for ${ grainOrId } is empty"
 msgstr ""
 
-#: src\js\BasicAuthenticator.js:77
-msgid "Login Onto Broker"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:78
-msgid "User"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:79
-msgid "Login user name"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:80
-msgid "Please provide a valid user name"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:81
-msgid "Password"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:82
-msgid "Login password"
-msgstr ""
-
-#: src\js\BasicAuthenticator.js:83
-msgid "Please provide a valid password"
-msgstr ""
-
-#: src\js\GrainEditor.js:58
-msgid "Grain was modified, close anyway?"
-msgstr ""
-
-#: src\js\GrainEditor.js:239
-msgid " (Default Value)"
-msgstr ""
-
-#: src\js\GrainEditor.js:286
-msgid "Grain was modified, save?"
-msgstr ""
-
-#: src\js\GrainEditor.js:358
-msgid "Please correct input errors first"
-msgstr ""
-
-#: src\js\GrainEditor.js:524
-msgid "No file selected"
-msgstr ""
-
-#: src\js\GrainEditor.js:693
-msgid "Field Info"
-msgstr ""
-
-#: src\js\index.js:27
+#: src\js\SiloNavi.js:265
 #, javascript-format
-msgid ""
-"This app requires access to session storage, configure your browser to "
-"accept cookies for ${ location.protocol }//${ location.host }"
-msgstr ""
-
-#: src\js\index.js:32
-#, javascript-format
-msgid ""
-"Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
-"evt.detail.payload }"
-msgstr ""
-
-#: src\js\LangManager.js:75
-msgid "Create Language"
-msgstr ""
-
-#: src\js\LangManager.js:76
-msgid "ISO 639 Code"
-msgstr ""
-
-#: src\js\LangManager.js:82
-#, javascript-format
-msgid "Language '${ isoCode }' - ${ option.textContent } exists already"
-msgstr ""
-
-#: src\js\LangManager.js:97
-#, javascript-format
-msgid ""
-"Deleting language '${ _LangManager.activeLang }' would also delete all data "
-"associated with it. Are you sure?"
-msgstr ""
-
-#: src\js\login.js:10
-msgid "You can close this window"
-msgstr ""
-
-#: src\js\login.js:22
-msgid "Processing authorization provider response..."
-msgstr ""
-
-#: src\js\login.js:24
-#, javascript-format
-msgid "${ title[0] } - Authorization Receiver"
-msgstr ""
-
-#: src\js\OAuthAuthenticator.js:84
-#, javascript-format
-msgid ""
-"Your browser is blocking popups, please allow them for ${ "
-"window.location.protocol }//${ window.location.host } and try again"
-msgstr ""
-
-#: src\js\OAuthAuthenticator.js:92
-msgid "Timeout attempting authorization"
+msgid "Path to ${ id } is unreachable"
 msgstr ""
 
 #: src\js\Packager.js:22
@@ -332,70 +252,169 @@ msgstr ""
 msgid "Package Import"
 msgstr ""
 
-#: src\js\SiloNavi.js:50
+#: src\js\OAuthAuthenticator.js:84
 #, javascript-format
-msgid "Delete ${ node.text }?"
+msgid ""
+"Your browser is blocking popups, please allow them for ${ "
+"window.location.protocol }//${ window.location.host } and try again"
 msgstr ""
 
-#: src\js\SiloNavi.js:51
-msgid "Deleting grain"
+#: src\js\OAuthAuthenticator.js:92
+msgid "Timeout attempting authorization"
 msgstr ""
 
-#: src\conf\editor.conf.js:145
-#: src\conf\editor.conf.js:202
-#: src\js\SiloNavi.js:74
-#: src\js\cmn\GrainPicker.js:110
-msgid "Type Definition"
+#: src\js\login.js:10
+msgid "You can close this window"
 msgstr ""
 
-#: src\js\SiloNavi.js:78
-#: src\js\cmn\GrainPicker.js:146
-msgid "Creating grain"
+#: src\js\login.js:22
+msgid "Processing authorization provider response..."
 msgstr ""
 
-#: src\js\SiloNavi.js:89
-#: src\js\cmn\GrainPicker.js:167
-msgid "Creating file"
-msgstr ""
-
-#: src\js\SiloNavi.js:102
+#: src\js\login.js:24
 #, javascript-format
-msgid "Rename \"${ oldName }\""
+msgid "${ title[0] } - Authorization Receiver"
 msgstr ""
 
-#: src\js\SiloNavi.js:103
-msgid "New Grain Name"
+#: src\js\LangManager.js:75
+msgid "Create Language"
 msgstr ""
 
-#: src\js\SiloNavi.js:189
-msgid "Moving grain"
+#: src\js\LangManager.js:76
+msgid "ISO 639 Code"
 msgstr ""
 
-#: src\js\SiloNavi.js:189
-msgid "Copying grain"
-msgstr ""
-
-#: src\js\SiloNavi.js:217
-msgid "Creating link"
-msgstr ""
-
-#: src\js\SiloNavi.js:244
+#: src\js\LangManager.js:82
 #, javascript-format
-msgid "Path for ${ grainOrId } is empty"
+msgid "Language '${ isoCode }' - ${ option.textContent } exists already"
 msgstr ""
 
-#: src\js\SiloNavi.js:265
+#: src\js\LangManager.js:97
 #, javascript-format
-msgid "Path to ${ id } is unreachable"
+msgid ""
+"Deleting language '${ _LangManager.activeLang }' would also delete all data "
+"associated with it. Are you sure?"
 msgstr ""
 
-#: src\js\SiloTree.js:197
+#: src\js\index.js:27
 #, javascript-format
-msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
+msgid ""
+"This app requires access to session storage, configure your browser to "
+"accept cookies for ${ location.protocol }//${ location.host }"
 msgstr ""
 
-#: src\js\SiloTree.js:224
-msgid "Loading grains"
+#: src\js\index.js:32
+#, javascript-format
+msgid ""
+"Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
+"evt.detail.payload }"
+msgstr ""
+
+#: src\js\GrainEditor.js:59
+msgid "Grain was modified, close anyway?"
+msgstr ""
+
+#: src\js\GrainEditor.js:241
+msgid " (Default Value)"
+msgstr ""
+
+#: src\js\GrainEditor.js:288
+msgid "Grain was modified, save?"
+msgstr ""
+
+#: src\js\GrainEditor.js:366
+msgid "Please correct input errors first"
+msgstr ""
+
+#: src\js\GrainEditor.js:532
+msgid "No file selected"
+msgstr ""
+
+#: src\js\GrainEditor.js:701
+msgid "Field Info"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:77
+msgid "Login Onto Broker"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:78
+msgid "User"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:79
+msgid "Login user name"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:80
+msgid "Please provide a valid user name"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:81
+msgid "Password"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:82
+msgid "Login password"
+msgstr ""
+
+#: src\js\BasicAuthenticator.js:83
+msgid "Please provide a valid password"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:7
+msgid "Invalid URL"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:8
+msgid "Data broker is offline, please try again later"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:11
+msgid "Invalid user or password"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:102
+#, javascript-format
+msgid "Connected to ${ info.brokerName } ${ info.brokerVersion } as ${ info.user }"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:132
+#, javascript-format
+msgid "Request failed (${ res.status } ${ res.statusText })"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:145
+#, javascript-format
+msgid ""
+"Incompatible schema version: ${ info.schemaVersion } (${ "
+"MarBasDefaults.MinSchemaVersion } is expected)"
+msgstr ""
+
+#: src\js\AbstractAuthModule.js:149
+#, javascript-format
+msgid ""
+"Incompatible API version: ${ info.version } (${ "
+"MarBasDefaults.MinAPIVersion } is expected)"
+msgstr ""
+
+#: src\js\jed\FieldEditorPropConstraints.js:41
+msgid "Configure"
+msgstr ""
+
+#: src\js\jed\FieldEditorPropConstraints.js:145
+#, javascript-format
+msgid "Unknown constraint handler ${ this.value }"
+msgstr ""
+
+#: src\js\jed\FieldEditorPropConstraints.js:148
+#, javascript-format
+msgid "Handler ${ this.handler.use } requires configuration"
+msgstr ""
+
+#: src\js\jed\FieldEditorPropConstraints.js:152
+#, javascript-format
+msgid "Handler ${ this.handler.use } requires value type ${ valTypes }"
 msgstr ""
 
 #: src\js\jed\FieldEditorGrain.js:23
@@ -446,40 +465,29 @@ msgstr ""
 msgid "Open (new window)"
 msgstr ""
 
-#: src\js\jed\FieldEditorPropConstraints.js:41
-msgid "Configure"
+#: src\js\cmn\_Dialog.js:122
+msgid "Close"
 msgstr ""
 
-#: src\js\jed\FieldEditorPropConstraints.js:145
-#, javascript-format
-msgid "Unknown constraint handler ${ this.value }"
+#: src\js\cmn\_Dialog.js:123
+msgid "Ok"
 msgstr ""
 
-#: src\js\jed\FieldEditorPropConstraints.js:148
-#, javascript-format
-msgid "Handler ${ this.handler.use } requires configuration"
+#: src\conf\vendor.i18n.js:14
+#: src\js\cmn\_Dialog.js:124
+msgid "Cancel"
 msgstr ""
 
-#: src\js\jed\FieldEditorPropConstraints.js:152
-#, javascript-format
-msgid "Handler ${ this.handler.use } requires value type ${ valTypes }"
+#: src\js\cmn\GrainSecurityDialog.js:27
+msgid "Reading grain security"
 msgstr ""
 
-#: src\js\cmn\GrainNewDialog.js:12
-msgid "Grain"
+#: src\js\cmn\GrainSecurityDialog.js:51
+msgid "Loading..."
 msgstr ""
 
-#: src\js\cmn\GrainNewDialog.js:40
-#, javascript-format
-msgid "New ${ grainType.label }"
-msgstr ""
-
-#: src\js\cmn\GrainNewDialog.js:55
-msgid "Schema"
-msgstr ""
-
-#: src\js\cmn\GrainPicker.js:44
-msgid "Select Grain"
+#: src\js\cmn\GrainSecurityDialog.js:266
+msgid "System defaults"
 msgstr ""
 
 #: src\js\cmn\GrainPropConstraints.js:75
@@ -506,29 +514,131 @@ msgstr ""
 msgid "Format: date only"
 msgstr ""
 
-#: src\js\cmn\GrainSecurityDialog.js:27
-msgid "Reading grain security"
+#: src\js\cmn\GrainPicker.js:44
+msgid "Select Grain"
 msgstr ""
 
-#: src\js\cmn\GrainSecurityDialog.js:51
-msgid "Loading..."
+#: src\js\cmn\GrainNewDialog.js:12
+msgid "Grain"
 msgstr ""
 
-#: src\js\cmn\GrainSecurityDialog.js:266
-msgid "System defaults"
+#: src\js\cmn\GrainNewDialog.js:40
+#, javascript-format
+msgid "New ${ grainType.label }"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:122
-msgid "Close"
+#: src\js\cmn\GrainNewDialog.js:55
+msgid "Schema"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:123
-msgid "Ok"
+#: src\conf\vendor.i18n.js:5
+#.  vendor source JSONEditor.translate
+msgid "Edit JSON"
 msgstr ""
 
-#: src\conf\vendor.i18n.js:14
-#: src\js\cmn\_Dialog.js:124
-msgid "Cancel"
+#: src\conf\vendor.i18n.js:8
+#.  vendor source JSONEditor.translate
+msgid "Save"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:11
+#.  vendor source JSONEditor.translate
+msgid "Copy"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:17
+#.  vendor source JSONEditor.translate
+msgid "Add"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:20
+#.  vendor source JSONEditor.translate
+msgid "Properties"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:23
+#.  vendor source JSONEditor.translate
+msgid "Collapse"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:26
+#.  vendor source JSONEditor.translate
+msgid "JSON"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:29
+#.  vendor source JSONEditor.translate
+msgid "properties"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:32
+#.  vendor source JSONEditor.translate
+msgid "Object Properties"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:35
+#.  vendor source JSONEditor.translate
+msgid "Select in the navigation"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:38
+#.  vendor source JSONEditor.translate
+msgid "Reset"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:41
+#.  vendor source JSONEditor.translate
+msgid "item"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:44
+#.  vendor source JSONEditor.translate
+msgid "Add {{0}}"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:47
+#.  vendor source JSONEditor.translate
+msgid "Last {{0}}"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:50
+#.  vendor source JSONEditor.translate
+msgid "Delete Last {{0}}"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:53
+#.  vendor source JSONEditor.translate
+msgid "All"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:56
+#.  vendor source JSONEditor.translate
+msgid "Delete All"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:59
+#.  vendor source JSONEditor.translate
+msgid "Delete {{0}}"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:62
+#.  vendor source JSONEditor.translate
+msgid "Move down"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:65
+#.  vendor source JSONEditor.translate
+msgid "Move up"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:68
+#.  vendor source JSONEditor.translate
+msgid "Property must be set"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:71
+#.  vendor source JSONEditor.translate
+msgid "Value required"
 msgstr ""
 
 #: src\conf\editor.conf.js:20
@@ -663,114 +773,4 @@ msgstr ""
 
 #: src\conf\editor.conf.js:451
 msgid "Select Type"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:5
-#.  vendor source JSONEditor.translate
-msgid "Edit JSON"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:8
-#.  vendor source JSONEditor.translate
-msgid "Save"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:11
-#.  vendor source JSONEditor.translate
-msgid "Copy"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:17
-#.  vendor source JSONEditor.translate
-msgid "Add"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:20
-#.  vendor source JSONEditor.translate
-msgid "Properties"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:23
-#.  vendor source JSONEditor.translate
-msgid "Collapse"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:26
-#.  vendor source JSONEditor.translate
-msgid "JSON"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:29
-#.  vendor source JSONEditor.translate
-msgid "properties"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:32
-#.  vendor source JSONEditor.translate
-msgid "Object Properties"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:35
-#.  vendor source JSONEditor.translate
-msgid "Select in the navigation"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:38
-#.  vendor source JSONEditor.translate
-msgid "Reset"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:41
-#.  vendor source JSONEditor.translate
-msgid "item"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:44
-#.  vendor source JSONEditor.translate
-msgid "Add {{0}}"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:47
-#.  vendor source JSONEditor.translate
-msgid "Last {{0}}"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:50
-#.  vendor source JSONEditor.translate
-msgid "Delete Last {{0}}"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:53
-#.  vendor source JSONEditor.translate
-msgid "All"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:56
-#.  vendor source JSONEditor.translate
-msgid "Delete All"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:59
-#.  vendor source JSONEditor.translate
-msgid "Delete {{0}}"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:62
-#.  vendor source JSONEditor.translate
-msgid "Move down"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:65
-#.  vendor source JSONEditor.translate
-msgid "Move up"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:68
-#.  vendor source JSONEditor.translate
-msgid "Property must be set"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:71
-#.  vendor source JSONEditor.translate
-msgid "Value required"
 msgstr ""

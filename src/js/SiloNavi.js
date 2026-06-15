@@ -46,7 +46,7 @@ export class SiloNavi extends SiloTree {
 	}
 
 	async deleteNode(grainOrId) {
-		const node = this._getNodeByGrain(grainOrId);
+		const node = this.getNodeByGrain(grainOrId);
 		if (node && 'yes' == await MsgBox.invokeYesNo(t`Delete ${node.text}?`)) {
 			return await Task.nowAsync(t`Deleting grain`, async () => {
 				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
@@ -95,7 +95,7 @@ export class SiloNavi extends SiloTree {
 	}
 
 	async renameNode(grainOrId) {
-		const node = this._getNodeByGrain(grainOrId);
+		const node = this.getNodeByGrain(grainOrId);
 		if (node) {
 			const oldName = grainOrId.name || (await this._apiSvc.getGrain(grainOrId.id || grainOrId)).name || node.text;
 			const newName = await InputDialog.requestTextFromUser({
@@ -196,7 +196,7 @@ export class SiloNavi extends SiloTree {
 					const parentId = parentOrId.id || parentOrId;
 					if (parentId != oldParentId) {
 						await this.reloadNode(oldParentId);
-						this.tree.expandNode(this._getNodeByGrain(oldParentId));
+						this.tree.expandNode(this.getNodeByGrain(oldParentId));
 					}
 				}
 			} else {
@@ -222,13 +222,13 @@ export class SiloNavi extends SiloTree {
 			if (link) {
 				this.clearClipboard();
 				await this.reloadNode(parentOrId);
-				this.tree.expandNode(this._getNodeByGrain(parentOrId));
+				this.tree.expandNode(this.getNodeByGrain(parentOrId));
 			}
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	}
 
 	async expandBranch(grainOrId) {
-		let node = this._getNodeByGrain(grainOrId);
+		let node = this.getNodeByGrain(grainOrId);
 		const handleErr = (errMsg) => {
 			console.warn('navigateToNode', errMsg);
 			MsgBox.invokeErr(errMsg);
@@ -250,7 +250,7 @@ export class SiloNavi extends SiloTree {
 			let allThere = false;
 			while (!allThere) {
 				for (let i = 0; i < path.length; i++) {
-					const part = this._getNodeByGrain(path[i]);
+					const part = this.getNodeByGrain(path[i]);
 					if (part) {
 						if (path[i].id == id) {
 							allThere = true;

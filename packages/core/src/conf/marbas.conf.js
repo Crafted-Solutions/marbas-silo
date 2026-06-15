@@ -1,6 +1,6 @@
 export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.16',
-	MinAPIVersion: '0.1.21',
+	MinAPIVersion: '0.1.23',
 	LANG: 'en',
 	NAME_ROOT: 'marbas',
 	TIER_FILE: 'IFile',
@@ -28,6 +28,9 @@ export const MarBasBuiltIns = [
 	MarBasDefaults.ID_ROOT, MarBasDefaults.ID_CONTENT, MarBasDefaults.ID_SCHEMA, MarBasDefaults.ID_FILES, MarBasDefaults.ID_TRASH_CONTENT, MarBasDefaults.ID_TRASH_SCHEMA,
 	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_PROPDEF_LINKTARGET, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_FILE,
 	MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_LINK, MarBasDefaults.ID_PROPDEF_COMMENT, MarBasDefaults.ID_TYPEDEFSPEC
+];
+export const MarBasRestrictTypeDefs = [
+	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK
 ];
 export const MarBasGrainAccessFlag = {
 	None: 0x000,

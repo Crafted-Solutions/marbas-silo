@@ -22,6 +22,7 @@ import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
 import { SiloEvtGrainDeleted } from "./cmn/SiloEvtGrainDeleted";
 import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
 import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
+import { MarBasRestrictTypeDefs } from "../../packages/core/src/conf/marbas.conf";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
@@ -182,6 +183,7 @@ export class GrainEditor {
 
 		await this.unloadEditor();
 		this.grain = grainBase;
+
 		if (grainBase) {
 			this.grain = await this._apiSvc.resolveGrainTier(grainBase);
 			const prevIcon = this.grain.icon;
@@ -306,34 +308,40 @@ export class GrainEditor {
 			console.warn("editor.errors", errors);
 			return this.grain;
 		}
-		if (this.customProps && this.customProps.changes) {
-			for (const k in this.customProps.changes) {
-				const sub = this.editor.getEditor(k);
-				if (sub && sub.is_dirty) {
-					const m = TraitPattern.exec(k);
-					if (m && 2 < m.length) {
-						await this._apiSvc.storeTraitValues(this.grain, {
-							id: m[2],
-							valueType: sub.schema._origType,
-							localizable: sub.schema._localizable
-						}, TraitUtils.getStorableValues(sub.isActive() ? sub.getValue() : undefined, sub.schema._origType));
+		try {
+			if (this.customProps && this.customProps.changes) {
+				for (const k in this.customProps.changes) {
+					const sub = this.editor.getEditor(k);
+					if (sub && sub.is_dirty) {
+						const m = TraitPattern.exec(k);
+						if (m && 2 < m.length) {
+							await this._apiSvc.storeTraitValues(this.grain, {
+								id: m[2],
+								valueType: sub.schema._origType,
+								localizable: sub.schema._localizable
+							}, TraitUtils.getStorableValues(sub.isActive() ? sub.getValue() : undefined, sub.schema._origType));
+						}
+						sub.is_dirty = false;
 					}
-					sub.is_dirty = false;
+					delete this.customProps.changes[k];
 				}
-				delete this.customProps.changes[k];
 			}
-		}
-		const storeGrain = this.#collectChanges();
-		let setClean = !storeGrain;
-		if (storeGrain && (await this._apiSvc.storeGrain(this.grain))) {
-			const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
-			if (sub) {
-				sub.setValueToInputField((new Date()).toLocaleString());
+			const storeGrain = this.#collectChanges();
+			let setClean = !storeGrain;
+			if (storeGrain && (await this._apiSvc.storeGrain(this.grain))) {
+				const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
+				if (sub) {
+					sub.setValueToInputField((new Date()).toLocaleString());
+				}
+				setClean = true;
 			}
-			setClean = true;
-		}
-		if (setClean) {
-			this._setDirty(false);
+			if (setClean) {
+				this._setDirty(false);
+			}
+
+		} catch (e) {
+			console.error(e);
+			MsgBox.invokeErr(e);
 		}
 		return this.grain;
 	}
@@ -737,8 +745,12 @@ export class GrainEditor {
 
 	_getSchema(grain, customProps) {
 		let result = EditorSchemaConfig[this._schemaID];
-		if (EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]) {
-			result = merge({}, result, EditorSchemaConfig[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF]);
+		const typeDefId = grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
+		if (EditorSchemaConfig[typeDefId]) {
+			result = merge({}, result, EditorSchemaConfig[typeDefId]);
+			if (MarBasDefaults.ID_TYPE_TYPEDEF == typeDefId && MarBasRestrictTypeDefs.includes(grain.id)) {
+				delete result.definitions.typeDef.properties.mixInIds;
+			}
 		}
 		result = this._extendSchemaByTraits(customProps, result);
 		if (_DEVELOPMENT_) {
@@ -977,14 +989,15 @@ export class GrainEditor {
 	}
 
 	getGrainPickerOptions(elm) {
+		let result = {};
 		const opts = elm.getAttribute('data-pickeropts');
 		if (opts) {
-			const result = opts.startsWith('{') ? JSON.parse(opts) : EditorGrainPickerConfig[opts || 'DEFAULT'];
+			result = opts.startsWith('{') ? JSON.parse(opts) : EditorGrainPickerConfig[opts || 'DEFAULT'];
 			if (result.root && !GuidPattern.test(result.root)) {
 				result.root = this._apiSvc.resolveGrainPath(result.root, this.grain);
 			}
-			return result;
 		}
-		return {};
+		result.disableGrains = [this.grain.id];
+		return result;
 	}
 }
