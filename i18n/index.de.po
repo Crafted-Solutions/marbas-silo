@@ -188,7 +188,7 @@ msgstr "Pfad"
 #: src\conf\editor.conf.js:145
 #: src\conf\editor.conf.js:202
 #: src\js\SiloNavi.js:74
-#: src\js\cmn\GrainPicker.js:110
+#: src\js\cmn\GrainPicker.js:118
 msgid "Type Definition"
 msgstr "Typdefinition"
 
@@ -403,12 +403,12 @@ msgid "Deleting grain"
 msgstr "Grain löschen"
 
 #: src\js\SiloNavi.js:78
-#: src\js\cmn\GrainPicker.js:146
+#: src\js\cmn\GrainPicker.js:154
 msgid "Creating grain"
 msgstr "Grain erstellen"
 
 #: src\js\SiloNavi.js:89
-#: src\js\cmn\GrainPicker.js:167
+#: src\js\cmn\GrainPicker.js:175
 msgid "Creating file"
 msgstr "Datei erstellen"
 
@@ -433,7 +433,7 @@ msgstr "Grain kopieren"
 msgid "Creating link"
 msgstr "Link erstellen"
 
-#: src\js\SiloTree.js:197
+#: src\js\SiloTree.js:232
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr "Neuladen von ${ grain.parentId } fehlgeschlagen, Grund: ${ reason }"
@@ -448,7 +448,7 @@ msgstr "Pfad für ${ grainOrId } ist leer"
 msgid "Path to ${ id } is unreachable"
 msgstr "Pfad to ${ id } ist unerreichbar"
 
-#: src\js\SiloTree.js:224
+#: src\js\SiloTree.js:259
 msgid "Loading grains"
 msgstr "Grains laden"
 
@@ -469,27 +469,27 @@ msgstr "Systemvorgaben"
 msgid "Move up"
 msgstr "Nach oben"
 
-#: src\js\GrainEditor.js:58
+#: src\js\GrainEditor.js:59
 msgid "Grain was modified, close anyway?"
 msgstr "Grain wurde geändert, trotzdem schließen?"
 
-#: src\js\GrainEditor.js:239
+#: src\js\GrainEditor.js:241
 msgid " (Default Value)"
 msgstr " (Vorgabewert)"
 
-#: src\js\GrainEditor.js:286
+#: src\js\GrainEditor.js:288
 msgid "Grain was modified, save?"
 msgstr "Grain wurde geändert, speichern?"
 
-#: src\js\GrainEditor.js:358
+#: src\js\GrainEditor.js:366
 msgid "Please correct input errors first"
 msgstr "Bitte zuerst die Eingabefehler korrigieren"
 
-#: src\js\GrainEditor.js:524
+#: src\js\GrainEditor.js:532
 msgid "No file selected"
 msgstr "Keine Datei ausgewählt"
 
-#: src\js\GrainEditor.js:693
+#: src\js\GrainEditor.js:701
 msgid "Field Info"
 msgstr "Feld-Info"
 

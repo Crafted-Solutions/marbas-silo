@@ -43,7 +43,7 @@ export class GrainPicker extends _Dialog {
 	show(options) {
 		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || t`Select Grain`;
 		super.show();
-		this.#load(options.root, options.typeFilter, options.selectionFilter);
+		this.#load(options.root, options.typeFilter, options.selectionFilter, options.disableGrains, options.listFilter);
 	}
 
 	async validate() {
@@ -52,7 +52,7 @@ export class GrainPicker extends _Dialog {
 		return result;
 	}
 
-	async #load(rootGrainOrId, typeFilter, selectionFilter) {
+	async #load(rootGrainOrId, typeFilter, selectionFilter, disableGrains, listFilter) {
 		rootGrainOrId = await Promise.resolve(rootGrainOrId);
 		if (!rootGrainOrId) {
 			rootGrainOrId = MarBasDefaults.ID_ROOT;
@@ -67,10 +67,16 @@ export class GrainPicker extends _Dialog {
 			await this.#updateActions(typeFilter);
 		}
 		if (this.grainSelector) {
-			if (newRoot || this.grainSelector._options.typeFilter != typeFilter || this.grainSelector._options.selectableTypes != selectionFilter) {
+			this.grainSelector._options.disableGrains = disableGrains;
+			if (newRoot || this.grainSelector._options.listFilter != listFilter
+				|| String(this.grainSelector._options.typeFilter) != String(typeFilter)
+				|| String(this.grainSelector._options.selectableTypes) != String(selectionFilter)) {
 				this.grainSelector._options.typeFilter = typeFilter;
 				this.grainSelector._options.selectableTypes = selectionFilter;
+				this.grainSelector._options.listFilter = listFilter;
 				this.grainSelector.reloadNode(this.#rootGrain);
+			} else {
+				this.grainSelector.disableNodesByGrain(disableGrains);
 			}
 		} else {
 			this.grainSelector = new SiloTree(`${this._scope}-sel`, this.#apiSvc, [{
@@ -88,7 +94,9 @@ export class GrainPicker extends _Dialog {
 				this.grainSelector.tree.expandAll();
 			}, {
 				selectableTypes: selectionFilter,
-				typeFilter: typeFilter
+				typeFilter: typeFilter,
+				disableGrains: disableGrains,
+				listFilter: listFilter
 			});
 		}
 	}

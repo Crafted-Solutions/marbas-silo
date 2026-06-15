@@ -52,5 +52,15 @@ export const MbUtils = {
 		}
 		return await result;
 
+	},
+
+	compareVersion: function (version1, version2) {
+		if (version1 == version2) {
+			return 0;
+		}
+		if (!version1) {
+			return -1;
+		}
+		return version1.localeCompare(version2, undefined, { numeric: true, sensitivity: 'base' });
 	}
 };

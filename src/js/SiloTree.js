@@ -19,16 +19,22 @@ export class SiloTree {
 	_scope;
 	_listeners = {};
 	_options = {};
+	_branchLoader = async (grain, apiSvc, options) => {
+		return 0 < grain.childCount ? await apiSvc.listGrainChildren(grain, false, options.typeFilter) : [];
+	}
 
-	constructor(elementId, apiSvc, rootNodes, initCallback = null, options = null) {
+	constructor(elementId, apiSvc, rootNodes, initCallback = null, options = null, branchLoader = null) {
 		this._initPromise = new Promise(resolve => this._initialized = resolve);
 		this._scope = elementId;
 		this._element = document.getElementById(elementId);
 		this._element.classList.add('silo-tree');
 		this._apiSvc = apiSvc;
 		this._seed = rootNodes;
-		if (null != options) {
+		if (options) {
 			this._options = options;
+		}
+		if ('function' == typeof branchLoader) {
+			this._branchLoader = branchLoader;
 		}
 		if (rootNodes) {
 			this.render(rootNodes, initCallback);
@@ -117,7 +123,7 @@ export class SiloTree {
 	}
 
 	updateNode(grain) {
-		const node = this._getNodeByGrain(grain);
+		const node = this.getNodeByGrain(grain);
 		if (node) {
 			this._getNodeProperties(grain, node).then(() => {
 				this.tree.updateNode(node, node);
@@ -129,14 +135,43 @@ export class SiloTree {
 		return !!this._focusedNode;
 	}
 
+	getNodeByGrain(grainOrId) {
+		const nodes = this.tree.findNodes(`${this._scope}-${(grainOrId || {}).id || grainOrId}`, 'id');
+		return nodes.length ? nodes[0] : null;
+	}
+
 	isNodeSelected(grainOrId) {
-		const node = this._getNodeByGrain(grainOrId.id || grainOrId);
+		const node = this.getNodeByGrain(grainOrId.id || grainOrId);
 		return node && node.state && node.state.selected;
+	}
+
+	disableNodesByGrain(disabledGrains, enabledPrevious = true) {
+		if (enabledPrevious && this._options.disableGrains) {
+			this.tree.enableAll();
+			this._options.disableGrains = disabledGrains;
+		} else if (disabledGrains) {
+			if (!this._options.disableGrains) {
+				this._options.disableGrains = [];
+			}
+			this._options.disableGrains.push(...disabledGrains);
+		}
+		if (this._options.disableGrains) {
+			const nodes = this._options.disableGrains.reduce((accu, grain) => {
+				const node = this.getNodeByGrain(grain);
+				if (node) {
+					accu.push(node);
+				}
+				return accu;
+			}, []);
+			if (nodes.length) {
+				this.tree.disableNode(nodes);
+			}
+		}
 	}
 
 	async reloadNode(grainOrId, restoreSelection = true) {
 		const id = grainOrId.id || grainOrId;
-		const node = this._getNodeByGrain(id);
+		const node = this.getNodeByGrain(id);
 		if (node) {
 			await this._apiSvc.invalidateGrain(grainOrId, true);
 
@@ -160,8 +195,8 @@ export class SiloTree {
 	}
 
 	async revealAndSelectNode(grain) {
-		let node = this._getNodeByGrain(grain);
-		let parent = this._getNodeByGrain(grain.parentId);
+		let node = this.getNodeByGrain(grain);
+		let parent = this.getNodeByGrain(grain.parentId);
 
 		const result = new Promise((resolve, reject) => {
 			this._element.addEventListener(EVENT_NODE_SELECTED, (evt) => {
@@ -172,7 +207,7 @@ export class SiloTree {
 			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
 				if (evt.detail.node == parent) {
 					if (!node) {
-						node = this._getNodeByGrain(grain);
+						node = this.getNodeByGrain(grain);
 					}
 					if (node) {
 						this.tree.selectNode(node, { silent: true });
@@ -224,7 +259,10 @@ export class SiloTree {
 		await Task.nowAsync(t`Loading grains`, async () => {
 			const grain = await this._apiSvc.getGrain(grainId);
 			await this._getNodeProperties(grain, node);
-			let children = 0 < grain.childCount ? await this._apiSvc.listGrainChildren(grain, false, this._options.typeFilter) : [];
+			let children = await this._branchLoader(grain, this._apiSvc, this._options);
+			if (children.length && this._options.listFilter && this._options.listFilter.invoke) {
+				children = children.filter(this._options.listFilter.invoke);
+			}
 			if (children.length) {
 				renderer(await Promise.all(children.map(async x => BSTreeViewNode.fromData(await this._getNodeProperties(x), this.tree))));
 			} else {
@@ -286,11 +324,6 @@ export class SiloTree {
 			}
 		}
 		return node;
-	}
-
-	_getNodeByGrain(grainOrId) {
-		const nodes = this.tree.findNodes(`${this._scope}-${(grainOrId || {}).id || grainOrId}`, 'id');
-		return nodes.length ? nodes[0] : null;
 	}
 
 	_getGrainIdFor(evtOrElm) {

@@ -1,4 +1,4 @@
-import { MarBasDefaults } from '@crafted.solutions/marbas-core';
+import { MarBasDefaults, MbUtils } from '@crafted.solutions/marbas-core';
 import { AuthStorage } from './AuthStorage';
 import { MbDomUtils } from './cmn/MbDomUtils';
 import { t } from 'ttag';
@@ -141,11 +141,11 @@ export class AbstractAuthModule {
 		if (!info) {
 			return false;
 		}
-		if (0 < MarBasDefaults.MinSchemaVersion.localeCompare(info.schemaVersion, undefined, { numeric: true, sensitivity: 'base' })) {
+		if (0 < MbUtils.compareVersion(MarBasDefaults.MinSchemaVersion, info.schemaVersion)) {
 			this.reportError(t`Incompatible schema version: ${info.schemaVersion} (${MarBasDefaults.MinSchemaVersion} is expected)`);
 			return false;
 		}
-		if (0 < MarBasDefaults.MinAPIVersion.localeCompare(info.version, undefined, { numeric: true, sensitivity: 'base' })) {
+		if (0 < MbUtils.compareVersion(MarBasDefaults.MinAPIVersion, info.version)) {
 			this.reportError(t`Incompatible API version: ${info.version} (${MarBasDefaults.MinAPIVersion} is expected)`);
 			return false;
 		}
