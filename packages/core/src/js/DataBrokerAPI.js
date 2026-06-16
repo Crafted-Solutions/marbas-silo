@@ -8,7 +8,7 @@ const NoOp = () => { };
 const FETCH_YIELD_FAILMSG = 'API reported failure';
 
 const BackgroundJobStatus = {
-	'Pending': 0, 'Running': 1, 'Paused': 2, 'Complete': 3, 'Cancelled': 4, 'Error': 5
+	Pending: 0, Running: 1, Paused: 2, Complete: 3, Cancelled: 4, Error: 5
 };
 
 function tierNameToRoute(tier) {

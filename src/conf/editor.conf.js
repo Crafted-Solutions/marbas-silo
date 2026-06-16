@@ -1,5 +1,5 @@
 import { t } from "ttag";
-import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasTraitValueTypes, MarBasGrainTier } from "@crafted.solutions/marbas-core";
 
 const NAME_PRIMARY_GROUP = '_1';
 const NAME_SECONDARY_GROUP = '_2';
@@ -190,11 +190,11 @@ export const EditorSchemaConfig = {
 		format: "grain",
 		options: {
 			containerAttributes: {
-				'data-pickeropts': 'File'
+				'data-pickeropts': MarBasGrainTier.IFile
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_TYPEDEF]: {
+	[MarBasGrainTier.ITypeDef]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -257,7 +257,7 @@ export const EditorSchemaConfig = {
 						options: {
 							grid_columns: 12,
 							containerAttributes: {
-								'data-pickeropts': 'TypeDef'
+								'data-pickeropts': MarBasGrainTier.ITypeDef
 							}
 						},
 						items: {
@@ -272,7 +272,7 @@ export const EditorSchemaConfig = {
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_PROPDEF]: {
+	[MarBasGrainTier.IPropDef]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -371,7 +371,7 @@ export const EditorSchemaConfig = {
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_FILE]: {
+	[MarBasGrainTier.IFile]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -441,13 +441,13 @@ export const EditorGrainPickerConfig = {
 	DEFAULT: {
 		root: MarBasDefaults.ID_ROOT
 	},
-	File: {
+	[MarBasGrainTier.IFile]: {
 		get title() { return t`Select File`; },
 		root: MarBasDefaults.ID_FILES,
 		typeFilter: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_FILE]
 	},
-	TypeDef: {
+	[MarBasGrainTier.ITypeDef]: {
 		get title() { return t`Select Type`; },
 		root: MarBasDefaults.ID_SCHEMA,
 		typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
