@@ -469,7 +469,7 @@ msgstr "Systemvorgaben"
 msgid "Move up"
 msgstr "Nach oben"
 
-#: src\js\GrainEditor.js:59
+#: src\js\GrainEditor.js:58
 msgid "Grain was modified, close anyway?"
 msgstr "Grain wurde geändert, trotzdem schließen?"
 

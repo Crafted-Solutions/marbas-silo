@@ -2,9 +2,9 @@ import { JSONEditor } from "@json-editor/json-editor";
 import merge from "lodash.merge";
 import { Popover } from "bootstrap";
 import { t } from "ttag";
+import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType, MarBasGrainTier, MarBasRestrictTypeDefs } from "@crafted.solutions/marbas-core";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
-import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType } from "@crafted.solutions/marbas-core";
 import { GrainXAttrs } from "./cmn/GrainXAttrs";
 import { GrainPicker } from "./cmn/GrainPicker";
 import { MsgBox } from "./cmn/MsgBox";
@@ -22,7 +22,6 @@ import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
 import { SiloEvtGrainDeleted } from "./cmn/SiloEvtGrainDeleted";
 import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
 import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
-import { MarBasRestrictTypeDefs } from "../../packages/core/src/conf/marbas.conf";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
@@ -223,9 +222,10 @@ export class GrainEditor {
 				}
 			}
 
-			if (MarBasDefaults.ID_TYPE_PROPDEF == this.grain.typeDefId && EditorSchemaConfig[`PropDef_${this.grain.valueType}`]) {
-				schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
-			}
+			// TODO find out what this was for, currently no EditorSchemaConfig[PropDef_*] are defined
+			// if (MarBasDefaults.ID_TYPE_PROPDEF == this.grain.typeDefId && EditorSchemaConfig[`PropDef_${this.grain.valueType}`]) {
+			// 	schema.definitions.propDef.properties = merge({}, schema.definitions.propDef.properties, EditorSchemaConfig[`PropDef_${this.grain.valueType}`]);
+			// }
 			const valGroup = startval[EditorSchemaConfig.NAME_PRIMARY_GROUP];
 			if (this.customProps.def.length && this.customProps.traits) {
 				const schemaGroup = GrainEditor._getTraitSchemaGroup(schema);
@@ -745,10 +745,9 @@ export class GrainEditor {
 
 	_getSchema(grain, customProps) {
 		let result = EditorSchemaConfig[this._schemaID];
-		const typeDefId = grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
-		if (EditorSchemaConfig[typeDefId]) {
-			result = merge({}, result, EditorSchemaConfig[typeDefId]);
-			if (MarBasDefaults.ID_TYPE_TYPEDEF == typeDefId && MarBasRestrictTypeDefs.includes(grain.id)) {
+		if (EditorSchemaConfig[this.grain._tier]) {
+			result = merge({}, result, EditorSchemaConfig[this.grain._tier]);
+			if (MarBasGrainTier.ITypeDef == this.grain._tier && MarBasRestrictTypeDefs.includes(grain.id)) {
 				delete result.definitions.typeDef.properties.mixInIds;
 			}
 		}

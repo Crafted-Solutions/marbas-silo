@@ -1,7 +1,7 @@
 import { t } from "ttag";
-import { MarBasRoleEntitlement } from "@crafted.solutions/marbas-core";
+import { MarBasRoleEntitlement, MarBasDefaults } from "@crafted.solutions/marbas-core";
+
 import { MbDomUtils } from "./cmn/MbDomUtils";
-import { MarBasDefaults } from "../../packages/core/src/conf/marbas.conf";
 import { InputDialog } from "./cmn/InputDialog";
 import { MsgBox } from "./cmn/MsgBox";
 import { StorageUtils } from "./cmn/StorageUtils";
