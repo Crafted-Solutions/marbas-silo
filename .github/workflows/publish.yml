@@ -29,9 +29,9 @@ jobs:
         id-token: write
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 24.x
         registry-url: https://registry.npmjs.org
@@ -65,8 +65,8 @@ jobs:
         tar czvf "marbas-silo-drop-in-basic-${VERSION}.tar.gz" -C "./dist/" .
 
     - name: Publish drop-in to GitHub
-      uses: softprops/action-gh-release@v2.4.2
+      uses: softprops/action-gh-release@v3
       with:
         files: "marbas-silo-drop-in-*"
       env:
-        GITHUB_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        token: ${{ secrets.PUBLISH_TOKEN }}
