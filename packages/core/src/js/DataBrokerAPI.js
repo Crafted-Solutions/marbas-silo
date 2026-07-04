@@ -7,18 +7,13 @@ const NoOp = () => { };
 
 const FETCH_YIELD_FAILMSG = 'API reported failure';
 
-const TierAPI = {
-	[MarBasDefaults.ID_TYPE_PROPDEF]: 'PropDef',
-	[MarBasDefaults.ID_TYPE_TYPEDEF]: 'TypeDef'
-};
-
-const ResolverAPI = Object.assign({}, TierAPI, {
-	[MarBasDefaults.ID_TYPE_FILE]: 'File'
-});
-
 const BackgroundJobStatus = {
-	'Pending': 0, 'Running': 1, 'Paused': 2, 'Complete': 3, 'Cancelled': 4, 'Error': 5
+	Pending: 0, Running: 1, Paused: 2, Complete: 3, Cancelled: 4, Error: 5
 };
+
+function tierNameToRoute(tier) {
+	return tier ? tier.substring(1) : 'Grain';
+}
 
 export class DataBrokerAPI {
 	#lang;
@@ -26,9 +21,9 @@ export class DataBrokerAPI {
 	#grains = {};
 	#subtypes = {};
 	#resolvers = {
-		[MarBasDefaults.ID_TYPE_FILE]: {},
-		[MarBasDefaults.ID_TYPE_PROPDEF]: {},
-		[MarBasDefaults.ID_TYPE_TYPEDEF]: {}
+		[MarBasDefaults.TIER_FILE]: {},
+		[MarBasDefaults.TIER_PROPDEF]: {},
+		[MarBasDefaults.TIER_TYPEDEF]: {}
 	};
 	#rejects = [];
 	#currentRoles = {
@@ -195,6 +190,10 @@ export class DataBrokerAPI {
 		});
 	}
 
+	isRootGrain(grain) {
+		return (grain.id || grain) == MarBasDefaults.ID_ROOT;
+	}
+
 	getGrain(id = null, ignoreCache = false) {
 		const effectiveId = id || MarBasDefaults.ID_ROOT;
 		if (!ignoreCache && this.#grains[effectiveId]) {
@@ -269,12 +268,16 @@ export class DataBrokerAPI {
 		if ((!useGrainCulture || !grain.culture) && this.#lang) {
 			grain.culture = this.#lang;
 		}
-		let tier = useBasicTier ? 'Grain' : TierAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain';
-		const result = this.#fetchSendJson(`${this.baseUrl}/${tier}`, grain, false);
-		result.then(_ => {
-			delete grain._siloAttrsMod;
-		}).catch(NoOp);
-		return result;
+		return new Promise((resolve, reject) => {
+			(useBasicTier ? Promise.resolve('IGrain') : this.getGrainTierName(grain)).then(tier => {
+				this.#fetchSendJson(`${this.baseUrl}/${tierNameToRoute(tier)}`, grain, false)
+					.then(result => {
+						delete grain._siloAttrsMod;
+						resolve(result);
+					})
+					.catch(reject);
+			});
+		});
 	}
 
 	deleteGrain(grain) {
@@ -286,12 +289,14 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						inv.then(() => {
-							resolve(json.success);
-						}).catch(() => resolve(false));
+						DataBrokerAPI.completeRequest(json, (success) => {
+							inv.then(() => {
+								resolve(success);
+							}).catch(() => resolve(false));
+						}, reject, false);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -321,23 +326,25 @@ export class DataBrokerAPI {
 				},
 				body: JSON.stringify(data)
 			}).then(opts => {
-				fetch(`${this.baseUrl}/${ResolverAPI[typeId || MarBasDefaults.ID_TYPE_TYPEDEF] || 'Grain'}`, opts)
-					.then(res => {
-						if (res.ok) {
-							return res.json();
-						}
-						reject(DataBrokerAPI.makeFetchErr(res));
-					})
-					.then(json => {
-						if (json.success) {
-							inv.then(() => {
-								resolve(this.#addGrainToCache(json.yield));
-							}).catch(() => resolve(json.yield));
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
-					})
-					.catch(reject);
+				this.getTypeDefTierName(typeId).then(tier => {
+					fetch(`${this.baseUrl}/${tierNameToRoute(tier)}`, opts)
+						.then(res => {
+							if (res.ok) {
+								return res.json();
+							}
+							return DataBrokerAPI.analyzeFetchErr(res);
+						})
+						.then(json => {
+							DataBrokerAPI.completeRequest(json, (grain) => {
+								grain._tier = tier;
+								inv.then(() => {
+									resolve(this.#addGrainToCache(grain));
+								}).catch(() => resolve(grain));
+							}, reject);
+						})
+						.catch(reject);
+
+				}).catch(reject);
 
 			}).catch(reject);
 
@@ -449,6 +456,10 @@ export class DataBrokerAPI {
 		return result;
 	}
 
+	verifyGrainsExist(grainIds) {
+		return this.#fetchSendJson(`${this.baseUrl}/Grain/VerifyExist`, grainIds);
+	}
+
 	getGrainPropDefs(grain) {
 		return this.getTypePropDefs(grain.typeDefId);
 	}
@@ -494,9 +505,9 @@ export class DataBrokerAPI {
 					if (res.ok) {
 						return res.json();
 					}
-					reject(DataBrokerAPI.makeFetchErr(res));
+					return DataBrokerAPI.analyzeFetchErr(res);
 				}).then(json => {
-					resolve(json.success);
+					DataBrokerAPI.completeRequest(json, resolve, reject, false);
 				}).catch(reject);
 			};
 			if (0 == values.length) {
@@ -554,36 +565,94 @@ export class DataBrokerAPI {
 		return result;
 	}
 
-	resolveGrainTier(grain) {
-		const typeRes = this.#resolvers[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF];
-		if (2 == grain._resolved || !typeRes) {
-			return Promise.resolve(grain);
-		}
-		if (!typeRes[grain.id] || !typeRes[grain.id]._fulfilled) {
-			typeRes[grain.id] = new Promise((resolve, reject) => {
-				grain._resolved = 1;
-				this.#fetchGet(`${this.baseUrl}/${ResolverAPI[grain.typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF] || grain.typeName}/${grain.id}?lang=${this.#lang || grain.culture}`)
-					.then(value => {
-						value._resolved = 2;
-						if (value.mixInIds) {
-							value.mixInIds.forEach(typeId => {
-								this.#registerSubtype(grain.id, typeId);
-							});
-						}
-						resolve(merge(grain, value));
-					})
+	getTypeDefTierName(typeDefId) {
+		// TODO call /api/marbas/TypeDef/{id}/Tier when implemented
+		const result = (() => {
+			switch (typeDefId) {
+				case MarBasDefaults.ID_TYPE_FILE:
+					return MarBasDefaults.TIER_FILE;
+				case MarBasDefaults.ID_TYPE_PROPDEF:
+					return MarBasDefaults.TIER_PROPDEF;
+				case MarBasDefaults.ID_TYPE_TYPEDEF:
+				case null:
+					return MarBasDefaults.TIER_TYPEDEF;
+			}
+			return null;
+		})();
+		if (!result) {
+			return new Promise((resolve, reject) => {
+				this.#fetchGet(`${this.baseUrl}/TypeDef/${typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF}/Tier`)
+					.then(resolve)
 					.catch(reject);
 			});
-			typeRes[grain.id].then((grain) => {
-				typeRes[grain.id]._fulfilled = true;
-			}).catch(NoOp);
-			return typeRes[grain.id];
 		}
-		return Promise.resolve(typeRes[grain.id]);
+		return Promise.resolve(result);
 	}
 
-	isRootGrain(grain) {
-		return (grain.id || grain) == MarBasDefaults.ID_ROOT;
+	getGrainTierName(grainOrId) {
+		const isGrain = grainOrId.id && "typeDefId" in grainOrId;
+		if (isGrain && "_tier" in grainOrId) {
+			return Promise.resolve(grainOrId._tier);
+		}
+		return new Promise((resolve, reject) => {
+			const apiCall = () => {
+				this.#fetchGet(`${this.baseUrl}/Grain/${grainOrId.id || grainOrId}/Tier`).then(tier => {
+					if (isGrain) {
+						grainOrId._tier = tier;
+					}
+					resolve(tier);
+				}).catch(reject);
+			};
+			if (isGrain) {
+				this.getTypeDefTierName(grainOrId.typeDefId).then(tier => {
+					if (tier) {
+						grainOrId._tier = tier;
+						resolve(tier);
+						return;
+					}
+					apiCall();
+				}).catch(reject);
+			} else {
+				apiCall();
+			}
+		});
+	}
+
+	resolveGrainTier(grain) {
+		if (2 == grain._resolved) {
+			return Promise.resolve(grain);
+		}
+		return new Promise((resolve, reject) => {
+			this.getGrainTierName(grain).then(tier => {
+				const typeRes = this.#resolvers[tier];
+				if (!typeRes) {
+					grain._resolved = 2;
+					resolve(grain);
+					return;
+				}
+				if (!typeRes[grain.id] || !typeRes[grain.id]._fulfilled) {
+					typeRes[grain.id] = new Promise((resolve, reject) => {
+						grain._resolved = 1;
+						this.#fetchGet(`${this.baseUrl}/${tierNameToRoute(tier)}/${grain.id}?lang=${this.#lang || grain.culture}`)
+							.then(value => {
+								value._resolved = 2;
+								if (value.mixInIds) {
+									value.mixInIds.forEach(typeId => {
+										this.#registerSubtype(grain.id, typeId);
+									});
+								}
+								resolve(merge(grain, value));
+							})
+							.catch(reject);
+					});
+				}
+				typeRes[grain.id].then(() => {
+					typeRes[grain.id]._fulfilled = true;
+					resolve(typeRes[grain.id]);
+				}).catch(NoOp);
+
+			}).catch(reject);
+		});
 	}
 
 	isGrainInstanceOf(grainOrId, baseTypeId) {
@@ -666,12 +735,14 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						inv.then(() => {
-							resolve(json.success);
-						}).catch(() => resolve(false));
+						DataBrokerAPI.completeRequest(json, (success) => {
+							inv.then(() => {
+								resolve(success);
+							}).catch(() => resolve(false));
+						}, reject, false);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -752,17 +823,19 @@ export class DataBrokerAPI {
 			if (recursive && MarBasDefaults.ID_ROOT == id) {
 				this.#grains = {};
 				this.#resolvers = {
-					[MarBasDefaults.ID_TYPE_FILE]: {},
-					[MarBasDefaults.ID_TYPE_PROPDEF]: {},
-					[MarBasDefaults.ID_TYPE_TYPEDEF]: {}
+					[MarBasDefaults.TIER_FILE]: {},
+					[MarBasDefaults.TIER_PROPDEF]: {},
+					[MarBasDefaults.TIER_TYPEDEF]: {}
 				};
 				this.#subtypes = {};
 				return Promise.resolve(id);
 			}
-			return new Promise((resolve) => {
-				const typeId = grainOrId.typeDefId || this.#grains[id].typeDefId || MarBasDefaults.ID_TYPE_TYPEDEF;
-				if (typeId && this.#resolvers[typeId] && this.#resolvers[typeId][id]) {
-					delete this.#resolvers[typeId][id];
+			return new Promise((resolve, reject) => {
+				for (const tier in this.#resolvers) {
+					if (this.#resolvers[tier] && this.#resolvers[tier][id]) {
+						delete this.#resolvers[tier][id];
+						break;
+					}
 				}
 				const results = [Promise.resolve(id)];
 				if (recursive && this.#grains[id]._listed) {
@@ -773,7 +846,7 @@ export class DataBrokerAPI {
 					}
 				}
 				delete this.#grains[id];
-				Promise.all(results).then(resolve(id));
+				Promise.all(results).then(resolve(id)).catch(reject);
 			});
 		}
 		return Promise.resolve(id);
@@ -792,16 +865,15 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						if (json.success) {
+						DataBrokerAPI.completeRequest(json, (grain) => {
 							inv.then(() => {
-								resolve(this.#addGrainToCache(json.yield));
-							}).catch(() => resolve(json.yield));
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
+								resolve(this.#addGrainToCache(grain));
+							}).catch(() => resolve(grain));
+
+						}, reject);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -822,14 +894,10 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						if (json.success) {
-							resolve(json.yield);
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
+						DataBrokerAPI.completeRequest(json, resolve, reject);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -869,12 +937,15 @@ export class DataBrokerAPI {
 							return res.blob();
 						}
 
-						reject(DataBrokerAPI.makeFetchErr(res));
-						return null;
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(blob => {
 						if (blob) {
-							resolve(filename ? new File([blob], filename) : blob);
+							if (blob.error) {
+								reject(blob.error);
+							} else {
+								resolve(filename ? new File([blob], filename) : blob);
+							}
 						} else {
 							reject(`Response from ${url} contained no data`);
 						}
@@ -903,11 +974,16 @@ export class DataBrokerAPI {
 							}
 							return res.blob();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
-						return null;
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then((blob) => {
-						resolve(new File([blob], filename));
+						if (blob) {
+							if (blob.error) {
+								reject(blob.error);
+							} else {
+								resolve(new File([blob], filename));
+							}
+						}
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -925,18 +1001,18 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						if (json.success) {
+						DataBrokerAPI.completeRequest(json, (job) => {
 							if (progressCallback && 1 > pollingInterval) {
 								pollingInterval = 500;
 							}
 							if (0 < pollingInterval) {
-								const jobId = json.yield.id;
+								const jobId = job.id;
 								let abort = false;
 								if (progressCallback) {
-									abort = !progressCallback(json.yield);
+									abort = !progressCallback(job);
 								}
 								if (abort) {
 									this.deleteBackgroundJob(jobId, true)
@@ -967,11 +1043,10 @@ export class DataBrokerAPI {
 									}, pollingInterval);
 								}
 							} else {
-								resolve(json.yield);
+								resolve(job);
 							}
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
+
+						}, reject);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -998,10 +1073,10 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							return res.json();
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						resolve(json.yield);
+						DataBrokerAPI.completeRequest(json, resolve, reject);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -1043,14 +1118,10 @@ export class DataBrokerAPI {
 								return { success: true, yield: sim };
 							}
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						if (json.success) {
-							resolve(json.yield);
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
+						DataBrokerAPI.completeRequest(json, resolve, reject);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -1080,16 +1151,10 @@ export class DataBrokerAPI {
 								return { success: true, yield: sim };
 							}
 						}
-						reject(DataBrokerAPI.makeFetchErr(res));
+						return DataBrokerAPI.analyzeFetchErr(res);
 					})
 					.then(json => {
-						if (!returnYield) {
-							resolve(json.success);
-						} else if (json.success) {
-							resolve(json.yield);
-						} else {
-							reject(FETCH_YIELD_FAILMSG);
-						}
+						DataBrokerAPI.completeRequest(json, resolve, reject, returnYield);
 					})
 					.catch(reject);
 			}).catch(reject);
@@ -1126,7 +1191,36 @@ export class DataBrokerAPI {
 		return url;
 	}
 
-	static makeFetchErr(res) {
-		return `Request to ${res.url} failed (${res.status} ${res.statusText})`;
+	static completeRequest(respBody, resolve, reject, returnYield = true) {
+		if (respBody.error) {
+			reject(respBody.error);
+		} else if (!returnYield) {
+			resolve(respBody.success);
+		} else if (respBody.success) {
+			resolve(respBody.yield);
+		} else {
+			reject(FETCH_YIELD_FAILMSG);
+		}
+	}
+
+	static analyzeFetchErr(res) {
+		const result = { success: false };
+		if (!res.statusText && res.body) {
+			return new Promise(resolve => {
+				res.json().then(json => {
+					result.error = DataBrokerAPI.makeFetchErr(res, json.detail || json.title);
+					resolve(result);
+				}).catch(NoOp);
+			});
+		}
+		result.error = DataBrokerAPI.makeFetchErr(res);
+		return Promise.resolve(result);
+	}
+
+	static makeFetchErr(res, text) {
+		if (res.statusText) {
+			text = res.statusText;
+		}
+		return `Request to ${res.url} failed (code: ${res.status}${(text ? `, message: ${text}` : '')})`
 	}
 }

@@ -80,6 +80,7 @@ module.exports = async (env) => {
 		apiBaseUrl: env.WEBPACK_SERVE ? 'https://localhost:7277/api/marbas' : '/api/marbas',
 		panelClasses: 'card card-body my-3 bg-light',
 		mode: mode,
+		version: version,
 		extensionPoint: extensionPoint,
 		locale: config.defaultLocale,
 		defaultLocale: config.defaultLocale,
@@ -139,7 +140,7 @@ module.exports = async (env) => {
 			port: 5500,
 			watchFiles: ['src/**/*.hbs', 'src/**/*.js', 'src/**/*.*css', 'packages/**/src/**/*.js']
 		},
-		devtool: 'production' == mode ? false : "eval-cheap-source-map",
+		devtool: 'production' == mode ? false : "eval-cheap-module-source-map",
 		resolve: {
 			alias: resolveAlias,
 			fallback: { path: false }

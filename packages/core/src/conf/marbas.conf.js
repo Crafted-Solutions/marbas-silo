@@ -1,8 +1,11 @@
 export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.16',
-	MinAPIVersion: '0.1.21',
+	MinAPIVersion: '0.1.23',
 	LANG: 'en',
 	NAME_ROOT: 'marbas',
+	TIER_FILE: 'IFile',
+	TIER_PROPDEF: 'IPropDef',
+	TIER_TYPEDEF: 'ITypeDef',
 	ID_DEFAULT: '00000000-0000-1000-a000-000000000000',
 	ID_ROOT: '00000000-0000-1000-a000-000000000001',
 	ID_CONTENT: '00000000-0000-1000-a000-000000000006',
@@ -20,12 +23,21 @@ export const MarBasDefaults = {
 	ID_PROPDEF_COMMENT: '00000000-0000-1000-a000-00000000000d',
 	ID_PROPDEF_LINKTARGET: '00000000-0000-1000-a000-000000000012',
 	ID_TYPEDEFSPEC: '00000000-0000-1000-a000-000000000013'
-}
+};
 export const MarBasBuiltIns = [
 	MarBasDefaults.ID_ROOT, MarBasDefaults.ID_CONTENT, MarBasDefaults.ID_SCHEMA, MarBasDefaults.ID_FILES, MarBasDefaults.ID_TRASH_CONTENT, MarBasDefaults.ID_TRASH_SCHEMA,
 	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_PROPDEF_LINKTARGET, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_FILE,
 	MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_LINK, MarBasDefaults.ID_PROPDEF_COMMENT, MarBasDefaults.ID_TYPEDEFSPEC
 ];
+export const MarBasRestrictTypeDefs = [
+	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK
+];
+
+export const MarBasGrainTiers = [
+	'ITypeDef', 'IPropDef', 'IFile'
+];
+export const MarBasGrainTier = MarBasGrainTiers.reduce((accu, curr) => { accu[curr] = curr; return accu }, {});
+
 export const MarBasGrainAccessFlag = {
 	None: 0x000,
 	Read: 0x001,

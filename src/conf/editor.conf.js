@@ -1,10 +1,12 @@
 import { t } from "ttag";
-import { MarBasDefaults, MarBasTraitValueTypes } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasTraitValueTypes, MarBasGrainTier } from "@crafted.solutions/marbas-core";
 
 const NAME_PRIMARY_GROUP = '_1';
 const NAME_SECONDARY_GROUP = '_2';
 const PATH_PRIMARY_GROUP = `root.${NAME_PRIMARY_GROUP}.`;
 const PATH_SECONDARY_GROUP = `root.${NAME_SECONDARY_GROUP}.`;
+
+const schemaCache = {};
 
 export const EditorSchemaConfig = {
 	NAME_PRIMARY_GROUP: NAME_PRIMARY_GROUP,
@@ -64,6 +66,7 @@ export const EditorSchemaConfig = {
 					},
 					sortKey: {
 						_store: true,
+						required: false,
 						get title() { return t`Sort Key`; },
 						type: 'string'
 					}
@@ -82,7 +85,7 @@ export const EditorSchemaConfig = {
 					},
 					dirty: {
 						type: 'string',
-						default: ''
+						default: ' '
 					},
 					api: {
 						type: 'string'
@@ -90,6 +93,87 @@ export const EditorSchemaConfig = {
 				}
 			}
 		}
+	},
+	get BASIC() {
+		if (schemaCache.basic) {
+			return schemaCache.basic;
+		}
+		const result = structuredClone(EditorSchemaConfig.BASIC_CORE);
+		result.format = 'categories';
+		result.properties[NAME_SECONDARY_GROUP] = {
+			get title() { return t`Advanced`; },
+			type: 'object',
+			propertyOrder: 2000,
+			options: {
+				disable_collapse: true,
+				titleHidden: true,
+				containerAttributes: {
+					'class': 'mb-tab-container'
+				}
+			},
+			properties: {
+				meta: {
+					get title() { return t`Metadata`; },
+					"$ref": '#/definitions/meta',
+					propertyOrder: 1000
+				},
+				stats: {
+					get title() { return t`Statistics`; },
+					"$ref": '#/definitions/stats',
+					propertyOrder: 2000
+				}
+			}
+		};
+		result.definitions.meta = {
+			type: "object",
+			id: "meta",
+			readonly: true,
+			properties: {
+				id: {
+					get title() { return t`ID`; },
+					type: "string"
+				},
+				name: {
+					get title() { return t`Name`; },
+					type: "string"
+				},
+				path: {
+					get title() { return t`Path`; },
+					type: "string"
+				},
+				typeDefId: {
+					get title() { return t`Type Definition`; },
+					type: "string",
+					format: "grain",
+					default: MarBasDefaults.ID_TYPE_TYPEDEF
+				}
+			}
+		};
+		result.definitions.stats = {
+			type: 'object',
+			id: "stats",
+			readonly: true,
+			properties: {
+				revision: {
+					get title() { return t`Revision`; },
+					type: "integer"
+				},
+				cTime: {
+					get title() { return t`Created`; },
+					type: "string"
+				},
+				mTime: {
+					get title() { return t`Modified`; },
+					type: "string"
+				},
+				owner: {
+					get title() { return t`Owner`; },
+					type: "string"
+				},
+			}
+		};
+		schemaCache.basic = result;
+		return result;
 	},
 	TRAIT_Memo: {
 		format: 'textarea'
@@ -106,11 +190,11 @@ export const EditorSchemaConfig = {
 		format: "grain",
 		options: {
 			containerAttributes: {
-				'data-pickeropts': 'File'
+				'data-pickeropts': MarBasGrainTier.IFile
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_TYPEDEF]: {
+	[MarBasGrainTier.ITypeDef]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -173,7 +257,7 @@ export const EditorSchemaConfig = {
 						options: {
 							grid_columns: 12,
 							containerAttributes: {
-								'data-pickeropts': 'TypeDef'
+								'data-pickeropts': MarBasGrainTier.ITypeDef
 							}
 						},
 						items: {
@@ -188,7 +272,7 @@ export const EditorSchemaConfig = {
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_PROPDEF]: {
+	[MarBasGrainTier.IPropDef]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -287,7 +371,7 @@ export const EditorSchemaConfig = {
 			}
 		}
 	},
-	[MarBasDefaults.ID_TYPE_FILE]: {
+	[MarBasGrainTier.IFile]: {
 		properties: {
 			[NAME_PRIMARY_GROUP]: {
 				properties: {
@@ -331,13 +415,14 @@ export const EditorSchemaConfig = {
 						readonly: true
 					},
 					size: {
+						type: "integer",
 						options: {
 							hidden: true
 						}
 					},
 					_size: {
 						get title() { return t`Size`; },
-						type: "integer",
+						type: "string",
 						template: "fileSizeFormatter",
 						watch: {
 							val: `${PATH_PRIMARY_GROUP}file.size`
@@ -346,81 +431,9 @@ export const EditorSchemaConfig = {
 				}
 			}
 		}
-	}
-};
-
-EditorSchemaConfig.BASIC = structuredClone(EditorSchemaConfig.BASIC_CORE);
-EditorSchemaConfig.BASIC.format = 'categories';
-EditorSchemaConfig.BASIC.properties[NAME_SECONDARY_GROUP] = {
-	get title() { return t`Advanced`; },
-	type: 'object',
-	propertyOrder: 2000,
-	options: {
-		disable_collapse: true,
-		titleHidden: true,
-		containerAttributes: {
-			'class': 'mb-tab-container'
-		}
 	},
-	properties: {
-		meta: {
-			get title() { return t`Metadata`; },
-			"$ref": '#/definitions/meta',
-			propertyOrder: 1000
-		},
-		stats: {
-			get title() { return t`Statistics`; },
-			"$ref": '#/definitions/stats',
-			propertyOrder: 2000
-		}
-	}
-};
-EditorSchemaConfig.BASIC.definitions.meta = {
-	type: "object",
-	id: "meta",
-	readonly: true,
-	properties: {
-		id: {
-			get title() { return t`ID`; },
-			type: "string"
-		},
-		name: {
-			get title() { return t`Name`; },
-			type: "string"
-		},
-		path: {
-			get title() { return t`Path`; },
-			type: "string"
-		},
-		typeDefId: {
-			get title() { return t`Type Definition`; },
-			type: "string",
-			format: "grain",
-			default: MarBasDefaults.ID_TYPE_TYPEDEF
-		}
-	}
-};
-EditorSchemaConfig.BASIC.definitions.stats = {
-	type: 'object',
-	id: "stats",
-	readonly: true,
-	properties: {
-		revision: {
-			get title() { return t`Revision`; },
-			type: "integer"
-		},
-		cTime: {
-			get title() { return t`Created`; },
-			type: "string"
-		},
-		mTime: {
-			get title() { return t`Modified`; },
-			type: "string"
-		},
-		owner: {
-			get title() { return t`Owner`; },
-			type: "string"
-		},
+	reset: function () {
+		delete schemaCache.basic;
 	}
 };
 
@@ -428,13 +441,13 @@ export const EditorGrainPickerConfig = {
 	DEFAULT: {
 		root: MarBasDefaults.ID_ROOT
 	},
-	File: {
+	[MarBasGrainTier.IFile]: {
 		get title() { return t`Select File`; },
 		root: MarBasDefaults.ID_FILES,
 		typeFilter: [MarBasDefaults.ID_TYPE_FILE, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
 		selectionFilter: [MarBasDefaults.ID_TYPE_FILE]
 	},
-	TypeDef: {
+	[MarBasGrainTier.ITypeDef]: {
 		get title() { return t`Select Type`; },
 		root: MarBasDefaults.ID_SCHEMA,
 		typeFilter: [MarBasDefaults.ID_TYPE_TYPEDEF, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_LINK],
