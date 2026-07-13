@@ -713,15 +713,15 @@ msgstr "Grain-Picker konfigurieren"
 msgid "Value Constraint Parameters"
 msgstr "Parmeter für Werteeinschränkung"
 
-#: src\js\cmn\GrainPropConstraints.js:121
+#: src\js\cmn\GrainPropConstraints.js:125
 msgid "Configure grain picker by relative path"
 msgstr "Grain-Picker mit Relativpfad konfigurieren"
 
-#: src\js\cmn\GrainPropConstraints.js:113
+#: src\js\cmn\GrainPropConstraints.js:117
 msgid "Grain Picker Root Folder"
 msgstr "Wurzel-Container für Grain-Picker"
 
-#: src\js\cmn\GrainPropConstraints.js:114
+#: src\js\cmn\GrainPropConstraints.js:118
 msgid "Path relative to grain instance"
 msgstr "Pfad relativ zur Grain-Instanz"
 
@@ -752,10 +752,10 @@ msgstr "New ${ grainType.label }"
 msgid "Schema"
 msgstr "Schema"
 
-#: src\js\cmn\GrainPropConstraints.js:136
+#: src\js\cmn\GrainPropConstraints.js:144
 msgid "Format: rich text"
 msgstr "Format: Rich-Text"
 
-#: src\js\cmn\GrainPropConstraints.js:151
+#: src\js\cmn\GrainPropConstraints.js:163
 msgid "Format: date only"
 msgstr "Format: nur Datum"
