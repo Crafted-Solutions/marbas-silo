@@ -494,23 +494,23 @@ msgstr ""
 msgid "Configure grain picker"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:113
+#: src\js\cmn\GrainPropConstraints.js:117
 msgid "Grain Picker Root Folder"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:114
+#: src\js\cmn\GrainPropConstraints.js:118
 msgid "Path relative to grain instance"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:121
+#: src\js\cmn\GrainPropConstraints.js:125
 msgid "Configure grain picker by relative path"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:136
+#: src\js\cmn\GrainPropConstraints.js:144
 msgid "Format: rich text"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:151
+#: src\js\cmn\GrainPropConstraints.js:163
 msgid "Format: date only"
 msgstr ""
 

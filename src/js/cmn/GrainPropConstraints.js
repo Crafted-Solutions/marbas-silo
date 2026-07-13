@@ -19,11 +19,7 @@ class AbstractConstraintHandler {
 	}
 
 	get use() {
-		return this.constructor.name;
-	}
-
-	static get title() {
-		return this.use;
+		return AbstractConstraintHandler.name;
 	}
 }
 
@@ -35,6 +31,10 @@ class PickerConfig extends AbstractConstraintHandler {
 		if ('false' == params.setRoot) {
 			this.setRoot = false;
 		}
+	}
+
+	get use() {
+		return 'PickerConfig';
 	}
 
 	tweakTargetSchema(propDef, schema) {
@@ -84,6 +84,10 @@ class PickerConfigByPath extends PickerConfig {
 		this.root = params.root;
 	}
 
+	get use() {
+		return 'PickerConfigByPath';
+	}
+
 	tweakTargetSchema(propDef, schema) {
 		if (!this.root) {
 			return;
@@ -124,6 +128,10 @@ class PickerConfigByPath extends PickerConfig {
 
 class FormatRichText extends AbstractConstraintHandler {
 
+	get use() {
+		return 'FormatRichText';
+	}
+
 	tweakTargetSchema(propDef, schema) {
 		schema.format = 'jodit';
 	}
@@ -138,6 +146,10 @@ class FormatRichText extends AbstractConstraintHandler {
 }
 
 class FormatDateOnly extends AbstractConstraintHandler {
+
+	get use() {
+		return 'FormatDateOnly';
+	}
 
 	tweakTargetSchema(propDef, schema) {
 		schema.format = 'date';
