@@ -27,7 +27,7 @@ export class InputDialog extends _Dialog {
 		}
 		return new Promise((resolve) => {
 			InputDialog.#inst._element.addEventListener('hidden.bs.modal', () => {
-				resolve(InputDialog.#inst.accepted ? InputDialog.#inst.inputValue : options.defaultValue || '');
+				resolve(InputDialog.#inst.accepted ? (InputDialog.#inst.inputValue || options.defaultValue) : false);
 			}, { once: true });
 			InputDialog.#inst.show(options);
 		});

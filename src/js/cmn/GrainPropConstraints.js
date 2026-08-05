@@ -113,11 +113,14 @@ class PickerConfigByPath extends PickerConfig {
 
 	async configure(apiSvc) {
 		const prevVal = this.root;
-		this.root = await InputDialog.requestTextFromUser({
+		const newVal = await InputDialog.requestTextFromUser({
 			title: t`Grain Picker Root Folder`,
 			prompt: t`Path relative to grain instance`,
 			defaultValue: this.root
 		});
+		if (newVal) {
+			this.root = newVal;
+		}
 		return this.root != prevVal;
 	}
 
