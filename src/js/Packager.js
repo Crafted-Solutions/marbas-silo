@@ -174,7 +174,7 @@ class ExportDialog extends _Dialog {
 				item.nextElementSibling.after(item);
 			}
 		}
-		item.scrollIntoView();
+		MbDomUtils.scrollIntoView(item);
 	}
 
 	#addAnchor() {
@@ -194,7 +194,7 @@ class ExportDialog extends _Dialog {
 		this._element.querySelector(`#${this._scope}-items`).appendChild(item);
 		this.#initGrainPicker(item);
 		this.#initAnchorActions(item);
-		item.scrollIntoView();
+		MbDomUtils.scrollIntoView(item);
 	}
 }
 

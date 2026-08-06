@@ -3,12 +3,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\SiloTree.js:232
+#: src\js\SiloTree.js:237
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr ""
 
-#: src\js\SiloTree.js:259
+#: src\js\SiloTree.js:264
 msgid "Loading grains"
 msgstr ""
 
@@ -502,15 +502,15 @@ msgstr ""
 msgid "Path relative to grain instance"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:125
+#: src\js\cmn\GrainPropConstraints.js:128
 msgid "Configure grain picker by relative path"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:144
+#: src\js\cmn\GrainPropConstraints.js:147
 msgid "Format: rich text"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:163
+#: src\js\cmn\GrainPropConstraints.js:166
 msgid "Format: date only"
 msgstr ""
 

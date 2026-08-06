@@ -26,6 +26,10 @@ export const MbDomUtils = {
 		}
 	},
 
+	scrollIntoView: function scrollIntoView(element, options) {
+		element.scrollIntoView(options || { block: "nearest", inline: "start", container: "nearest" });
+	},
+
 	updateSessionLinks: function (container) {
 		const sessionLinks = (container || document).querySelectorAll('.mb-session-link');
 		sessionLinks.forEach((link) => {

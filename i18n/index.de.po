@@ -433,7 +433,7 @@ msgstr "Grain kopieren"
 msgid "Creating link"
 msgstr "Link erstellen"
 
-#: src\js\SiloTree.js:232
+#: src\js\SiloTree.js:237
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr "Neuladen von ${ grain.parentId } fehlgeschlagen, Grund: ${ reason }"
@@ -448,7 +448,7 @@ msgstr "Pfad für ${ grainOrId } ist leer"
 msgid "Path to ${ id } is unreachable"
 msgstr "Pfad to ${ id } ist unerreichbar"
 
-#: src\js\SiloTree.js:259
+#: src\js\SiloTree.js:264
 msgid "Loading grains"
 msgstr "Grains laden"
 
@@ -713,7 +713,7 @@ msgstr "Grain-Picker konfigurieren"
 msgid "Value Constraint Parameters"
 msgstr "Parmeter für Werteeinschränkung"
 
-#: src\js\cmn\GrainPropConstraints.js:125
+#: src\js\cmn\GrainPropConstraints.js:128
 msgid "Configure grain picker by relative path"
 msgstr "Grain-Picker mit Relativpfad konfigurieren"
 
@@ -752,10 +752,10 @@ msgstr "New ${ grainType.label }"
 msgid "Schema"
 msgstr "Schema"
 
-#: src\js\cmn\GrainPropConstraints.js:144
+#: src\js\cmn\GrainPropConstraints.js:147
 msgid "Format: rich text"
 msgstr "Format: Rich-Text"
 
-#: src\js\cmn\GrainPropConstraints.js:163
+#: src\js\cmn\GrainPropConstraints.js:166
 msgid "Format: date only"
 msgstr "Format: nur Datum"
