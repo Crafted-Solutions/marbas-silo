@@ -433,7 +433,7 @@ msgstr "Grain kopieren"
 msgid "Creating link"
 msgstr "Link erstellen"
 
-#: src\js\SiloTree.js:237
+#: src\js\SiloTree.js:238
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr "Neuladen von ${ grain.parentId } fehlgeschlagen, Grund: ${ reason }"
@@ -448,7 +448,7 @@ msgstr "Pfad für ${ grainOrId } ist leer"
 msgid "Path to ${ id } is unreachable"
 msgstr "Pfad to ${ id } ist unerreichbar"
 
-#: src\js\SiloTree.js:264
+#: src\js\SiloTree.js:265
 msgid "Loading grains"
 msgstr "Grains laden"
 

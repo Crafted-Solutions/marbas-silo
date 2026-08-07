@@ -124,6 +124,14 @@ $spacer: 1rem !default;
 	max-width: 100%;
 	max-height: 200px;
 }
+.mb-grain-file img {
+	background-color: rgba(100, 100, 100, .2);
+  	padding: 1ex;
+  	border-radius: 5px;	
+}
+[data-bs-theme="dark"] .mb-grain-file img {
+	background-color: rgba(100, 100, 100, .8);
+}
 
 .mb-session-link {
 	vertical-align: top;

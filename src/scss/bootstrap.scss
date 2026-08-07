@@ -1,3 +1,6 @@
 @import "~bootstrap/scss/bootstrap";
 $bootstrap-icons-font-dir: "~bootstrap-icons/font/fonts";
 @import "~bootstrap-icons/font/bootstrap-icons.scss";
+[data-bs-theme="dark"] .bg-light {
+  background-color: var(--bs-dark-bg-subtle) !important;
+}
