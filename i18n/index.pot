@@ -3,12 +3,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\SiloTree.js:237
+#: src\js\SiloTree.js:238
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr ""
 
-#: src\js\SiloTree.js:264
+#: src\js\SiloTree.js:265
 msgid "Loading grains"
 msgstr ""
 

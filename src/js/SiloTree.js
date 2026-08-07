@@ -53,6 +53,7 @@ export class SiloTree {
 			showIcon: true,
 			showTags: true,
 			tagsClass: 'badge bg-secondary ms-1',
+			onhoverColor: 'var(--bs-list-group-action-active-bg)',
 			wrapNodeText: true,
 			showBorder: true,
 			// showCheckbox: true,
