@@ -43,7 +43,7 @@ if (!redirected) {
 			const grainId = (new URLSearchParams(window.location.search)).get('grain');
 			if (grainId) {
 				MbDomUtils.cleanBrowserLocation(['grain']);
-				SiloEvtNavigate.trigger(grainId);
+				SiloEvtNavigate.trigger(grainId, true);
 			}
 		}
 	};

@@ -26,9 +26,9 @@ export class SiloNavi extends SiloTree {
 	constructor(elementId, apiSvc, rootNodes, initCallback = null) {
 		super(elementId, apiSvc, rootNodes, initCallback);
 		this.#buildContextMenu();
-		SiloEvtNavigate.on(async (grainId) => {
+		SiloEvtNavigate.on(async (grainId, expand) => {
 			await this.initialized;
-			await this.navigateToNode(grainId || MarBasDefaults.ID_ROOT);
+			await this.navigateToNode(grainId || MarBasDefaults.ID_ROOT, expand);
 		});
 		SiloEvtReload.on(async (grainId, navigate) => {
 			const id = grainId || MarBasDefaults.ID_ROOT;
@@ -230,7 +230,7 @@ export class SiloNavi extends SiloTree {
 	async expandBranch(grainOrId) {
 		let node = this.getNodeByGrain(grainOrId);
 		const handleErr = (errMsg) => {
-			console.warn('navigateToNode', errMsg);
+			console.warn('expandBranch', errMsg);
 			MsgBox.invokeErr(errMsg);
 			return null;
 		};
@@ -269,9 +269,13 @@ export class SiloNavi extends SiloTree {
 		return node;
 	}
 
-	async navigateToNode(grainOrId) {
+	async navigateToNode(grainOrId, expand = false) {
 		if (await this.expandBranch(grainOrId)) {
-			return await this.revealAndSelectNode(grainOrId);
+			const result = await this.revealAndSelectNode(grainOrId);
+			if (expand) {
+				await this.#expandNodeAndWait(this.getNodeByGrain(grainOrId));
+			}
+			return result;
 		}
 		return null;
 	}
