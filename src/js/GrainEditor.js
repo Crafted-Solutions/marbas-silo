@@ -460,7 +460,7 @@ export class GrainEditor {
 
 	onEditorReady() {
 		try {
-			document.title = `${this.grain.label} - ${BASE_TITLE}`;
+			document.title = `${this.grain.label} - ${window.EnvConfig ? window.EnvConfig.title : BASE_TITLE}`;
 			this.#dateFields.forEach((key) => {
 				const sub = this.editor.getEditor(key);
 				if (sub && sub.getValue()) {

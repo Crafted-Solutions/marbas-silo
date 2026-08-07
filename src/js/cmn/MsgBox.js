@@ -58,7 +58,7 @@ export class MsgBox {
 		this.#defaultAction = null;
 
 		this.#element.querySelector('.msgbox-dlg-text').textContent = text;
-		this.#element.querySelector('#msgbox-dlg-title').textContent = options.title || document.title;
+		this.#element.querySelector('#msgbox-dlg-title').textContent = options.title || (window.EnvConfig || document).title;
 
 		const icoElm = this.#element.querySelector('.msgbox-dlg-icon');
 		if (options.icon) {
