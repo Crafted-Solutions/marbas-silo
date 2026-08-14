@@ -1,6 +1,6 @@
 export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.16',
-	MinAPIVersion: '0.1.23',
+	MinAPIVersion: '0.1.24',
 	LANG: 'en',
 	NAME_ROOT: 'marbas',
 	TIER_FILE: 'IFile',
@@ -10,6 +10,7 @@ export const MarBasDefaults = {
 	ID_ROOT: '00000000-0000-1000-a000-000000000001',
 	ID_CONTENT: '00000000-0000-1000-a000-000000000006',
 	ID_SCHEMA: '00000000-0000-1000-a000-000000000002',
+	ID_CONFIG: '00000000-0000-1000-a000-000000000014',
 	ID_FILES: '00000000-0000-1000-a000-000000000008',
 	ID_TRASH_CONTENT: '00000000-0000-1000-a000-000000000010',
 	ID_TRASH_SCHEMA: '00000000-0000-1000-a000-000000000011',
@@ -25,7 +26,7 @@ export const MarBasDefaults = {
 	ID_TYPEDEFSPEC: '00000000-0000-1000-a000-000000000013'
 };
 export const MarBasBuiltIns = [
-	MarBasDefaults.ID_ROOT, MarBasDefaults.ID_CONTENT, MarBasDefaults.ID_SCHEMA, MarBasDefaults.ID_FILES, MarBasDefaults.ID_TRASH_CONTENT, MarBasDefaults.ID_TRASH_SCHEMA,
+	MarBasDefaults.ID_ROOT, MarBasDefaults.ID_CONTENT, MarBasDefaults.ID_SCHEMA, MarBasDefaults.ID_FILES, MarBasDefaults.ID_TRASH_CONTENT, MarBasDefaults.ID_CONFIG, MarBasDefaults.ID_TRASH_SCHEMA,
 	MarBasDefaults.ID_TYPE_PROPDEF, MarBasDefaults.ID_PROPDEF_LINKTARGET, MarBasDefaults.ID_TYPE_ELEMENT, MarBasDefaults.ID_TYPE_CONTAINER, MarBasDefaults.ID_TYPE_FILE,
 	MarBasDefaults.ID_TYPE_TRASH, MarBasDefaults.ID_TYPE_LINK, MarBasDefaults.ID_PROPDEF_COMMENT, MarBasDefaults.ID_TYPEDEFSPEC
 ];

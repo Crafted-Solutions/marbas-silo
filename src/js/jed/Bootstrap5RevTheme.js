@@ -15,6 +15,21 @@ export class Bootstrap5RevTheme extends JSONEditor.defaults.themes.bootstrap5 {
 		return super.getButtonHolder();
 	}
 
+	getHeader(text, pathDepth) {
+		const result = document.createElement('span');
+		result.classList.add('h4');
+		result.classList.add('card-title');
+		result.classList.add(`level-${pathDepth}`);
+
+		if (typeof text === 'string') {
+			result.textContent = text;
+		} else {
+			result.appendChild(text);
+		}
+		result.style.display = 'inline-block'
+		return result;
+	}
+
 	getFormButtonHolder() {
 		const result = super.getFormButtonHolder();
 		result.classList.replace('btn-group-rev', 'btn-group');

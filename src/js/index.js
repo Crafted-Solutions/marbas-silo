@@ -1,3 +1,8 @@
+/*!
+ * MarBas Silo (https://github.com/Crafted-Solutions/marbas-silo)
+ * Released under MIT see LICENSE in the project root for license information.
+ * Copyright (c) 2025-2026 Crafted Solutionss. All rights reserved.
+ */
 import "../scss/index.scss";
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 import { t } from "ttag";

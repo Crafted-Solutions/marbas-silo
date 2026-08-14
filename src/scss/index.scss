@@ -116,6 +116,10 @@ $spacer: 1rem !default;
 	margin-bottom: 0 !important;
 }
 
+.h4.card-title:not(.je-object__title) {
+	font-size: 1.25rem;
+}
+
 .mb-grain-file {
 	margin-right: 0.25rem !important;
 	vertical-align: top;

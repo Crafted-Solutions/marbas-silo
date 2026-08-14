@@ -51,13 +51,13 @@ export class SiloNavi extends SiloTree {
 			return await Task.nowAsync(t`Deleting grain`, async () => {
 				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
 				this.tree.removeNode(node);
-				if (parents.length) {
-					this.tree.selectNode(parents);
-				}
 				const id = grainOrId.id || grainOrId;
 				const result = await this._apiSvc.deleteGrain(id);
 				if (result) {
 					SiloEvtGrainDeleted.trigger(id);
+				}
+				if (parents.length) {
+					this.tree.selectNode(parents);
 				}
 				return result;
 			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
