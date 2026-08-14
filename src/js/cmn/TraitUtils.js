@@ -1,6 +1,11 @@
 import { MarBasTraitValueType } from "@crafted.solutions/marbas-core";
 
 export const TraitUtils = {
+	DefaultMapHandler: {
+		filter: (key, traitArr) => key,
+		isMultiVal: (key, traitArr) => 1 < traitArr.length,
+		convert: (key, trarit) => null != trarit.value && MarBasTraitValueType.DateTime == trarit.valueType ? new Date(trarit.value) : trarit.value
+	},
 	isArray: function (prop) {
 		return 1 < prop.cardinalityMax || -1 == prop.cardinalityMax;
 	},
@@ -32,5 +37,35 @@ export const TraitUtils = {
 			}
 			return result;
 		}, []);
+	},
+	mapTraitValues: function mapTraitValues(traits, target, valueHandler = this.DefaultMapHandler) {
+		if (!traits) {
+			return;
+		}
+		if (!target) {
+			target = {};
+		}
+		for (const k in traits) {
+			const trait = traits[k];
+			if (trait && trait.length) {
+				const mappedKey = valueHandler.filter(k, trait);
+				if (!mappedKey) {
+					continue;
+				}
+				if (!(mappedKey in target) && valueHandler.isMultiVal(k, trait)) {
+					target[mappedKey] = [];
+				}
+				target[mappedKey] = trait.reduce((accu, tval) => {
+					const v = valueHandler.convert(k, tval);
+					if (Array.isArray(accu)) {
+						accu.push(v);
+					} else {
+						accu = v;
+					}
+					return accu;
+				}, target[mappedKey]);
+			}
+		}
+		return target;
 	}
 };

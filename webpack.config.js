@@ -235,6 +235,11 @@ module.exports = async (env) => {
 						test: /[\\/]node_modules[\\/](handlebars)[\\/]/,
 						name: 'libs-hb',
 						chunks: 'all'
+					},
+					joditVendor: {
+						test: /[\\/]node_modules[\\/](jodit)[\\/]/,
+						name: 'libs-jodit',
+						chunks: 'all'
 					}
 				}
 			},

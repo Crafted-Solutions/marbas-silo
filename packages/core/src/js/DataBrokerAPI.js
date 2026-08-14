@@ -464,12 +464,14 @@ export class DataBrokerAPI {
 		return this.getTypePropDefs(grain.typeDefId);
 	}
 
-	getGrainTraits(grain) {
+	getGrainTraits(grain, scopedKeys = false) {
 		let url = `${this.baseUrl}/Grain/${grain.id || grain}/Traits`;
-		const lang = this.#lang || grain.culture;
-		if (lang) {
-			const params = new URLSearchParams();
-			params.set('lang', lang);
+		let params = scopedKeys ? new URLSearchParams() : null;
+		if (params) {
+			params.set('scopedKeys', true);
+		}
+		params = this.addLangParam(params, this.#lang || grain.culture);
+		if (params) {
 			url += `?${params}`;
 		}
 		return this.#fetchGet(url);
@@ -494,7 +496,7 @@ export class DataBrokerAPI {
 	getTraitValues(grain, propDefOrId) {
 		const params = new URLSearchParams();
 		params.set('revision', grain.revision);
-		params.set('lang', this.#lang || grain.culture);
+		this.addLangParam(params, this.#lang || grain.culture);
 		return this.#fetchGet(`${this.baseUrl}/Trait/Values/${grain.id}/${propDefOrId.id || propDefOrId}?${params}`);
 	}
 
@@ -514,7 +516,7 @@ export class DataBrokerAPI {
 				const params = new URLSearchParams();
 				params.set('revision', grain.revision);
 				if (propDef.localizable) {
-					params.set('lang', langOverride || this.#lang || grain.culture);
+					this.addLangParam(params, langOverride || this.#lang || grain.culture);
 				}
 				this.applyStdFetchOptions({ method: 'DELETE' }).then(opts => {
 					const req = fetch(`${this.baseUrl}/Trait/Values/${grain.id}/${propDef.id}?${params}`, opts);
@@ -1172,19 +1174,19 @@ export class DataBrokerAPI {
 		return this.#authModule.authorizeRequest(result);
 	}
 
-	addLangParam(searchParams = null) {
+	addLangParam(searchParams = null, lang = this.#lang) {
 		let result = searchParams;
-		if (this.#lang) {
+		if (lang) {
 			if (!result) {
 				result = new URLSearchParams();
 			}
-			result.set('lang', this.#lang);
+			result.set('lang', lang);
 		}
 		return result;
 	}
 
-	localizeUrl(url) {
-		const params = this.addLangParam();
+	localizeUrl(url, lang = this.#lang) {
+		const params = this.addLangParam(null, lang);
 		if (params) {
 			url += `?${params}`;
 		}

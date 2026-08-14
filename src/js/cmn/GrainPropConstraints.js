@@ -135,7 +135,10 @@ class FormatRichText extends AbstractConstraintHandler {
 		return 'FormatRichText';
 	}
 
-	tweakTargetSchema(propDef, schema) {
+	async tweakTargetSchema(propDef, schema) {
+		if (!global.Jodit) {
+			await import(/* webpackChunkName: "jodit" */'../jodit.js');
+		}
 		schema.format = 'jodit';
 	}
 
