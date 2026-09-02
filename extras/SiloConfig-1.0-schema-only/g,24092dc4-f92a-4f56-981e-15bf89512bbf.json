@@ -1,0 +1,32 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 0,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "en": {
+      "label": "Model / Engine",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/BackendEngine",
+  "cTime": "2026-08-26T15:26:49.0000000Z",
+  "mTime": "2026-08-29T21:22:55.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "500",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "24092dc4-f92a-4f56-981e-15bf89512bbf",
+  "name": "BackendEngine",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

@@ -1,3 +1,5 @@
+import { t } from "ttag";
+
 import { _Dialog } from "./_Dialog";
 
 export class InputDialog extends _Dialog {
@@ -15,8 +17,8 @@ export class InputDialog extends _Dialog {
 	}
 
 	show(options) {
-		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || 'Input Request';
-		this._element.querySelector(`label[for="${this._scope}-txt"]`).textContent = options.prompt || 'Input';
+		this._getScoped('title span').textContent = options.title || t`Input Request`;
+		this._getScoped('txt').textContent = options.prompt || t`Input`;
 		super.show(true, options.parent, options.restoreParent);
 		this.#input.value = options.defaultValue || '';
 	}
@@ -34,6 +36,6 @@ export class InputDialog extends _Dialog {
 	}
 
 	get #input() {
-		return this._element.querySelector(`#${this._scope}-txt`);
+		return this._getScoped('txt');
 	}
 }

@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Boolean"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "API-Token ist HTTP-Header",
+      "traits": null
+    },
+    "en": {
+      "label": "API Token Is HTTP Header",
+      "traits": null
+    }
+  },
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/APITokenIsHeader",
+  "cTime": "2026-08-29T15:52:34.0000000Z",
+  "mTime": "2026-08-29T15:54:22.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "800",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "53993a02-e81a-415a-a45a-17b432996c47",
+  "name": "APITokenIsHeader",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

@@ -26,8 +26,8 @@ export class GrainSecurityDialog extends _Dialog {
 		super(scope || 'grain-security');
 		this.#loadTaskName = t`Reading grain security`;
 		this.#apiSvc = apiSvc;
-		this.#aclHeadElm = this._element.querySelector(`#${this._scope}-aclhead`);
-		this.#aclBodyElm = this._element.querySelector(`#${this._scope}-acl tbody`);
+		this.#aclHeadElm = this._getScoped('aclhead');
+		this.#aclBodyElm = this._getScoped('acl tbody');
 		document.addEventListener(Task.Event.ERROR, (evt) => {
 			if (this.#loadTaskName == evt.detail.task.name) {
 				this.modal.hide();
@@ -48,7 +48,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	show(grainId) {
-		this._element.querySelector(`#${this._scope}-subtitle`).textContent = t`Loading...`;
+		this._getScoped('subtitle').textContent = t`Loading...`;
 		MbDomUtils.clearNode(this.#aclHeadElm);
 		MbDomUtils.clearNode(this.#aclBodyElm);
 		this.#modified = {};
@@ -74,12 +74,12 @@ export class GrainSecurityDialog extends _Dialog {
 			await this.#loadRoles();
 			this.#buildAclTable();
 
-			this._element.querySelector(`#${this._scope}-subtitle`).textContent = `${this.#grain ? this.#grain.path : grainId}`;
+			this._getScoped('subtitle').textContent = `${this.#grain ? this.#grain.path : grainId}`;
 		});
 	}
 
 	#updateModifiedMark() {
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-mod`),
+		MbDomUtils.hideNode(this._getScoped('mod'),
 			0 == Object.keys(this.#modified).length + Object.keys(this.#added).length + Object.keys(this.#deleted).length);
 	}
 
@@ -126,7 +126,7 @@ export class GrainSecurityDialog extends _Dialog {
 		}
 		delete this.#added[key[1]];
 		delete this.#modified[key[1]];
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-add-${key[1]}`), false);
+		MbDomUtils.hideNode(this._getScoped(`add-${key[1]}`), false);
 		this.#updateEntryAddDropdown();
 		this.#updateModifiedMark();
 	}
@@ -179,7 +179,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 		this.#aclBodyElm.insertBefore(tr, this.#aclBodyElm.firstChild);
 
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-add-${roleId}`), true);
+		MbDomUtils.hideNode(this._getScoped(`add-${roleId}`), true);
 		this.#updateEntryAddDropdown();
 		this.#updateModifiedMark();
 	}
@@ -309,7 +309,7 @@ export class GrainSecurityDialog extends _Dialog {
 	}
 
 	#updateEntryAddDropdown() {
-		const mnu = this._element.querySelector(`#${this._scope}-add`);
+		const mnu = this._getScoped('add');
 		MbDomUtils.hideNode(mnu, !this.#canWrite || mnu.querySelectorAll('.dropdown-item[aria-hidden="true"]').length >= Object.keys(this.#roles).length);
 	}
 
@@ -337,7 +337,7 @@ export class GrainSecurityDialog extends _Dialog {
 
 	async #loadRoles() {
 		let hasRoles = false;
-		const actionCnt = this._element.querySelector(`#${this._scope}-add .dropdown-menu`);
+		const actionCnt = this._getScoped('add .dropdown-menu');
 		MbDomUtils.clearNode(actionCnt);
 
 		if (await this.#apiSvc.getCurrentRoleEntitlement(MarBasRoleEntitlement.ReadRoles)) {
@@ -359,7 +359,7 @@ export class GrainSecurityDialog extends _Dialog {
 				}
 			});
 		}
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-add`), !hasRoles);
+		MbDomUtils.hideNode(this._getScoped('add'), !hasRoles);
 	}
 
 	static #isRelevantAccessFlag(flag) {

@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": "82558531-5778-4bda-9eca-7292092e5d14",
+    "constraintParams": "use=PickerConfig",
+    "cardinalityMin": 0,
+    "cardinalityMax": 3,
+    "versionable": true,
+    "localizable": true,
+    "valueType": "Grain"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Unterst\u00FCtzte Formate",
+      "traits": null
+    },
+    "en": {
+      "label": "Supported Formats",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/SupportedFormats",
+  "cTime": "2026-08-26T15:43:46.0000000Z",
+  "mTime": "2026-08-29T16:49:29.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "700",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "0f413b5e-97d0-496f-a840-0b7a7fccdc47",
+  "name": "SupportedFormats",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

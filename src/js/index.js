@@ -23,6 +23,7 @@ import { UILocale } from "./UILocale";
 import { MbDomUtils } from "./cmn/MbDomUtils";
 import { SiloTools } from "./SiloTools";
 import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
+import { CustomConfig } from "./cmn/CustomConfig";
 
 global.NoOp = () => { };
 
@@ -61,6 +62,7 @@ if (!redirected) {
 				processParameters();
 			}, { once: true });
 			naviMgr.tree.expandAll();
+			CustomConfig.register(CustomConfig.DEFAULT_NAME, apiSvc);
 			done();
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	};

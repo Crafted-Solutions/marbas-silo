@@ -17,12 +17,12 @@ export class GrainPicker extends _Dialog {
 	constructor(scope, apiSvc) {
 		super(scope);
 		this.#apiSvc = apiSvc;
-		this._element.querySelector(`#${this._scope}-btn-reload`).onclick = () => {
+		this._getScoped('btn-reload').onclick = () => {
 			if (this.grainSelector && this.#rootGrain) {
 				this.grainSelector.reloadNode(this.#rootGrain);
 			}
 		};
-		this._element.querySelector(`#${this._scope}-btn-new`).onclick = async () => {
+		this._getScoped('btn-new').onclick = async () => {
 			await this.#newGrain();
 		};
 	}
@@ -41,14 +41,14 @@ export class GrainPicker extends _Dialog {
 	}
 
 	show(options) {
-		this._element.querySelector(`#${this._scope}-title span`).textContent = options.title || t`Select Grain`;
+		this._getScoped('title span').textContent = options.title || t`Select Grain`;
 		super.show();
 		this.#load(options.root, options.typeFilter, options.selectionFilter, options.disableGrains, options.listFilter);
 	}
 
 	async validate() {
 		const result = (await super.validate()) && !!this.selectedGrain;
-		this._element.querySelector(`#${this._scope}-validation`).classList[this.selectedGrain ? 'remove' : 'add']('is-invalid');
+		this._getScoped('validation').classList[this.selectedGrain ? 'remove' : 'add']('is-invalid');
 		return result;
 	}
 
@@ -103,16 +103,16 @@ export class GrainPicker extends _Dialog {
 
 	async #updateActions(typeFilter) {
 		const enableNew = await this.#apiSvc.getGrainPermission(this.#rootGrain, MarBasGrainAccessFlag.CreateSubelement);
-		this._element.querySelectorAll(`.${this._scope}-newact`).forEach(elm => elm.disabled = !enableNew);
+		this._getScoped('newact', '.', true).forEach(elm => elm.disabled = !enableNew);
 		if (this.grainSelector && this.grainSelector._options.typeFilter == typeFilter) {
 			return;
 		}
 		this._createableTypes = {};
 		if (enableNew) {
 			const types = typeFilter ? typeFilter.filter(x => x != MarBasDefaults.ID_TYPE_LINK) : [];
-			this._element.querySelector(`#${this._scope}-btn-newsel`).disabled = 2 > types.length;
+			this._getScoped('btn-newsel').disabled = 2 > types.length;
 			if (1 < types.length) {
-				const dd = this._element.querySelector(`#${this._scope}-dd-newsel`);
+				const dd = this._getScoped('dd-newsel');
 				dd.querySelectorAll('li').forEach(elm => elm.remove());
 				for (const type of types) {
 					this._createableTypes[type] = MarBasDefaults.ID_TYPE_TYPEDEF == type ? t`Type Definition` : await this.#apiSvc.resolveGrainLabel(type);

@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Boolean"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Unterst\u00FCtzt Landescodierung",
+      "traits": null
+    },
+    "en": {
+      "label": "Supports Country Codes",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/SupportsCountryCodes",
+  "cTime": "2026-08-27T20:33:05.0000000Z",
+  "mTime": "2026-08-29T16:49:08.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "650",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "c08f2b61-1349-45ca-b2d0-10a311fe6a55",
+  "name": "SupportsCountryCodes",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

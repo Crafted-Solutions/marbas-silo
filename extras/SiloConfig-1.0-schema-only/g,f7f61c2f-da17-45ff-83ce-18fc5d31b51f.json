@@ -1,0 +1,27 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Einfacher Text",
+      "traits": null
+    },
+    "en": {
+      "label": "Plain Text",
+      "traits": null
+    }
+  },
+  "parentId": "82558531-5778-4bda-9eca-7292092e5d14",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/SiloTextFormats/text",
+  "cTime": "2026-08-26T15:40:05.0000000Z",
+  "mTime": "2026-08-26T15:41:30.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "100",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "f7f61c2f-da17-45ff-83ce-18fc5d31b51f",
+  "name": "text",
+  "typeDefId": "00000000-0000-1000-a000-000000000004"
+}

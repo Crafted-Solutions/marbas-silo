@@ -1,0 +1,54 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 0,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Sammelparameter",
+      "traits": [
+        {
+          "$type": 0,
+          "value": "Wenn angegeben, wird die gesamte Anfrage als Object unter diesem Namen gesendet",
+          "id": "0b94c341-44e5-4010-b8ee-f8863c06253d",
+          "ord": 0,
+          "propDefId": "00000000-0000-1000-a000-00000000000d",
+          "revision": 1
+        }
+      ]
+    },
+    "en": {
+      "label": "Wrapper Parameter",
+      "traits": [
+        {
+          "$type": 0,
+          "value": "If provided it will be used to encode entire request as object of this name",
+          "id": "411c7bac-b616-485d-9b17-a0c2d06e9458",
+          "ord": 0,
+          "propDefId": "00000000-0000-1000-a000-00000000000d",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/WrapperParameter",
+  "cTime": "2026-08-26T16:08:30.0000000Z",
+  "mTime": "2026-08-29T15:49:12.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "600",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "0863f196-0a14-4153-b071-4f7663af5d30",
+  "name": "WrapperParameter",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

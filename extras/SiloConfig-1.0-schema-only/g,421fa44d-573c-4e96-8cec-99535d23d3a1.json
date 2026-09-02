@@ -1,0 +1,32 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "en": {
+      "label": "HTTP Method",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/HTTPMethod",
+  "cTime": "2026-08-26T15:15:39.0000000Z",
+  "mTime": "2026-08-29T16:47:27.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "300",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "421fa44d-573c-4e96-8cec-99535d23d3a1",
+  "name": "HTTPMethod",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

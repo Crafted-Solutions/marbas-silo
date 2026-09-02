@@ -21,6 +21,7 @@
 		"start-jed-debug": "webpack serve --mode development --env=DEBUG_JSONEDITOR --open",
 		"po-update-static": "node scripts/po-helpers/po-update-static.js",
 		"po-update-dynamic": "node scripts/po-helpers/po-update-dynamic.js",
+		"make-extras": "node scripts/extras-packager/extras-packager.js",
 		"test": "echo \"No test specified yet\" && exit 0",
 		"prepack": "npm run build"
 	},
@@ -32,7 +33,24 @@
 			"en",
 			"de"
 		],
-		"defaultLocale": "en"
+		"defaultLocale": "en",
+		"extras": [
+			"SiloConfig-1.0-schema-only",
+			{
+				"name": "SiloConfig-1.0-tm-mozhi",
+				"sources": [
+					"SiloConfig-1.0-schema-only",
+					"SiloConfig-1.0-tm-mozhi"
+				]
+			},
+			{
+				"name": "SiloConfig-1.0-tm-wikimedia",
+				"sources": [
+					"SiloConfig-1.0-schema-only",
+					"SiloConfig-1.0-tm-wikimedia"
+				]
+			}
+		]
 	},
 	"dependencies": {
 		"@jbtronics/bs-treeview": "github:hatelamers/bs-treeview",
@@ -41,8 +59,8 @@
 		"bootstrap": "^5.3.8",
 		"bootstrap-icons": "^1.13.1",
 		"clipboard-copy": "^4.0.1",
-		"dompurify": "^3.4.10",
-		"jodit": "^4.12.25",
+		"dompurify": "^3.4.14",
+		"jodit": "^4.13.23",
 		"jose": "^6.2.3",
 		"lodash.merge": "^4.6.2",
 		"lodash.startcase": "^4.4.0",
@@ -60,7 +78,7 @@
 		"json-loader": "^0.5.7",
 		"mini-css-extract-plugin": "^2.10.2",
 		"postcss-loader": "^8.2.1",
-		"sass": "^1.102.0",
+		"sass": "^1.103.1",
 		"sass-loader": "^17.0.0",
 		"style-loader": "^4.0.0",
 		"webpack": "^5.109.2",

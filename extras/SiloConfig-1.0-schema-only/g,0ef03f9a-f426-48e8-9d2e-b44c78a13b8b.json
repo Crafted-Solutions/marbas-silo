@@ -1,0 +1,31 @@
+{
+  "tier": {
+    "$type": "ITypeDef",
+    "impl": null,
+    "mixInIds": []
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Silo-Konfiguration",
+      "traits": null
+    },
+    "en": {
+      "label": "Silo Configuration",
+      "traits": null
+    }
+  },
+  "parentId": "24180840-d935-4877-bdbc-a8d75885891e",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/SiloConfig",
+  "cTime": "2026-08-26T15:05:11.0000000Z",
+  "mTime": "2026-08-29T17:23:00.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": "\u0022silo\u0022:{\u0022icon\u0022:\u0022bi-gear-wide-connected\u0022}",
+  "id": "0ef03f9a-f426-48e8-9d2e-b44c78a13b8b",
+  "name": "SiloConfig",
+  "typeDefId": null
+}

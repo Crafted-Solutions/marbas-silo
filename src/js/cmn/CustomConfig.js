@@ -18,6 +18,10 @@ export class CustomConfig {
 		return this.#grain;
 	}
 
+	get name() {
+		return this.#grain.name;
+	}
+
 	async getValue(key, defaultVal = null) {
 		if (!this.#values) {
 			if (!this.#grain) {
@@ -71,6 +75,8 @@ export class CustomConfig {
 		return TraitUtils.mapTraitValues(traits);
 	}
 
+	static get DEFAULT_NAME() { return 'SiloConfig'; }
+
 	static async register(configName, apiSvc) {
 		if (CustomConfig.#instances[configName]) {
 			return await CustomConfig.#instances[configName];
@@ -84,6 +90,12 @@ export class CustomConfig {
 			}).catch(reject);
 		});
 		return await CustomConfig.#instances[configName];
+	}
+	static async get(configName) {
+		if (CustomConfig.#instances[configName]) {
+			return await CustomConfig.#instances[configName];
+		}
+		return null;
 	}
 
 	static unregister(configName) {

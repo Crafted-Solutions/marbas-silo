@@ -300,16 +300,21 @@ export class SiloNavi extends SiloTree {
 	}
 
 	async #expandNodeAndWait(node) {
+		if (node.state.expanded) {
+			return node;
+		}
 		const result = new Promise((resolve) => {
 			if (node.state.expanded) {
 				resolve(node);
 				return;
 			}
-			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
+			const handler = (evt) => {
 				if (evt.detail.node == node) {
 					resolve(evt.detail.node);
+					this._element.removeEventListener(EVENT_NODE_EXPANDED, handler);
 				}
-			}, { once: true });
+			};
+			this._element.addEventListener(EVENT_NODE_EXPANDED, handler);
 		});
 		this.tree.expandNode(node);
 		return await result;
