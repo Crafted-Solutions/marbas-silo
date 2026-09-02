@@ -1,0 +1,27 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "R\u00FCckgabeeigenschaften",
+      "traits": null
+    },
+    "en": {
+      "label": "Response Properties",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/ResponseProperties",
+  "cTime": "2026-08-26T16:13:30.0000000Z",
+  "mTime": "2026-08-29T19:06:46.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "910",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "4aa3ff2a-b455-4d36-bba2-cc87113ae4b3",
+  "name": "ResponseProperties",
+  "typeDefId": "00000000-0000-1000-a000-000000000005"
+}

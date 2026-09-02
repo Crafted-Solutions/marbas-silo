@@ -40,7 +40,7 @@ export const TraitUtils = {
 	},
 	mapTraitValues: function mapTraitValues(traits, target, valueHandler = this.DefaultMapHandler) {
 		if (!traits) {
-			return;
+			return {};
 		}
 		if (!target) {
 			target = {};

@@ -18,7 +18,7 @@ export class GrainNewDialog extends _NewDialog {
 
 	constructor(scope, apiSvc) {
 		super(scope, apiSvc);
-		this._element.querySelector(`#${this._scope}-btn-reload`).onclick = () => {
+		this._getScoped('btn-reload').onclick = () => {
 			if (this.typeSelector) {
 				this.typeSelector.reloadNode(MarBasDefaults.ID_SCHEMA);
 			}
@@ -44,7 +44,7 @@ export class GrainNewDialog extends _NewDialog {
 				this.#setTypeFromNode(sel[0]);
 			}
 		}
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-type-fields`), !!grainType);
+		MbDomUtils.hideNode(this._getScoped('type-fields'), !!grainType);
 		super.show(parentGrainId, options);
 	}
 

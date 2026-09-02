@@ -19,7 +19,7 @@ export class _Dialog {
 			}
 		});
 		this._element.addEventListener('hidden.bs.modal', this._handleClose.bind(this));
-		this._element.querySelector(`#${this._scope}-btn-ok`).onclick = async () => {
+		this._getScoped('btn-ok').onclick = async () => {
 			await this._onOk();
 		};
 		if (this._element.classList.contains('modal-over')) {
@@ -98,8 +98,12 @@ export class _Dialog {
 		dispEvent();
 	}
 
+	_getScoped(namePart, mode = '#', getAll = false) {
+		return this._element[getAll ? 'querySelectorAll' : 'querySelector'](`${mode}${this._scope}-${namePart}`);
+	}
+
 	_getTemplate(name, subElement = null) {
-		const cont = this._element.querySelector(`#${this._scope}-tpl-${name}`).content;
+		const cont = this._getScoped(`tpl-${name}`).content;
 		return subElement && cont ? cont.querySelector(subElement) : cont;
 	}
 

@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Backend-URL",
+      "traits": null
+    },
+    "en": {
+      "label": "Backend URL",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/BackendURL",
+  "cTime": "2026-08-26T15:10:02.0000000Z",
+  "mTime": "2026-08-29T16:46:22.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "200",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "41c1beed-7ff9-4f1a-9bd2-336c3cee6687",
+  "name": "BackendURL",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

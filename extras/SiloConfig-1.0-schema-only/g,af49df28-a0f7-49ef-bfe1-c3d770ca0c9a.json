@@ -1,0 +1,27 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Anfragparameter",
+      "traits": null
+    },
+    "en": {
+      "label": "Request Parameters",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters",
+  "cTime": "2026-08-26T15:48:43.0000000Z",
+  "mTime": "2026-08-29T16:55:34.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "900",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "name": "RequestParameters",
+  "typeDefId": "00000000-0000-1000-a000-000000000005"
+}

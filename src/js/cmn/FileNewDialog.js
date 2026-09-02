@@ -12,12 +12,12 @@ export class FileNewDialog extends _NewDialog {
 	}
 
 	get files() {
-		return this._element.querySelector(`#${this._scope}-file`).files;
+		return this._getScoped('file').files;
 	}
 
 	show(parentGrainId, options = {}) {
-		this._element.querySelector(`#${this._scope}-parent-id`).value = parentGrainId;
-		const fileElm = this._element.querySelector(`#${this._scope}-file`);
+		this._getScoped('parent-id').value = parentGrainId;
+		const fileElm = this._getScoped('file');
 		if (options.accept) {
 			fileElm.setAttribute('accept', options.accept);
 		} else {

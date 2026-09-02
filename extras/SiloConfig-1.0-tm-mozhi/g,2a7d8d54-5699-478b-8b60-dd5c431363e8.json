@@ -1,0 +1,67 @@
+{
+	"tier": null,
+	"acl": [],
+	"traits": [
+		{
+			"$type": 0,
+			"value": "libre",
+			"id": "32cdebd6-794b-4056-953a-2179535b9488",
+			"ord": 0,
+			"propDefId": "24092dc4-f92a-4f56-981e-15bf89512bbf",
+			"revision": 1
+		},
+		{
+			"$type": 0,
+			"value": "https://mozhi.adminforge.de/api/translate",
+			"id": "338314be-6689-4f2b-9fff-443d2aea7802",
+			"ord": 0,
+			"propDefId": "41c1beed-7ff9-4f1a-9bd2-336c3cee6687",
+			"revision": 1
+		},
+		{
+			"$type": 0,
+			"value": "GET",
+			"id": "7b5a9d71-35c3-4116-abeb-1405d2efa90f",
+			"ord": 0,
+			"propDefId": "421fa44d-573c-4e96-8cec-99535d23d3a1",
+			"revision": 1
+		},
+		{
+			"$type": 0,
+			"value": "engine",
+			"id": "186aad98-98d0-4bbb-b18f-1b334d2b17ff",
+			"ord": 0,
+			"propDefId": "7262b933-162c-4796-a5b2-7e4242264705",
+			"revision": 1
+		},
+		{
+			"$type": 0,
+			"value": "text",
+			"id": "8d1c04d9-8cdd-4369-a7a2-cad905e51524",
+			"ord": 0,
+			"propDefId": "b8d92216-c5e7-457e-b7b9-fa2b5ca66738",
+			"revision": 1
+		},
+		{
+			"$type": 3,
+			"value": false,
+			"id": "7051a605-6fad-459e-b8ca-0c74ee857eec",
+			"ord": 0,
+			"propDefId": "c08f2b61-1349-45ca-b2d0-10a311fe6a55",
+			"revision": 1
+		}
+	],
+	"localized": {},
+	"parentId": "e98a70cd-093b-4a0a-b6d2-ef0afd60023f",
+	"path": "marbas/Schema/$Config$/SiloConfig/Translation/Mozhi",
+	"cTime": "2026-08-29T20:09:54.0000000Z",
+	"mTime": "2026-09-01T14:39:19.0000000Z",
+	"owner": "dima@marbas",
+	"revision": 1,
+	"sortKey": null,
+	"customFlag": 0,
+	"xAttrs": null,
+	"id": "2a7d8d54-5699-478b-8b60-dd5c431363e8",
+	"name": "Mozhi",
+	"typeDefId": "fa3c8031-1c04-4634-8f31-c0049361750f"
+}

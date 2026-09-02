@@ -8,20 +8,20 @@ import { MbDomUtils } from "./cmn/MbDomUtils";
 class LoginDialog extends _Dialog {
 	show(options) {
 		if (options && options.brokerUrl) {
-			this._element.querySelector(`#${this._scope}-subtitle`).textContent = options.brokerUrl;
+			this._getScoped('subtitle').textContent = options.brokerUrl;
 		}
 		this.addEventListener('shown.bs.modal', () => {
-			this._element.querySelector(`#${this._scope}-txt-user`).focus();
+			this._getScoped('txt-user').focus();
 		});
 		super.show();
 	}
 
 	get user() {
-		return this._element.querySelector(`#${this._scope}-txt-user`).value;
+		return this._getScoped('txt-user').value;
 	}
 
 	get pwd() {
-		return this._element.querySelector(`#${this._scope}-txt-pwd`).value;
+		return this._getScoped('txt-pwd').value;
 	}
 }
 

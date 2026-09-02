@@ -1,0 +1,18 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {},
+  "parentId": "00000000-0000-1000-a000-000000000007",
+  "path": "marbas/Schema/UserDefined/MarBasSilo",
+  "cTime": "2026-08-26T15:04:45.0000000Z",
+  "mTime": "2026-08-29T16:39:24.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "24180840-d935-4877-bdbc-a8d75885891e",
+  "name": "MarBasSilo",
+  "typeDefId": "00000000-0000-1000-a000-000000000005"
+}

@@ -1,0 +1,39 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 0,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [
+    {
+      "inherit": true,
+      "permissionMask": "Full",
+      "restrictionMask": "None",
+      "roleId": "00000000-0000-1000-b000-000000000001"
+    }
+  ],
+  "traits": null,
+  "localized": {
+    "en": {
+      "label": "Model / Engine",
+      "traits": null
+    }
+  },
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/Engine",
+  "cTime": "2026-08-26T15:26:49.0000000Z",
+  "mTime": "2026-08-29T21:21:12.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "400",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "7262b933-162c-4796-a5b2-7e4242264705",
+  "name": "Engine",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

@@ -40,8 +40,8 @@ export class GrainEditorDialog extends _Dialog {
 
 	async #load(grainId) {
 		await this.#editor.buildEditor(await this.#editor._apiSvc.getGrain(grainId));
-		MbDomUtils.hideNode(this._element.querySelector(`#${this._scope}-loading`));
-		this._element.querySelector(`#${this._scope}-subtitle`).textContent = `${this.#editor.grain.path} (${this.#editor.grain.typeName})`;
+		MbDomUtils.hideNode(this._getScoped('loading'));
+		this._getScoped('subtitle').textContent = `${this.#editor.grain.path} (${this.#editor.grain.typeName})`;
 		this.#editor.editor.on('ready', () => {
 			const card = this._element.querySelector('.je-object__container > .card-body');
 			if (card) {

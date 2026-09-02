@@ -1,0 +1,97 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": [
+    {
+      "$type": 0,
+      "value": "https://translate.wmcloud.org/api/translate",
+      "id": "fe0650ce-42b9-47d3-85d4-eab6e281d4db",
+      "ord": 0,
+      "propDefId": "41c1beed-7ff9-4f1a-9bd2-336c3cee6687",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "target_language",
+      "id": "84ec5454-ded9-42d9-8ab0-364316ba2be7",
+      "ord": 0,
+      "propDefId": "7212fb7f-7157-4997-a54c-2c094a1287d1",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "translation",
+      "id": "b86e313b-c652-422e-af8d-39724be67b54",
+      "ord": 0,
+      "propDefId": "bac4454a-f67c-44fd-8c41-f919681fbb5b",
+      "revision": 1
+    },
+    {
+      "$type": 3,
+      "value": false,
+      "id": "e0a797ca-9258-4008-beba-54c5a5714a51",
+      "ord": 0,
+      "propDefId": "c08f2b61-1349-45ca-b2d0-10a311fe6a55",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "source_language",
+      "id": "cfdc1595-52ce-4697-8ca9-1787c825df8a",
+      "ord": 0,
+      "propDefId": "cc675764-b5d9-4713-9c96-2f008bf8672a",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "format",
+      "id": "88838b38-d0cb-4dd6-9da4-cf28c43bcef7",
+      "ord": 0,
+      "propDefId": "fdd3679e-48d1-4889-85f2-4239b65a45ad",
+      "revision": 1
+    }
+  ],
+  "localized": {
+    "en": {
+      "label": null,
+      "traits": [
+        {
+          "$type": 6,
+          "value": "f7f61c2f-da17-45ff-83ce-18fc5d31b51f",
+          "id": "7319b4d8-f95e-435c-b4ce-7716667bc813",
+          "ord": 0,
+          "propDefId": "0f413b5e-97d0-496f-a840-0b7a7fccdc47",
+          "revision": 1
+        },
+        {
+          "$type": 6,
+          "value": "3c7398df-6eb5-44b4-8898-129bd51de4d1",
+          "id": "c997cc38-b969-483b-9801-d545ca8c3b1a",
+          "ord": 1,
+          "propDefId": "0f413b5e-97d0-496f-a840-0b7a7fccdc47",
+          "revision": 1
+        },
+        {
+          "$type": 6,
+          "value": "ab953ff1-a6cc-452e-ac4f-a685f13d79bc",
+          "id": "5cf475d2-5aaa-4f71-99fd-1f30f178f795",
+          "ord": 2,
+          "propDefId": "0f413b5e-97d0-496f-a840-0b7a7fccdc47",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "parentId": "e98a70cd-093b-4a0a-b6d2-ef0afd60023f",
+  "path": "marbas/Schema/$Config$/SiloConfig/Translation/WikiMedia",
+  "cTime": "2026-08-29T17:41:53.0000000Z",
+  "mTime": "2026-09-01T14:09:48.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "6652b878-ff5c-4130-a232-cb3b88805603",
+  "name": "WikiMedia",
+  "typeDefId": "fa3c8031-1c04-4634-8f31-c0049361750f"
+}

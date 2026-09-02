@@ -1,5 +1,5 @@
 import merge from "lodash.merge";
-import contentDisposition from "content-disposition";
+import { parse as dispositionParse } from "content-disposition";
 import { MarBasDefaults, MarBasRoleEntitlement, MarBasTraitValueType } from "../conf/marbas.conf.js";
 import { MbUtils } from "./MbUtils.js";
 
@@ -20,6 +20,7 @@ export class DataBrokerAPI {
 	#authModule;
 	#grains = {};
 	#subtypes = {};
+	#languages = [];
 	#resolvers = {
 		[MarBasDefaults.TIER_FILE]: {},
 		[MarBasDefaults.TIER_PROPDEF]: {},
@@ -50,23 +51,30 @@ export class DataBrokerAPI {
 		return this.#authModule.brokerUrl;
 	}
 
-	listLanguages() {
-		return this.#fetchGet(`${this.baseUrl}/Language/List`);
+	listLanguages(reload = false) {
+		if (!reload && this.#languages.length) {
+			return Promise.resolve(this.#languages);
+		}
+		const result = this.#fetchGet(`${this.baseUrl}/Language/List`);
+		result.then((langs) => {
+			this.#languages = langs;
+		}).catch(NoOp);
+		return result;
 	}
 
 	createLanguage(isoCode) {
+		this.#languages = [];
 		return this.#fetchSendJson(`${this.baseUrl}/Language?lang=${isoCode}`, null, true, 'PUT');
 	}
 
 	deleteLanguage(isoCode) {
+		this.#languages = [];
 		return this.#fetchSendJson(`${this.baseUrl}/Language/${isoCode}`, null, false, 'DELETE');
 	}
 
 	getCurrentRoles() {
 		if (this.#currentRoles.roles) {
-			return new Promise((resolve) => {
-				resolve(this.#currentRoles.roles);
-			});
+			return Promise.resolve(this.#currentRoles.roles);
 		}
 		const result = this.#fetchGet(`${this.baseUrl}/Role/Current`);
 		result.then((roles) => {
@@ -254,8 +262,16 @@ export class DataBrokerAPI {
 		return new Promise((resolve, reject) => {
 			this.getGrain(relativeToGrainOrId.id || relativeToGrainOrId)
 				.then(baseGrain => {
-					var url = new URL(path, `https://test.com/${baseGrain.path}`);
-					this.getGrainByPath(url.pathname.substring(1)).then(resolve).catch(reject);
+					if ('.' == path) {
+						resolve(baseGrain);
+					} else {
+						const url = new URL(path, `https://test.com/${baseGrain.path}/`);
+						let resPath = url.pathname.substring(1);
+						if (resPath.endsWith('/')) {
+							resPath = resPath.substring(0, resPath.length - 1);
+						}
+						this.getGrainByPath(resPath).then(resolve).catch(reject);
+					}
 				})
 				.catch(reject);
 		});
@@ -493,10 +509,10 @@ export class DataBrokerAPI {
 		return this.#fetchGet(this.localizeUrl(`${this.baseUrl}/TypeDef/${(typeDefOrId || {}).id || typeDefOrId || MarBasDefaults.ID_TYPE_TYPEDEF}/Properties`));
 	}
 
-	getTraitValues(grain, propDefOrId) {
+	getTraitValues(grain, propDefOrId, langOverride = null) {
 		const params = new URLSearchParams();
 		params.set('revision', grain.revision);
-		this.addLangParam(params, this.#lang || grain.culture);
+		this.addLangParam(params, langOverride || this.#lang || grain.culture);
 		return this.#fetchGet(`${this.baseUrl}/Trait/Values/${grain.id}/${propDefOrId.id || propDefOrId}?${params}`);
 	}
 
@@ -931,7 +947,7 @@ export class DataBrokerAPI {
 							if (true === forDownload) {
 								const disposition = res.headers.get('Content-Disposition');
 								if (disposition) {
-									filename = contentDisposition.parse(disposition).parameters.filename;
+									filename = dispositionParse(disposition).parameters.filename;
 								}
 							} else if (forDownload && forDownload.length) {
 								filename = forDownload;
@@ -972,7 +988,7 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							const disposition = res.headers.get('Content-Disposition');
 							if (disposition) {
-								filename = contentDisposition.parse(disposition).parameters.filename || filename;
+								filename = dispositionParse(disposition).parameters.filename || filename;
 							}
 							return res.blob();
 						}

@@ -70,3 +70,14 @@ jobs:
         files: "marbas-silo-drop-in-*"
       env:
         token: ${{ secrets.PUBLISH_TOKEN }}
+
+    - name: Build extras
+      shell: bash
+      run: npm run make-extras
+
+    - name: Publish extras to GitHub
+      uses: softprops/action-gh-release@v3
+      with:
+        files: "build/*.zip"
+      env:
+        token: ${{ secrets.PUBLISH_TOKEN }}

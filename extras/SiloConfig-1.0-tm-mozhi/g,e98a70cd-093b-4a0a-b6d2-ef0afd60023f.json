@@ -1,0 +1,30 @@
+{
+  "tier": null,
+  "acl": [
+    {
+      "inherit": true,
+      "permissionMask": "Full",
+      "restrictionMask": "None",
+      "roleId": "00000000-0000-1000-b000-000000000001"
+    }
+  ],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "\u00DCbersetzung",
+      "traits": null
+    }
+  },
+  "parentId": "af1b786b-684f-481e-b0a3-b09c75d7e3e3",
+  "path": "marbas/Schema/$Config$/SiloConfig/Translation",
+  "cTime": "2026-08-29T17:23:37.0000000Z",
+  "mTime": "2026-09-01T14:39:26.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "e98a70cd-093b-4a0a-b6d2-ef0afd60023f",
+  "name": "Translation",
+  "typeDefId": "00000000-0000-1000-a000-000000000005"
+}

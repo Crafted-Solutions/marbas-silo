@@ -1,0 +1,27 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 0,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {},
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/Format",
+  "cTime": "2026-08-26T16:03:58.0000000Z",
+  "mTime": "2026-08-26T16:04:50.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "500",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "fdd3679e-48d1-4889-85f2-4239b65a45ad",
+  "name": "Format",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}
