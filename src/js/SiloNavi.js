@@ -50,14 +50,14 @@ export class SiloNavi extends SiloTree {
 		if (node && 'yes' == await MsgBox.invokeYesNo(t`Delete ${node.text}?`)) {
 			return await Task.nowAsync(t`Deleting grain`, async () => {
 				const parents = node.state && node.state.selected ? this.tree.getParents(node) : [];
-				this.tree.removeNode(node);
 				const id = grainOrId.id || grainOrId;
 				const result = await this._apiSvc.deleteGrain(id);
 				if (result) {
+					this.tree.removeNode(node);
 					SiloEvtGrainDeleted.trigger(id);
-				}
-				if (parents.length) {
-					this.tree.selectNode(parents);
+					if (parents.length) {
+						this.tree.selectNode(parents);
+					}
 				}
 				return result;
 			}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
@@ -420,6 +420,9 @@ export class SiloNavi extends SiloTree {
 				const isInFiles = !isRoot && !isInSchema && (grain.id == MarBasDefaults.ID_FILES || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_FILES));
 				const isInTrash = !isRoot && (grain.id == MarBasDefaults.ID_TRASH_CONTENT || grain.id == MarBasDefaults.ID_TRASH_SCHEMA
 					|| await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_TRASH_CONTENT) || await this._apiSvc.isGrainDescendantOf(grain, MarBasDefaults.ID_TRASH_SCHEMA));
+				const isDeleteable = 0 == (0x1000 & grain.customFlag) && -1 == MarBasBuiltIns.indexOf(grainId) && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Delete);
+				const canAddChild = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
+
 				opCmds.forEach(async x => {
 					let enable = 'cmdNewContainer' == x || !isRoot;
 					try {
@@ -436,13 +439,13 @@ export class SiloNavi extends SiloTree {
 							enable = !isInTrash;
 						}
 						if (enable && (x.startsWith('cmdPaste') || x.startsWith('cmdNew'))) {
-							enable = await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.CreateSubelement);
+							enable = canAddChild;
 						}
 						if (enable && 'cmdRename' == x) {
 							enable = '__defaults__' != grain.name && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Write);
 						}
 						if (enable && ('cmdDelete' == x || 'cmdCut' == x)) {
-							enable = -1 == MarBasBuiltIns.indexOf(grainId) && await this._apiSvc.getGrainPermission(grain, MarBasGrainAccessFlag.Delete);
+							enable = isDeleteable;
 						}
 					} catch (e) {
 						console.warn(`Error initiazing menu item`, x, e);

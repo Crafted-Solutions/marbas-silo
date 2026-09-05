@@ -364,14 +364,14 @@ msgid ""
 "associated with it. Are you sure?"
 msgstr ""
 
-#: src\js\index.js:33
+#: src\js\index.js:36
 #, javascript-format
 msgid ""
 "This app requires access to session storage, configure your browser to "
 "accept cookies for ${ location.protocol }//${ location.host }"
 msgstr ""
 
-#: src\js\index.js:38
+#: src\js\index.js:41
 #, javascript-format
 msgid ""
 "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
