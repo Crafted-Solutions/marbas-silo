@@ -29,6 +29,9 @@ global.NoOp = () => { };
 
 if (!redirected) {
 
+	if (undefined == EnvConfig) {
+		global.EnvConfig = {};
+	}
 	if (!StorageUtils.checkAccess()) {
 		MsgBox.invokeErr(t`This app requires access to session storage, configure your browser to accept cookies for ${location.protocol}//${location.host}`);
 	}

@@ -9,6 +9,6 @@ module.exports = function () {
 	}
 	return new Handlebars.SafeString(`
 <script type="text/javascript">
-	const EnvConfig = ${JSON.stringify(env)};
+	var EnvConfig = ${JSON.stringify(env)};
 </script>`);
 };

@@ -1108,10 +1108,16 @@ export class DataBrokerAPI {
 	}
 
 	#isRegisteredSubtype(typeDefId, baseTypeId) {
+		if (!typeDefId) {
+			return false;
+		}
 		return this.#subtypes[baseTypeId] ? this.#subtypes[baseTypeId][typeDefId] : undefined;
 	}
 
 	#registerSubtype(typeDefId, baseTypeId, isSubtype = true) {
+		if (!typeDefId) {
+			return;
+		}
 		if (!this.#subtypes[baseTypeId]) {
 			this.#subtypes[baseTypeId] = {};
 		}
@@ -1225,10 +1231,18 @@ export class DataBrokerAPI {
 		const result = { success: false };
 		if (!res.statusText && res.body) {
 			return new Promise(resolve => {
-				res.json().then(json => {
-					result.error = DataBrokerAPI.makeFetchErr(res, json.detail || json.title);
+				res.text().then(text => {
+					let msg = text;
+					try {
+						const json = JSON.parse(text);
+						msg = json.detail || json.title;
+					} catch { }
+					result.error = DataBrokerAPI.makeFetchErr(res, msg);
 					resolve(result);
-				}).catch(NoOp);
+				}).catch(err => {
+					console.error(err);
+					resolve(result);
+				});
 			});
 		}
 		result.error = DataBrokerAPI.makeFetchErr(res);

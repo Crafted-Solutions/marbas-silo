@@ -523,7 +523,7 @@ export class GrainEditor {
 					continue;
 				}
 				if (sub.schema.readonly) {
-					if ('object' == sub.schema.type) {
+					if ('object' == sub.schema.type || 'array' == sub.schema.type) {
 						// WA for JE bug ignoring readonly on objects
 						sub.disable();
 					}
@@ -800,7 +800,7 @@ export class GrainEditor {
 		if (EditorSchemaConfig[this.grain._tier]) {
 			result = merge({}, result, EditorSchemaConfig[this.grain._tier]);
 			if (MarBasGrainTier.ITypeDef == this.grain._tier && MarBasRestrictTypeDefs.includes(grain.id)) {
-				delete result.definitions.typeDef.properties.mixInIds;
+				result.definitions.typeDef.properties.mixInIds.readonly = true;
 			}
 		}
 		result = await this._extendSchemaByTraits(customProps, result);
