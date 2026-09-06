@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 0,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "API-Token",
+      "traits": null
+    },
+    "en": {
+      "label": "API Token",
+      "traits": null
+    }
+  },
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/APIToken",
+  "cTime": "2026-08-29T15:50:15.0000000Z",
+  "mTime": "2026-08-29T15:51:39.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "700",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "06a0b1d7-8838-4fde-b8bb-d84fbe14825a",
+  "name": "APIToken",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

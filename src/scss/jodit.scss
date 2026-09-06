@@ -1,0 +1,12 @@
+ @import "~jodit/es2015/jodit.css";
+[data-bs-theme="dark"] .jodit_theme_default {
+	--jd-color-background-default: black;
+	--jd-dark-background-color: black;
+	--jd-color-background-light-gray: var(--bs-body-bg);
+	--jd-color-panel: var(--bs-body-bg);
+	--jd-color-border: var(--bs-border-color);
+	--jd-color-icon: var(--bs-secondary-color);
+	--jd-color-text-icons: var(--bs-secondary-color);
+	--jd-color-button-background-hover: var(--bs-gray);
+	--jd-color-white: var(--bs-body-bg);
+ }

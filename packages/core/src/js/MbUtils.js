@@ -1,7 +1,10 @@
 export const MbUtils = {
 	string2BitField: function (namedBitsStr, enumObj, defaultValue = 0, maxValueName = null) {
+		if (!isNaN(namedBitsStr)) {
+			return Number(namedBitsStr);
+		}
 		let result = defaultValue;
-		const items = namedBitsStr.split(/\s*,\s*/);
+		const items = String(namedBitsStr).split(/\s*,\s*/);
 		items.some(name => {
 			if (maxValueName == name) {
 				result = enumObj[name];

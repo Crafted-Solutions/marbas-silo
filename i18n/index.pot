@@ -3,12 +3,80 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\SiloTree.js:232
+#: src\js\TranslationModule.js:35
+msgid "Source Language"
+msgstr ""
+
+#: src\js\TranslationModule.js:49
+msgid "Target Language"
+msgstr ""
+
+#: src\js\TranslationModule.js:55
+msgid "Please Select"
+msgstr ""
+
+#: src\js\TranslationModule.js:66
+msgid "Source Text"
+msgstr ""
+
+#: src\js\TranslationModule.js:74
+msgid "Translated Text"
+msgstr ""
+
+#: src\js\TranslationModule.js:92
+msgid "Translate Field"
+msgstr ""
+
+#: src\js\TranslationModule.js:93
+msgid ""
+"Data from this dialog may be tramsmitted to a third-party translation "
+"service, use it with caution, do not enter sensible or private information "
+"if you do not trust the provider fully."
+msgstr ""
+
+#: src\js\TranslationModule.js:94
+msgid ""
+"The translation service doesn't support rich text, formatting may be lost "
+"during translation."
+msgstr ""
+
+#: src\js\TranslationModule.js:106
+#, javascript-format
+msgid "Translate \"${ title }\""
+msgstr ""
+
+#: src\js\TranslationModule.js:173
+msgid "Target language must be distinct from source"
+msgstr ""
+
+#: src\conf\vendor.i18n.js:71
+#: src\js\TranslationModule.js:179
+msgid "Value required"
+msgstr ""
+
+#: src\js\TranslationModule.js:215
+#, javascript-format
+msgid "Tranlate With ${ url.host }"
+msgstr ""
+
+#: src\js\TranslationModule.js:258
+msgid "Requesting translation"
+msgstr ""
+
+#: src\js\TranslationModule.js:285
+msgid "Translation service returned error"
+msgstr ""
+
+#: src\js\TranslationModule.js:423
+msgid "Applying translation"
+msgstr ""
+
+#: src\js\SiloTree.js:238
 #, javascript-format
 msgid "Failed to reload ${ grain.parentId } due to: ${ reason }"
 msgstr ""
 
-#: src\js\SiloTree.js:259
+#: src\js\SiloTree.js:265
 msgid "Loading grains"
 msgstr ""
 
@@ -148,107 +216,107 @@ msgstr ""
 msgid "All recursively"
 msgstr ""
 
-#: src\js\Packager.js:205
+#: src\js\Packager.js:206
 msgid "Import Package"
 msgstr ""
 
-#: src\js\Packager.js:206
+#: src\js\Packager.js:207
 msgid "Package"
 msgstr ""
 
-#: src\js\Packager.js:207
+#: src\js\Packager.js:208
 msgid "Please provide a package"
 msgstr ""
 
-#: src\js\Packager.js:208
+#: src\js\Packager.js:209
 msgid "Duplicate Grains Handling"
 msgstr ""
 
-#: src\js\Packager.js:210
+#: src\js\Packager.js:211
 msgid "Ignore"
 msgstr ""
 
-#: src\js\Packager.js:211
+#: src\js\Packager.js:212
 msgid "Merge (skip if newer)"
 msgstr ""
 
-#: src\js\Packager.js:212
+#: src\js\Packager.js:213
 msgid "Merge"
 msgstr ""
 
-#: src\js\Packager.js:213
+#: src\js\Packager.js:214
 msgid "Overwrite (skip if newer)"
 msgstr ""
 
-#: src\js\Packager.js:214
+#: src\js\Packager.js:215
 msgid "Overwrite"
 msgstr ""
 
-#: src\js\Packager.js:215
+#: src\js\Packager.js:216
 msgid "Overwrite recursively"
 msgstr ""
 
-#: src\js\Packager.js:217
+#: src\js\Packager.js:218
 msgid "Missing Dependencies Handling"
 msgstr ""
 
-#: src\js\Packager.js:219
+#: src\js\Packager.js:220
 msgid "Warn and continue"
 msgstr ""
 
-#: src\js\Packager.js:220
+#: src\js\Packager.js:221
 msgid "Create placeholder (dummy) grain"
 msgstr ""
 
-#: src\js\Packager.js:221
+#: src\js\Packager.js:222
 msgid "Abort operation"
 msgstr ""
 
-#: src\js\Packager.js:323
+#: src\js\Packager.js:324
 msgid "Caching"
 msgstr ""
 
-#: src\js\Packager.js:328
+#: src\js\Packager.js:329
 #, javascript-format
 msgid "Processing grain \"${ name }\" (${ id })"
 msgstr ""
 
-#: src\js\Packager.js:330
+#: src\js\Packager.js:331
 msgid "Processing"
 msgstr ""
 
-#: src\js\Packager.js:273
+#: src\js\Packager.js:274
 msgid "Exporting package"
 msgstr ""
 
-#: src\js\Packager.js:280
+#: src\js\Packager.js:281
 msgid "Importing package"
 msgstr ""
 
-#: src\js\Packager.js:283
+#: src\js\Packager.js:284
 msgid "Pending"
 msgstr ""
 
-#: src\js\Packager.js:290
+#: src\js\Packager.js:291
 msgid "Cancelled"
 msgstr ""
 
-#: src\js\Packager.js:304
+#: src\js\Packager.js:305
 #, javascript-format
 msgid ""
 "Import results: ${ importResult.importedCount } grains imported, ${ "
 "importResult.ignoredCount } grains skipped"
 msgstr ""
 
-#: src\js\Packager.js:306
+#: src\js\Packager.js:307
 msgid " (completed with warnings)"
 msgstr ""
 
-#: src\js\Packager.js:308
+#: src\js\Packager.js:309
 msgid " (completed with errors)"
 msgstr ""
 
-#: src\js\Packager.js:311
+#: src\js\Packager.js:312
 msgid "Package Import"
 msgstr ""
 
@@ -296,41 +364,51 @@ msgid ""
 "associated with it. Are you sure?"
 msgstr ""
 
-#: src\js\index.js:27
+#: src\js\index.js:36
 #, javascript-format
 msgid ""
 "This app requires access to session storage, configure your browser to "
 "accept cookies for ${ location.protocol }//${ location.host }"
 msgstr ""
 
-#: src\js\index.js:32
+#: src\js\index.js:41
 #, javascript-format
 msgid ""
 "Unexpected error occured in task \"${ evt.detail.task.name }\": ${ "
 "evt.detail.payload }"
 msgstr ""
 
-#: src\js\GrainEditor.js:58
+#: src\js\GrainEditor.js:106
 msgid "Grain was modified, close anyway?"
 msgstr ""
 
-#: src\js\GrainEditor.js:241
+#: src\js\GrainEditor.js:270
 msgid " (Default Value)"
 msgstr ""
 
-#: src\js\GrainEditor.js:288
+#: src\js\GrainEditor.js:322
 msgid "Grain was modified, save?"
 msgstr ""
 
-#: src\js\GrainEditor.js:366
+#: src\js\GrainEditor.js:345
+#, javascript-format
+msgid "Saving grain ${ _this5.grain.label }"
+msgstr ""
+
+#: src\js\GrainEditor.js:409
+#.  __defaults__
+msgid "There are some input errors, save anyway?"
+msgstr ""
+
+#: src\js\GrainEditor.js:413
 msgid "Please correct input errors first"
 msgstr ""
 
-#: src\js\GrainEditor.js:532
+#: src\js\GrainEditor.js:584
 msgid "No file selected"
 msgstr ""
 
-#: src\js\GrainEditor.js:701
+#: src\js\GrainEditor.js:753
 msgid "Field Info"
 msgstr ""
 
@@ -465,25 +543,39 @@ msgstr ""
 msgid "Open (new window)"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:122
+#: src\js\cmn\GrainSecurityDialog.js:51
+#: src\js\cmn\_NewDialog.js:41
+msgid "Loading..."
+msgstr ""
+
+#: src\js\cmn\_NewDialog.js:50
+#, javascript-format
+msgid "under ${ _this._parentGrain.path }"
+msgstr ""
+
+#: src\js\cmn\_Dialog.js:126
 msgid "Close"
 msgstr ""
 
-#: src\js\cmn\_Dialog.js:123
+#: src\js\cmn\_Dialog.js:127
 msgid "Ok"
 msgstr ""
 
 #: src\conf\vendor.i18n.js:14
-#: src\js\cmn\_Dialog.js:124
+#: src\js\cmn\_Dialog.js:128
 msgid "Cancel"
+msgstr ""
+
+#: src\js\cmn\InputDialog.js:20
+msgid "Input Request"
+msgstr ""
+
+#: src\js\cmn\InputDialog.js:21
+msgid "Input"
 msgstr ""
 
 #: src\js\cmn\GrainSecurityDialog.js:27
 msgid "Reading grain security"
-msgstr ""
-
-#: src\js\cmn\GrainSecurityDialog.js:51
-msgid "Loading..."
 msgstr ""
 
 #: src\js\cmn\GrainSecurityDialog.js:266
@@ -502,15 +594,15 @@ msgstr ""
 msgid "Path relative to grain instance"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:125
+#: src\js\cmn\GrainPropConstraints.js:128
 msgid "Configure grain picker by relative path"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:144
+#: src\js\cmn\GrainPropConstraints.js:150
 msgid "Format: rich text"
 msgstr ""
 
-#: src\js\cmn\GrainPropConstraints.js:163
+#: src\js\cmn\GrainPropConstraints.js:169
 msgid "Format: date only"
 msgstr ""
 
@@ -634,11 +726,6 @@ msgstr ""
 #: src\conf\vendor.i18n.js:68
 #.  vendor source JSONEditor.translate
 msgid "Property must be set"
-msgstr ""
-
-#: src\conf\vendor.i18n.js:71
-#.  vendor source JSONEditor.translate
-msgid "Value required"
 msgstr ""
 
 #: src\conf\editor.conf.js:20

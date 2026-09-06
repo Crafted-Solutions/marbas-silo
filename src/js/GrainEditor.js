@@ -22,6 +22,8 @@ import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
 import { SiloEvtGrainDeleted } from "./cmn/SiloEvtGrainDeleted";
 import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
 import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
+import { TranslationLayer } from "./TranslationLayer.js";
+import { Task } from "./cmn/Task.js";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
@@ -29,6 +31,52 @@ const GuidPattern = /[0-9A-F]{8}-[0-9A-F]{4}-[1-5][0-9A-F]{3}-[89AB][0-9A-F]{3}-
 const TraitPattern = new RegExp(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}_trait_([^\\.]+)\\.(${GuidPattern.source})`, 'i');
 
 EditorSchemaConfig.reset();
+
+function patchJedJoditEditor(jedEditors) {
+	// BEGIN Jodit bug patch https://github.com/json-editor/json-editor/issues/1691
+	// TODO remove when 1691 fixed
+	jedEditors.jodit.prototype.enable = function () {
+		jedEditors.string.prototype.enable.apply(this, arguments);
+		this.input.readOnly = false;
+		if (!this.always_disabled && this.jodit_instance) {
+			this.jodit_instance.setDisabled(false);
+			this.jodit_instance.setReadOnly(false);
+		}
+	};
+	jedEditors.jodit.prototype.disable = function () {
+		if (this.jodit_instance) {
+			this.jodit_instance.setDisabled(true);
+			this.jodit_instance.setReadOnly(true);
+		}
+		this.input.readOnly = true;
+		jedEditors.string.prototype.disable.apply(this, arguments);
+	};
+	// END Jodit bug patch
+
+	// Jodit doesn't understand 'undefined' values
+	jedEditors.jodit.prototype.setValueToInputField = function (value) {
+		jedEditors.string.prototype.setValueToInputField.apply(this, arguments);
+		if (this.jodit_instance) {
+			this.jodit_instance.setEditorValue(value || '');
+		}
+	};
+}
+
+function patchJedNumberEditor(jedEditors) {
+	jedEditors.number.prototype.isDefaultRequired = function () {
+		return !!this.jsoneditor.options.use_default_values;
+	};
+	jedEditors.number.prototype.getValue = function () {
+		if (!this.dependenciesFulfilled) {
+			return undefined;
+		}
+		if (this.shouldBeUnset() && !(this.input && this.input.value)) {
+			return undefined;
+		}
+		const result = isNaN(this.value) ? this.value : parseFloat(this.value);
+		return isNaN(result) ? this.value : result;
+	};
+}
 
 const BASE_TITLE = document.title;
 
@@ -130,33 +178,9 @@ export class GrainEditor {
 		FieldEditorPropConstraints.install();
 		Bootstrap5RevTheme.install();
 
-		// BEGIN Jodit bug patch https://github.com/json-editor/json-editor/issues/1691
-		// TODO remove when 1691 fixed
-		jedDefaults.editors.jodit.prototype.enable = function () {
-			jedDefaults.editors.string.prototype.enable.apply(this, arguments);
-			this.input.readOnly = false;
-			if (!this.always_disabled && this.jodit_instance) {
-				this.jodit_instance.setDisabled(false);
-				this.jodit_instance.setReadOnly(false);
-			}
-		};
-		jedDefaults.editors.jodit.prototype.disable = function () {
-			if (this.jodit_instance) {
-				this.jodit_instance.setDisabled(true);
-				this.jodit_instance.setReadOnly(true);
-			}
-			this.input.readOnly = true;
-			jedDefaults.editors.string.prototype.disable.apply(this, arguments);
-		};
-		// END Jodit bug patch
-
-		// Jodit doesn't understand 'undefined' values
-		jedDefaults.editors.jodit.prototype.setValueToInputField = function (value) {
-			jedDefaults.editors.string.prototype.setValueToInputField.apply(this, arguments);
-			if (this.jodit_instance) {
-				this.jodit_instance.setEditorValue(value || '');
-			}
-		};
+		const jedEditors = jedDefaults.editors;
+		patchJedJoditEditor(jedEditors);
+		patchJedNumberEditor(jedEditors);
 
 		await ExtensionLoader.installExtension('GrainEditorStatic', {
 			version: _PACKAGE_VERSION_,
@@ -184,6 +208,11 @@ export class GrainEditor {
 		this.grain = grainBase;
 
 		if (grainBase) {
+			if (this._translationLayer) {
+				this._translationLayer.detachAll();
+			} else if (!this.isPopup) {
+				this._translationLayer = new TranslationLayer(this);
+			}
 			this.grain = await this._apiSvc.resolveGrainTier(grainBase);
 			const prevIcon = this.grain.icon;
 			if (prevIcon != GrainXAttrs.getGrainIcon(this.grain)) {
@@ -202,7 +231,7 @@ export class GrainEditor {
 					this.grain[key] = undefined;
 				}
 			}
-			const schema = this._getSchema(this.grain, this.customProps);
+			const schema = await this._getSchema(this.grain, this.customProps);
 			const startval = {
 				[EditorSchemaConfig.NAME_PRIMARY_GROUP]: {
 					_sys: {
@@ -251,6 +280,9 @@ export class GrainEditor {
 			this.editor._grainEditor = this;
 			this.editor.initializing = true;
 			this.editor.on('ready', this.#readyCb);
+			if (this._translationLayer) {
+				this._translationLayer.attach(`${FieldLabel}`);
+			}
 		}
 	}
 
@@ -271,6 +303,8 @@ export class GrainEditor {
 		delete this.grain;
 		delete this.customProps;
 		this.#dateFields = [`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.cTime`, `${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`];
+
+		document.title = window.EnvConfig ? window.EnvConfig.title : BASE_TITLE;
 		return result;
 	}
 
@@ -308,41 +342,49 @@ export class GrainEditor {
 			console.warn("editor.errors", errors);
 			return this.grain;
 		}
-		try {
-			if (this.customProps && this.customProps.changes) {
-				for (const k in this.customProps.changes) {
-					const sub = this.editor.getEditor(k);
-					if (sub && sub.is_dirty) {
-						const m = TraitPattern.exec(k);
-						if (m && 2 < m.length) {
-							await this._apiSvc.storeTraitValues(this.grain, {
-								id: m[2],
-								valueType: sub.schema._origType,
-								localizable: sub.schema._localizable
-							}, TraitUtils.getStorableValues(sub.isActive() ? sub.getValue() : undefined, sub.schema._origType));
+		await Task.nowAsync(t`Saving grain ${this.grain.label}`, async (done, error) => {
+			try {
+				if (this.customProps && this.customProps.changes) {
+					for (const k in this.customProps.changes) {
+						const sub = this.editor.getEditor(k);
+						if (sub && sub.is_dirty) {
+							const m = TraitPattern.exec(k);
+							if (m && 2 < m.length) {
+								await this._apiSvc.storeTraitValues(this.grain, {
+									id: m[2],
+									valueType: sub.schema._origType,
+									localizable: sub.schema._localizable
+								}, TraitUtils.getStorableValues(sub.isActive() ? sub.getValue() : undefined, sub.schema._origType));
+							}
+							sub.is_dirty = false;
 						}
-						sub.is_dirty = false;
+						delete this.customProps.changes[k];
 					}
-					delete this.customProps.changes[k];
+					if (this._translationLayer) {
+						const conf = await this._translationLayer.getConfig();
+						if (conf && conf.grain && this.grain.id == conf.grain.id) {
+							conf.reload();
+						}
+					}
 				}
-			}
-			const storeGrain = this.#collectChanges();
-			let setClean = !storeGrain;
-			if (storeGrain && (await this._apiSvc.storeGrain(this.grain))) {
-				const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
-				if (sub) {
-					sub.setValueToInputField((new Date()).toLocaleString());
+				const storeGrain = this.#collectChanges();
+				let setClean = !storeGrain;
+				if (storeGrain && (await this._apiSvc.storeGrain(this.grain))) {
+					const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_SECONDARY_GROUP}stats.mTime`);
+					if (sub) {
+						sub.setValueToInputField((new Date()).toLocaleString());
+					}
+					setClean = true;
 				}
-				setClean = true;
-			}
-			if (setClean) {
-				this._setDirty(false);
+				if (setClean) {
+					this._setDirty(false);
+				}
+				done();
+			} catch (e) {
+				error(e);
 			}
 
-		} catch (e) {
-			console.error(e);
-			MsgBox.invokeErr(e);
-		}
+		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START | Task.Flag.REPORT_STATUS);
 		return this.grain;
 	}
 
@@ -363,7 +405,13 @@ export class GrainEditor {
 		if (result.length) {
 			this.editor.showValidationErrors(result);
 			if (showMessage) {
-				await MsgBox.invokeErr(t`Please correct input errors first`);
+				if (this.grain.typeDefId == this.grain.parentId) { // __defaults__
+					if ('yes' == await MsgBox.invokeYesNo(t`There are some input errors, save anyway?`)) {
+						result.length = 0;
+					}
+				} else {
+					await MsgBox.invokeErr(t`Please correct input errors first`);
+				}
 			}
 			if (invalidPath) {
 				const tabId = this._getGroupByPath(invalidPath).closest('.tab-pane').id;
@@ -460,7 +508,7 @@ export class GrainEditor {
 
 	onEditorReady() {
 		try {
-			document.title = `${this.grain.label} - ${BASE_TITLE}`;
+			document.title = `${this.grain.label} - ${window.EnvConfig ? window.EnvConfig.title : BASE_TITLE}`;
 			this.#dateFields.forEach((key) => {
 				const sub = this.editor.getEditor(key);
 				if (sub && sub.getValue()) {
@@ -475,7 +523,7 @@ export class GrainEditor {
 					continue;
 				}
 				if (sub.schema.readonly) {
-					if ('object' == sub.schema.type) {
+					if ('object' == sub.schema.type || 'array' == sub.schema.type) {
 						// WA for JE bug ignoring readonly on objects
 						sub.disable();
 					}
@@ -501,6 +549,10 @@ export class GrainEditor {
 			this.#renderFieldComments();
 
 			this.#updateSessionLinks();
+
+			if (this._translationLayer) {
+				this._translationLayer.renderControls();
+			}
 
 		} catch (e) {
 			console.error(e);
@@ -743,22 +795,22 @@ export class GrainEditor {
 		});
 	}
 
-	_getSchema(grain, customProps) {
+	async _getSchema(grain, customProps) {
 		let result = EditorSchemaConfig[this._schemaID];
 		if (EditorSchemaConfig[this.grain._tier]) {
 			result = merge({}, result, EditorSchemaConfig[this.grain._tier]);
 			if (MarBasGrainTier.ITypeDef == this.grain._tier && MarBasRestrictTypeDefs.includes(grain.id)) {
-				delete result.definitions.typeDef.properties.mixInIds;
+				result.definitions.typeDef.properties.mixInIds.readonly = true;
 			}
 		}
-		result = this._extendSchemaByTraits(customProps, result);
+		result = await this._extendSchemaByTraits(customProps, result);
 		if (_DEVELOPMENT_) {
 			console.log('getSchema', result);
 		}
 		return result;
 	}
 
-	_extendSchemaByTraits(customProps, baseSchema) {
+	async _extendSchemaByTraits(customProps, baseSchema) {
 		if (!customProps || !customProps.def || !customProps.def.length) {
 			return baseSchema;
 		}
@@ -766,7 +818,7 @@ export class GrainEditor {
 
 		const sections = {};
 		let ord = 100;
-		customProps.def.forEach(prop => {
+		for (const prop of customProps.def) {
 			const secName = TraitUtils.getContainerName(prop);
 			const secKey = `_trait_${secName}`;
 			if (!sections[secKey]) {
@@ -850,7 +902,7 @@ export class GrainEditor {
 
 			const constrHandler = GrainPropConstraints.createHandler(prop.constraintParams, GrainXAttrs.getAttr(prop, 'propMod'));
 			if (constrHandler) {
-				constrHandler.tweakTargetSchema(prop, propSchema);
+				await constrHandler.tweakTargetSchema(prop, propSchema);
 			}
 
 			sections[secKey].properties[prop.id] = propSchema;
@@ -872,7 +924,10 @@ export class GrainEditor {
 					console.warn(reason);
 					disableProp();
 				});
-		});
+			if (this._translationLayer && prop.localizable && (MarBasTraitValueType.Text == prop.valueType || MarBasTraitValueType.Memo == prop.valueType)) {
+				this._translationLayer.attach(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}${secKey}.${prop.id}`);
+			}
+		}
 		// console.log('sections', sections);
 
 		const group = GrainEditor._getTraitSchemaGroup(result);
@@ -900,7 +955,7 @@ export class GrainEditor {
 					}
 					if (text) {
 						schema.properties[traitKey].title = text;
-						if (this.editor.ready) {
+						if (this.editor && this.editor.ready) {
 							const sub = this.editor.getEditor(`${EditorSchemaConfig.PATH_DEFAULT_GROUP}${traitKey}`);
 							if (sub) {
 								//sub.schema.title = label;

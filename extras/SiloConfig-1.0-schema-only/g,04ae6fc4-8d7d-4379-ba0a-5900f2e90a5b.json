@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Boolean"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Dienst ist vertauensw\u00FCrdig",
+      "traits": null
+    },
+    "en": {
+      "label": "Provider Is Trusted",
+      "traits": null
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/ProviderIsTrusted",
+  "cTime": "2026-08-28T15:17:49.0000000Z",
+  "mTime": "2026-08-29T16:48:25.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "550",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "04ae6fc4-8d7d-4379-ba0a-5900f2e90a5b",
+  "name": "ProviderIsTrusted",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

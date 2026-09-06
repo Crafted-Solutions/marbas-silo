@@ -4,6 +4,7 @@
 Schema and content management client for [MarBas Databroker](../../../marbas-databroker).
 
 ![Main Workspace](doc/screenshots/workspace.png)
+![Main Workspace (Dark Mode)](doc/screenshots/workspace-dark.png)
 
 ## Building
 After you cloned the repository execute in the project directory

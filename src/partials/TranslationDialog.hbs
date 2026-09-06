@@ -1,0 +1,9 @@
+{{#> partials/_DialogModal dlgScope='translate-dlg' dlgClasses='modal-xl fade'}}
+{{> partials/_DialogModalHeaderDyn dlgScope=dlgScope}}
+<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+	<div id="{{dlgScope}}-alert-privacy" class="alert alert-warning d-none" role="alert">{{i18n.alertPrivacy}}</div>
+	<div id="{{dlgScope}}-editor"></div>
+	<div id="{{dlgScope}}-alert-format" class="alert alert-secondary d-none" role="alert">{{i18n.alertFormat}}</div>
+</form>
+{{> partials/_DialogFooterDyn dlgScope=dlgScope}}
+{{/partials/_DialogModal}}

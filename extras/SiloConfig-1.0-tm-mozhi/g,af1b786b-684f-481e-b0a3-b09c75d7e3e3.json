@@ -1,0 +1,32 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": [
+    {
+      "$type": 6,
+      "value": "2a7d8d54-5699-478b-8b60-dd5c431363e8",
+      "id": "cf930fe2-a0ce-44f4-b830-9a372c007297",
+      "ord": 0,
+      "propDefId": "43dcabce-154a-4b0c-94f0-704642d94506",
+      "revision": 1
+    }
+  ],
+  "localized": {
+    "en": {
+      "label": "MarBas Silo",
+      "traits": null
+    }
+  },
+  "parentId": "00000000-0000-1000-a000-000000000014",
+  "path": "marbas/Schema/$Config$/SiloConfig",
+  "cTime": "2026-08-29T17:25:29.0000000Z",
+  "mTime": "2026-09-01T14:39:33.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "af1b786b-684f-481e-b0a3-b09c75d7e3e3",
+  "name": "SiloConfig",
+  "typeDefId": "0ef03f9a-f426-48e8-9d2e-b44c78a13b8b"
+}

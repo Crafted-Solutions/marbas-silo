@@ -1,17 +1,17 @@
 {{#> partials/_DialogModal dlgScope='login-dlg' dlgStatic='1' dlgCenter='1'}}
 {{> partials/_DialogModalHeaderDyn dlgScope=dlgScope}}
-<form class="modal-body needs-validation" action="#" onsubmit="return false;" novalidate>
+<form class="modal-body needs-validation" name="{{dlgScope}}-form" action="#" onsubmit="return false;" novalidate>
 	<div class="mb-3">
 		<div>
 			<label class="form-label text-end" for="{{dlgScope}}-txt-user">{{i18n.lblUser}}</label>
-			<input id="{{dlgScope}}-txt-user" type="text" class="form-control" aria-describedby="{{dlgScope}}-txt-user-fb" placeholder="{{i18n.phUser}}" required>
+			<input id="{{dlgScope}}-txt-user" name="{{dlgScope}}-user" type="text" class="form-control" aria-describedby="{{dlgScope}}-txt-user-fb" placeholder="{{i18n.phUser}}" required>
 			<div id="{{dlgScope}}-txt-user-fb" class="invalid-feedback">
 				{{i18n.fbUser}}
 			</div>
 		</div>
 		<div class="mt-2">
 			<label class="form-label text-end" for="{{dlgScope}}-txt-pwd">{{i18n.lblPassword}}</label>
-			<input id="{{dlgScope}}-txt-pwd" type="password" class="form-control" aria-describedby="{{dlgScope}}-txt-pwd-fb" placeholder="{{i18n.phPassword}}" required>
+			<input id="{{dlgScope}}-txt-pwd" name="{{dlgScope}}-pwd" type="password" class="form-control" aria-describedby="{{dlgScope}}-txt-pwd-fb" placeholder="{{i18n.phPassword}}" required>
 			<div id="{{dlgScope}}-txt-pwd-fb" class="invalid-feedback">
 				{{i18n.fbPassword}}
 			</div>

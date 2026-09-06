@@ -52,7 +52,7 @@ class ExportDialog extends _Dialog {
 		this.#apiSvc = apiSvc;
 
 		MbDomUtils.fakeReadonlyElements(this._element);
-		this._element.querySelector(`#${this._scope}-btn-add`).addEventListener('click', () => {
+		this._getScoped('btn-add').addEventListener('click', () => {
 			this.#addAnchor();
 		});
 
@@ -65,15 +65,16 @@ class ExportDialog extends _Dialog {
 		for (let i = items.length - 1; i > 0; i--) {
 			items.item(i).remove();
 		}
+		this.#setAnchor(items.item(0), null);
 		super.show();
 	}
 
 	get namePrefix() {
-		return this._element.querySelector(`#${this._scope}-txt-name`).value;
+		return this._getScoped('txt-name').value;
 	}
 
 	get anchors() {
-		return this._element.querySelectorAll(`.${this._scope}-item`);
+		return this._getScoped('item', '.', true);
 	}
 
 	get anchorCount() {
@@ -174,7 +175,7 @@ class ExportDialog extends _Dialog {
 				item.nextElementSibling.after(item);
 			}
 		}
-		item.scrollIntoView();
+		MbDomUtils.scrollIntoView(item);
 	}
 
 	#addAnchor() {
@@ -191,10 +192,10 @@ class ExportDialog extends _Dialog {
 				elm.setAttribute(attr, elm.getAttribute(attr).replace(sfxPh, sfx));
 			});
 		}
-		this._element.querySelector(`#${this._scope}-items`).appendChild(item);
+		this._getScoped('items').appendChild(item);
 		this.#initGrainPicker(item);
 		this.#initAnchorActions(item);
-		item.scrollIntoView();
+		MbDomUtils.scrollIntoView(item);
 	}
 }
 
@@ -248,7 +249,7 @@ export class Packager {
 	cmdPackageIn() {
 		if (!this.#importDialog) {
 			this.#importDialog = new ImportDialog();
-			this.#importDialog.addEventListener('hidden.bs.modal', async () => {
+			this.#importDialog.addEventListener('mbdialog:close', async () => {
 				if (this.#importDialog.accepted) {
 					await this.#import(this.#importDialog.formData);
 				}
@@ -260,7 +261,7 @@ export class Packager {
 	cmdPackageOut() {
 		if (!this.#exportDialog) {
 			this.#exportDialog = new ExportDialog(this.#apiSvc);
-			this.#exportDialog.addEventListener('hidden.bs.modal', async () => {
+			this.#exportDialog.addEventListener('mbdialog:close', async () => {
 				if (this.#exportDialog.accepted) {
 					await this.#export(this.#exportDialog.packageModel);
 				}

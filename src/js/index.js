@@ -1,3 +1,8 @@
+/*!
+ * MarBas Silo (https://github.com/Crafted-Solutions/marbas-silo)
+ * Released under MIT see LICENSE in the project root for license information.
+ * Copyright (c) 2025-2026 Crafted Solutionss. All rights reserved.
+ */
 import "../scss/index.scss";
 import { EVENT_NODE_EXPANDED, EVENT_NODE_SELECTED } from "@jbtronics/bs-treeview";
 import { t } from "ttag";
@@ -18,11 +23,15 @@ import { UILocale } from "./UILocale";
 import { MbDomUtils } from "./cmn/MbDomUtils";
 import { SiloTools } from "./SiloTools";
 import { SiloEvtNavigate } from "./cmn/SiloEvtNavigate";
+import { CustomConfig } from "./cmn/CustomConfig";
 
 global.NoOp = () => { };
 
 if (!redirected) {
 
+	if (undefined == EnvConfig) {
+		global.EnvConfig = {};
+	}
 	if (!StorageUtils.checkAccess()) {
 		MsgBox.invokeErr(t`This app requires access to session storage, configure your browser to accept cookies for ${location.protocol}//${location.host}`);
 	}
@@ -43,7 +52,7 @@ if (!redirected) {
 			const grainId = (new URLSearchParams(window.location.search)).get('grain');
 			if (grainId) {
 				MbDomUtils.cleanBrowserLocation(['grain']);
-				SiloEvtNavigate.trigger(grainId);
+				SiloEvtNavigate.trigger(grainId, true);
 			}
 		}
 	};
@@ -56,6 +65,7 @@ if (!redirected) {
 				processParameters();
 			}, { once: true });
 			naviMgr.tree.expandAll();
+			CustomConfig.register(CustomConfig.DEFAULT_NAME, apiSvc);
 			done();
 		}, Task.Flag.DEFAULT | Task.Flag.REPORT_START);
 	};

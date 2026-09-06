@@ -1,0 +1,36 @@
+{
+  "tier": {
+    "$type": "IPropDef",
+    "valueConstraintId": null,
+    "constraintParams": null,
+    "cardinalityMin": 1,
+    "cardinalityMax": 1,
+    "versionable": true,
+    "localizable": false,
+    "valueType": "Text"
+  },
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "de": {
+      "label": "Ausgangstext",
+      "traits": null
+    },
+    "en": {
+      "label": "Source Text",
+      "traits": null
+    }
+  },
+  "parentId": "af49df28-a0f7-49ef-bfe1-c3d770ca0c9a",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/RequestParameters/SourceText",
+  "cTime": "2026-08-26T15:55:44.0000000Z",
+  "mTime": "2026-08-26T15:57:23.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "300",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "b8d92216-c5e7-457e-b7b9-fa2b5ca66738",
+  "name": "SourceText",
+  "typeDefId": "00000000-0000-1000-a000-000000000009"
+}

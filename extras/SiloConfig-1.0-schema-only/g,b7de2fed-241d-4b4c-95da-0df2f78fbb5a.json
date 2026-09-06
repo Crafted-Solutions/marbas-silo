@@ -1,0 +1,27 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": [
+    {
+      "$type": 0,
+      "value": "1.0",
+      "id": "2df69f61-dc82-4210-ab97-e9773667a6a8",
+      "ord": 0,
+      "propDefId": "af0d73d9-430d-4ff3-bfcc-9cbb3b33d611",
+      "revision": 1
+    }
+  ],
+  "localized": {},
+  "parentId": "0ef03f9a-f426-48e8-9d2e-b44c78a13b8b",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/SiloConfig/__defaults__",
+  "cTime": "2026-08-29T17:23:00.0000000Z",
+  "mTime": "2026-08-29T17:23:37.0000000Z",
+  "owner": "system@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "b7de2fed-241d-4b4c-95da-0df2f78fbb5a",
+  "name": "__defaults__",
+  "typeDefId": "0ef03f9a-f426-48e8-9d2e-b44c78a13b8b"
+}

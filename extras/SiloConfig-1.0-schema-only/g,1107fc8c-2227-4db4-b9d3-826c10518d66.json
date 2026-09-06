@@ -1,0 +1,81 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": [
+    {
+      "$type": 0,
+      "value": "POST",
+      "id": "3c59d2ed-1eb4-460c-9ebf-88b6928f2d3a",
+      "ord": 0,
+      "propDefId": "421fa44d-573c-4e96-8cec-99535d23d3a1",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "to",
+      "id": "094ceb28-0a37-4e16-bb53-ceafac92ca33",
+      "ord": 0,
+      "propDefId": "7212fb7f-7157-4997-a54c-2c094a1287d1",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "content",
+      "id": "90a43d90-eb9e-4e94-8b1c-233fb67410da",
+      "ord": 0,
+      "propDefId": "b8d92216-c5e7-457e-b7b9-fa2b5ca66738",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "translated-text",
+      "id": "4f9ed6d2-7e3e-450b-9db5-28609d21f91a",
+      "ord": 0,
+      "propDefId": "bac4454a-f67c-44fd-8c41-f919681fbb5b",
+      "revision": 1
+    },
+    {
+      "$type": 3,
+      "value": true,
+      "id": "6b420888-cb6a-4325-a556-c05b16242045",
+      "ord": 0,
+      "propDefId": "c08f2b61-1349-45ca-b2d0-10a311fe6a55",
+      "revision": 1
+    },
+    {
+      "$type": 0,
+      "value": "from",
+      "id": "0c80b4f2-fb60-431c-89c3-3b6558607e2f",
+      "ord": 0,
+      "propDefId": "cc675764-b5d9-4713-9c96-2f008bf8672a",
+      "revision": 1
+    }
+  ],
+  "localized": {
+    "en": {
+      "label": null,
+      "traits": [
+        {
+          "$type": 6,
+          "value": "f7f61c2f-da17-45ff-83ce-18fc5d31b51f",
+          "id": "d31fef65-f315-4518-98c0-78d55058ca16",
+          "ord": 0,
+          "propDefId": "0f413b5e-97d0-496f-a840-0b7a7fccdc47",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "parentId": "fa3c8031-1c04-4634-8f31-c0049361750f",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule/__defaults__",
+  "cTime": "2026-08-29T17:00:41.0000000Z",
+  "mTime": "2026-08-29T17:02:03.0000000Z",
+  "owner": "system@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "1107fc8c-2227-4db4-b9d3-826c10518d66",
+  "name": "__defaults__",
+  "typeDefId": "fa3c8031-1c04-4634-8f31-c0049361750f"
+}

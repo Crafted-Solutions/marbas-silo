@@ -1,0 +1,18 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {},
+  "parentId": "24180840-d935-4877-bdbc-a8d75885891e",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/SiloTextFormats",
+  "cTime": "2026-08-26T15:39:12.0000000Z",
+  "mTime": "2026-08-26T15:42:45.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": null,
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "82558531-5778-4bda-9eca-7292092e5d14",
+  "name": "SiloTextFormats",
+  "typeDefId": "00000000-0000-1000-a000-000000000005"
+}

@@ -11,6 +11,7 @@ import { BSTreeView, BSTreeViewNode, BS5Theme, EVENT_INITIALIZED, EVENT_NODE_EXP
 import { GrainXAttrs } from "./cmn/GrainXAttrs";
 import { Task } from "./cmn/Task";
 import { MarBasDefaults } from "@crafted.solutions/marbas-core";
+import { MbDomUtils } from "./cmn/MbDomUtils";
 
 export class SiloTree {
 	_element;
@@ -52,6 +53,7 @@ export class SiloTree {
 			showIcon: true,
 			showTags: true,
 			tagsClass: 'badge bg-secondary ms-1',
+			onhoverColor: 'var(--bs-list-group-action-active-bg)',
 			wrapNodeText: true,
 			showBorder: true,
 			// showCheckbox: true,
@@ -68,7 +70,7 @@ export class SiloTree {
 			this._initialized(true);
 		});
 		this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
-			evt.target.scrollIntoView(true);
+			MbDomUtils.scrollIntoView(evt.target);
 		});
 
 		for (const key in this._listeners) {
@@ -201,7 +203,7 @@ export class SiloTree {
 		const result = new Promise((resolve, reject) => {
 			this._element.addEventListener(EVENT_NODE_SELECTED, (evt) => {
 				this._afterNodeRendered(node, (node) => {
-					node._domElement.scrollIntoView();
+					MbDomUtils.scrollIntoView(node._domElement);
 				});
 			}, { once: true });
 			this._element.addEventListener(EVENT_NODE_EXPANDED, (evt) => {
@@ -219,7 +221,11 @@ export class SiloTree {
 
 			if (node) {
 				this.tree.revealNode(node);
-				node.setSelected(true);
+				if (node.state.selected) {
+					MbDomUtils.scrollIntoView(node._domElement);
+				} else {
+					node.setSelected(true);
+				}
 				resolve(node);
 			} else if (parent) {
 				this.reloadNode(grain.parentId, false)
@@ -274,7 +280,7 @@ export class SiloTree {
 				}
 			}
 			this._restoreFocus();
-			node._domElement.scrollIntoView(true);
+			MbDomUtils.scrollIntoView(node._domElement);
 		}, flags);
 	}
 

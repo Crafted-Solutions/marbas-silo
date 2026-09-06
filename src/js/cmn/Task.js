@@ -195,6 +195,7 @@ export class TaskLayer {
 	#element;
 	#pendingShow;
 	#pendingHide;
+	#showRequests = 0;
 	#defaultHandler;
 	#taskTpl;
 	#taskCnt;
@@ -377,10 +378,15 @@ export class TaskLayer {
 
 	#triggerShow() {
 		if (!this.#pendingShow) {
+			this.#showRequests++;
 			this.#cancelHide();
 			this.#pendingShow = setTimeout(() => {
-				this.canvas.show();
 				this.#pendingShow = undefined;
+				if (0 < this.#showRequests) {
+					this.canvas.show();
+				} else {
+					this.#cleanUpTasks();
+				}
 			}, 300);
 		}
 	}
@@ -395,6 +401,9 @@ export class TaskLayer {
 
 	#triggerHide() {
 		if (!this.#pendingHide) {
+			if (0 < this.#showRequests) {
+				this.#showRequests--;
+			}
 			this.#cancelShow();
 			this.#pendingHide = setTimeout(() => {
 				this.canvas.hide();

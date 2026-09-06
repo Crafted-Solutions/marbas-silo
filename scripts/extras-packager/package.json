@@ -1,0 +1,14 @@
+{
+	"private": true,
+	"name": "extras-packager",
+	"description": "Helper scripts for packaging extras",
+	"version": "0.0.1",
+	"type": "commonjs",
+	"scripts": {
+		"build": "exit 0",
+		"test": "exit 0"
+	},
+	"devDependencies": {
+		"archiver": "^8.0.0"
+	}
+}

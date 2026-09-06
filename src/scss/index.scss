@@ -116,6 +116,10 @@ $spacer: 1rem !default;
 	margin-bottom: 0 !important;
 }
 
+.h4.card-title:not(.je-object__title) {
+	font-size: 1.25rem;
+}
+
 .mb-grain-file {
 	margin-right: 0.25rem !important;
 	vertical-align: top;
@@ -123,6 +127,14 @@ $spacer: 1rem !default;
 .mb-grain-file img, .mb-grain-file video {
 	max-width: 100%;
 	max-height: 200px;
+}
+.mb-grain-file img {
+	background-color: rgba(100, 100, 100, .2);
+  	padding: 1ex;
+  	border-radius: 5px;	
+}
+[data-bs-theme="dark"] .mb-grain-file img {
+	background-color: rgba(100, 100, 100, .8);
 }
 
 .mb-session-link {

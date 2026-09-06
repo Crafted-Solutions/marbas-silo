@@ -1,0 +1,31 @@
+{
+	"tier": {
+		"$type": "ITypeDef",
+		"impl": null,
+		"mixInIds": []
+	},
+	"acl": [],
+	"traits": null,
+	"localized": {
+		"de": {
+			"label": "\u00DCbersetzungsmodul",
+			"traits": null
+		},
+		"en": {
+			"label": "Translation Module",
+			"traits": null
+		}
+	},
+	"parentId": "24180840-d935-4877-bdbc-a8d75885891e",
+	"path": "marbas/Schema/UserDefined/MarBasSilo/TranslationModule",
+	"cTime": "2026-08-29T16:39:24.0000000Z",
+	"mTime": "2026-08-29T17:00:41.0000000Z",
+	"owner": "dima@marbas",
+	"revision": 1,
+	"sortKey": "100",
+	"customFlag": 0,
+	"xAttrs": "\u0022silo\u0022:{\u0022icon\u0022:\u0022bi-globe2\u0022}",
+	"id": "fa3c8031-1c04-4634-8f31-c0049361750f",
+	"name": "TranslationModule",
+	"typeDefId": null
+}

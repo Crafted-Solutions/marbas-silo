@@ -63,6 +63,7 @@ module.exports = async (env) => {
 
 	const chunks = {
 		index: { import: './src/js/index.js', dependOn: 'shared' },
+		theme: './src/js/theme.js',
 		libs: './src/js/libs.js',
 		bs: './src/scss/bootstrap.scss',
 		shared: 'ttag'
@@ -92,7 +93,7 @@ module.exports = async (env) => {
 		...{
 			filename: 'index.html',
 			template: 'src/index.hbs',
-			chunks: ['bs', 'shared', 'index', 'libs']
+			chunks: ['bs', 'theme', 'shared', 'index', 'libs']
 		}
 	}];
 	if (locales.length) {
@@ -111,7 +112,7 @@ module.exports = async (env) => {
 				...{
 					filename: `index.${loc}.html`,
 					template: 'src/index.hbs',
-					chunks: ['bs', 'shared', 'index', 'libs']
+					chunks: ['bs', 'theme', 'shared', 'index', 'libs']
 				}
 			};
 			pageOptions.push(page);
@@ -125,7 +126,7 @@ module.exports = async (env) => {
 			...{
 				filename: 'login.html',
 				template: 'src/login.hbs',
-				chunks: ['bs', 'shared', 'login']
+				chunks: ['bs', 'theme', 'shared', 'login']
 			}
 		});
 	}
@@ -233,6 +234,11 @@ module.exports = async (env) => {
 					handlebarsVendor: {
 						test: /[\\/]node_modules[\\/](handlebars)[\\/]/,
 						name: 'libs-hb',
+						chunks: 'all'
+					},
+					joditVendor: {
+						test: /[\\/]node_modules[\\/](jodit)[\\/]/,
+						name: 'libs-jodit',
 						chunks: 'all'
 					}
 				}

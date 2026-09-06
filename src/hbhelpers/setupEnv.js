@@ -1,6 +1,6 @@
 const Handlebars = require('handlebars');
 
-const knownKeys = ['mode', 'apiBaseUrl', 'panelClasses', 'extensionPoint', 'defaultLocale', 'locales'];
+const knownKeys = ['title', 'mode', 'apiBaseUrl', 'panelClasses', 'extensionPoint', 'defaultLocale', 'locales'];
 
 module.exports = function () {
 	const env = {};
@@ -9,6 +9,6 @@ module.exports = function () {
 	}
 	return new Handlebars.SafeString(`
 <script type="text/javascript">
-	const EnvConfig = ${JSON.stringify(env)};
+	var EnvConfig = ${JSON.stringify(env)};
 </script>`);
 };

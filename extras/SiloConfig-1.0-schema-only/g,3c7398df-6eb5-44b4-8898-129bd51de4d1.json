@@ -1,0 +1,23 @@
+{
+  "tier": null,
+  "acl": [],
+  "traits": null,
+  "localized": {
+    "en": {
+      "label": "Markdown",
+      "traits": null
+    }
+  },
+  "parentId": "82558531-5778-4bda-9eca-7292092e5d14",
+  "path": "marbas/Schema/UserDefined/MarBasSilo/SiloTextFormats/markdown",
+  "cTime": "2026-08-26T15:41:55.0000000Z",
+  "mTime": "2026-08-26T15:42:18.0000000Z",
+  "owner": "dima@marbas",
+  "revision": 1,
+  "sortKey": "200",
+  "customFlag": 0,
+  "xAttrs": null,
+  "id": "3c7398df-6eb5-44b4-8898-129bd51de4d1",
+  "name": "markdown",
+  "typeDefId": "00000000-0000-1000-a000-000000000004"
+}
