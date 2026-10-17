@@ -241,7 +241,7 @@ export class OAuthAuthenticator {
 
 	#getTokenRequestOptions(config) {
 		if (!config) {
-			config = config = this.#module.config;
+			config = this.#module.config;
 		}
 		return {
 			[oauth.allowInsecureRequests]: 'development' == EnvConfig.mode && config.tokenUrl.startsWith('http:')

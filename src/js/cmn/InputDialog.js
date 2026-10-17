@@ -18,7 +18,7 @@ export class InputDialog extends _Dialog {
 
 	show(options) {
 		this._getScoped('title span').textContent = options.title || t`Input Request`;
-		this._getScoped('txt').textContent = options.prompt || t`Input`;
+		this._element.querySelector(`[for="${this._scope}-txt"]`).textContent = options.prompt || t`Input`;
 		super.show(true, options.parent, options.restoreParent);
 		this.#input.value = options.defaultValue || '';
 	}
