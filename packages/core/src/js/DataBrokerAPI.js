@@ -927,9 +927,10 @@ export class DataBrokerAPI {
 	}
 
 	loadBlob(url, acceptType = /.*/, maxSize = 30 * 1024 * 1024, forDownload = false) {
+		const rejectKey = `${url}\\${acceptType.source}\\${maxSize}`;
 		return new Promise((resolve, reject) => {
-			if (-1 < this.#rejects.indexOf(url)) {
-				reject(`Response from ${url} doesn't match criteria`);
+			if (-1 < this.#rejects.indexOf(rejectKey)) {
+				reject(`Response from ${url} was rejected before due to criteria`);
 				return;
 			}
 			this.applyStdFetchOptions().then(opts => {
@@ -939,8 +940,8 @@ export class DataBrokerAPI {
 						if (res.ok) {
 							const size = res.headers.get('Content-Length');
 							const type = res.headers.get('Content-Type');
-							if (size >= maxSize || !acceptType.test(type)) {
-								this.#rejects.push(url);
+							if ((-1 < maxSize && size >= maxSize) || !acceptType.test(type)) {
+								this.#rejects.push(rejectKey);
 								reject(`Response ${type} of ${size} bytes from ${url} doesn't match criteria`);
 								return null;
 							}

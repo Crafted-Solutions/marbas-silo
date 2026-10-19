@@ -288,6 +288,8 @@ export class GrainEditor {
 
 	async unloadEditor() {
 		if (this.editor) {
+			const objUrls = [...this._element.querySelectorAll('.mb-grain-file *')].map(elm => elm.src);
+
 			await this.verifySaved();
 			this.editor.off('ready', this.#readyCb);
 			this.editor.off('change', this.#changeCb);
@@ -297,6 +299,8 @@ export class GrainEditor {
 			}
 			this.#watches = {};
 			this.editor.destroy();
+
+			objUrls.forEach(URL.revokeObjectURL);
 		}
 		delete this.editor;
 		const result = this.grain;
@@ -786,7 +790,6 @@ export class GrainEditor {
 						anchor.setAttribute('title', anchor.textContent);
 						anchor.innerHTML = '';
 						const objUrl = URL.createObjectURL(blob);
-						elm.onload = () => URL.revokeObjectURL(objUrl);
 						elm.src = objUrl;
 						anchor.appendChild(elm);
 					})
