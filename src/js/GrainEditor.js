@@ -2,7 +2,7 @@ import { JSONEditor } from "@json-editor/json-editor";
 import merge from "lodash.merge";
 import { Popover } from "bootstrap";
 import { t } from "ttag";
-import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType, MarBasGrainTier, MarBasRestrictTypeDefs } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasGrainAccessFlag, MarBasTraitValueType, MarBasGrainTier, MarBasRestrictTypeDefs, MarBasTraitKeyFormat, MbUtils } from "@crafted.solutions/marbas-core";
 
 import { EditorGrainPickerConfig, EditorSchemaConfig } from "../conf/editor.conf";
 import { GrainXAttrs } from "./cmn/GrainXAttrs";
@@ -24,6 +24,7 @@ import { SiloEvtGrainRenamed } from "./cmn/SiloEvtGrainRenamed";
 import { SiloEvtTypeDefDefaults } from "./cmn/SiloEvtTypeDefDefaults";
 import { TranslationLayer } from "./TranslationLayer.js";
 import { Task } from "./cmn/Task.js";
+import { SiloEvtGrainStored } from "./cmn/SiloEvtGrainStored.js";
 
 const FieldIcon = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.icon`;
 const FieldLabel = `${EditorSchemaConfig.PATH_DEFAULT_GROUP}presentation.label`;
@@ -224,7 +225,7 @@ export class GrainEditor {
 				def: await this._apiSvc.getGrainPropDefs(this.grain)
 			};
 			if (this.customProps.def.length) {
-				this.customProps.traits = await this._apiSvc.getGrainTraits(this.grain);
+				this.customProps.traits = await this._apiSvc.getGrainTraits(this.grain, MarBasTraitKeyFormat.PropId);
 			}
 			for (const key in this.grain) {
 				if (null == this.grain[key]) {
@@ -263,7 +264,7 @@ export class GrainEditor {
 					if (!valGroup[secKey]) {
 						valGroup[secKey] = {};
 					}
-					const trait = this.customProps.traits[prop.name];
+					const trait = this.customProps.traits[prop.id];
 					if (trait && trait.length) {
 						valGroup[secKey][prop.id] = TraitUtils.getEditableValue(prop, trait);
 						if (trait[0].grainId != this.grain.id) {
@@ -348,6 +349,7 @@ export class GrainEditor {
 		}
 		await Task.nowAsync(t`Saving grain ${this.grain.label}`, async (done, error) => {
 			try {
+				let notify = false;
 				if (this.customProps && this.customProps.changes) {
 					for (const k in this.customProps.changes) {
 						const sub = this.editor.getEditor(k);
@@ -363,12 +365,7 @@ export class GrainEditor {
 							sub.is_dirty = false;
 						}
 						delete this.customProps.changes[k];
-					}
-					if (this._translationLayer) {
-						const conf = await this._translationLayer.getConfig();
-						if (conf && conf.grain && this.grain.id == conf.grain.id) {
-							conf.reload();
-						}
+						notify = true;
 					}
 				}
 				const storeGrain = this.#collectChanges();
@@ -378,10 +375,13 @@ export class GrainEditor {
 					if (sub) {
 						sub.setValueToInputField((new Date()).toLocaleString());
 					}
-					setClean = true;
+					setClean = notify = true;
 				}
 				if (setClean) {
 					this._setDirty(false);
+				}
+				if (notify) {
+					SiloEvtGrainStored.trigger(this.grain);
 				}
 				done();
 			} catch (e) {
@@ -615,7 +615,7 @@ export class GrainEditor {
 						sub.destroy();
 					}
 					this.customProps.def.splice(this.customProps.def.indexOf(prop), 1);
-					delete this.customProps.traits[prop.name];
+					delete this.customProps.traits[prop.id];
 					if (this.customProps.changes) {
 						delete this.customProps.changes[GrainEditor.makeTraitPath(prop)];
 					}
@@ -748,14 +748,15 @@ export class GrainEditor {
 		if (this.customProps.def.length && this.customProps.traits) {
 			this.customProps.def.forEach((prop) => {
 				this._apiSvc.getTraitValues(prop, MarBasDefaults.ID_PROPDEF_COMMENT).then((comments) => {
-					if (comments && comments.length && comments[0].value) {
+					const comment = MbUtils.firstOrDefault(comments, null, 'value');
+					if (comment) {
 						const lbl = this.editor.element.querySelector(
 							`[data-schemapath="${GrainEditor.makeTraitPath(prop)}"] ${1 == prop.cardinalityMax ? 'label' : '.card-title'}`
 						);
 						if (lbl) {
-							const elm = this.editor.theme.getInfoButton(comments[0].value);
+							const elm = this.editor.theme.getInfoButton(comment);
 							elm.title = t`Field Info`;
-							elm.setAttribute('data-bs-content', comments[0].value);
+							elm.setAttribute('data-bs-content', comment);
 							elm.removeAttribute('data-toggle');
 							elm.setAttribute('data-bs-toggle', 'popover');
 							elm.setAttribute('data-bs-trigger', 'focus');

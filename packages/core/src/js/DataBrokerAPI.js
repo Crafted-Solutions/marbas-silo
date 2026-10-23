@@ -136,8 +136,9 @@ export class DataBrokerAPI {
 			const link = linkOrId.id ? linkOrId : await this.getGrain(linkOrId);
 			this.getTraitValues(link, MarBasDefaults.ID_PROPDEF_LINKTARGET)
 				.then(targets => {
-					if (targets && targets.length && targets[0].value) {
-						this.getGrain(targets[0].value).then(resolve).catch(reject);
+					const linkId = MbUtils.firstOrDefault(targets, null, 'value');
+					if (linkId) {
+						this.getGrain(linkId).then(resolve).catch(reject);
 					} else {
 						resolve(link);
 					}
@@ -480,11 +481,11 @@ export class DataBrokerAPI {
 		return this.getTypePropDefs(grain.typeDefId);
 	}
 
-	getGrainTraits(grain, scopedKeys = false) {
+	getGrainTraits(grain, keyFormat = null) {
 		let url = `${this.baseUrl}/Grain/${grain.id || grain}/Traits`;
-		let params = scopedKeys ? new URLSearchParams() : null;
+		let params = keyFormat ? new URLSearchParams() : null;
 		if (params) {
-			params.set('scopedKeys', true);
+			params.set('keyFormat', keyFormat);
 		}
 		params = this.addLangParam(params, this.#lang || grain.culture);
 		if (params) {
