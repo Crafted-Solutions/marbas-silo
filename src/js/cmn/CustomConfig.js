@@ -1,4 +1,4 @@
-import { MarBasDefaults } from "@crafted.solutions/marbas-core";
+import { MarBasDefaults, MarBasTraitKeyFormat } from "@crafted.solutions/marbas-core";
 import { TraitUtils } from "./TraitUtils";
 
 export class CustomConfig {
@@ -71,7 +71,7 @@ export class CustomConfig {
 	}
 
 	async #loadValues() {
-		const traits = await this.#apiSvc.getGrainTraits(this.#grain, true);
+		const traits = await this.#apiSvc.getGrainTraits(this.#grain, MarBasTraitKeyFormat.ScopedPropName);
 		return TraitUtils.mapTraitValues(traits);
 	}
 

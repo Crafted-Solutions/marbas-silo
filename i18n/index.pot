@@ -3,71 +3,72 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: src\js\TranslationModule.js:35
+#: src\js\TranslationModule.js:45
 msgid "Source Language"
 msgstr ""
 
-#: src\js\TranslationModule.js:49
+#: src\js\TranslationModule.js:59
 msgid "Target Language"
 msgstr ""
 
-#: src\js\TranslationModule.js:55
+#: src\js\TranslationModule.js:65
 msgid "Please Select"
 msgstr ""
 
-#: src\js\TranslationModule.js:66
+#: src\js\TranslationModule.js:76
 msgid "Source Text"
 msgstr ""
 
-#: src\js\TranslationModule.js:74
+#: src\js\TranslationModule.js:84
 msgid "Translated Text"
 msgstr ""
 
-#: src\js\TranslationModule.js:92
+#: src\js\TranslationLayer.js:68
+#: src\js\TranslationModule.js:102
 msgid "Translate Field"
 msgstr ""
 
-#: src\js\TranslationModule.js:93
+#: src\js\TranslationModule.js:103
 msgid ""
 "Data from this dialog may be tramsmitted to a third-party translation "
 "service, use it with caution, do not enter sensible or private information "
 "if you do not trust the provider fully."
 msgstr ""
 
-#: src\js\TranslationModule.js:94
+#: src\js\TranslationModule.js:104
 msgid ""
 "The translation service doesn't support rich text, formatting may be lost "
 "during translation."
 msgstr ""
 
-#: src\js\TranslationModule.js:106
+#: src\js\TranslationModule.js:116
 #, javascript-format
 msgid "Translate \"${ title }\""
 msgstr ""
 
-#: src\js\TranslationModule.js:173
+#: src\js\TranslationModule.js:185
 msgid "Target language must be distinct from source"
 msgstr ""
 
 #: src\conf\vendor.i18n.js:71
-#: src\js\TranslationModule.js:179
+#: src\js\TranslationModule.js:191
 msgid "Value required"
 msgstr ""
 
-#: src\js\TranslationModule.js:215
+#: src\js\TranslationModule.js:227
 #, javascript-format
-msgid "Tranlate With ${ url.host }"
+msgid "Translate With ${ url.host }"
 msgstr ""
 
-#: src\js\TranslationModule.js:258
+#: src\js\TranslationModule.js:270
 msgid "Requesting translation"
 msgstr ""
 
-#: src\js\TranslationModule.js:285
+#: src\js\TranslationModule.js:297
 msgid "Translation service returned error"
 msgstr ""
 
-#: src\js\TranslationModule.js:423
+#: src\js\TranslationModule.js:435
 msgid "Applying translation"
 msgstr ""
 
@@ -378,37 +379,37 @@ msgid ""
 "evt.detail.payload }"
 msgstr ""
 
-#: src\js\GrainEditor.js:106
+#: src\js\GrainEditor.js:107
 msgid "Grain was modified, close anyway?"
 msgstr ""
 
-#: src\js\GrainEditor.js:270
+#: src\js\GrainEditor.js:271
 msgid " (Default Value)"
 msgstr ""
 
-#: src\js\GrainEditor.js:322
+#: src\js\GrainEditor.js:327
 msgid "Grain was modified, save?"
 msgstr ""
 
-#: src\js\GrainEditor.js:345
+#: src\js\GrainEditor.js:350
 #, javascript-format
 msgid "Saving grain ${ _this5.grain.label }"
 msgstr ""
 
-#: src\js\GrainEditor.js:409
+#: src\js\GrainEditor.js:413
 #.  __defaults__
 msgid "There are some input errors, save anyway?"
 msgstr ""
 
-#: src\js\GrainEditor.js:413
+#: src\js\GrainEditor.js:417
 msgid "Please correct input errors first"
 msgstr ""
 
-#: src\js\GrainEditor.js:584
+#: src\js\GrainEditor.js:588
 msgid "No file selected"
 msgstr ""
 
-#: src\js\GrainEditor.js:753
+#: src\js\GrainEditor.js:758
 msgid "Field Info"
 msgstr ""
 

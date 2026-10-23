@@ -4,6 +4,7 @@ export const SiloEvents = {
 	GRAIN_MODIFIED: 'mb-silo:grain-modified',
 	GRAIN_DELETED: 'mb-silo:grain-deleted',
 	GRAIN_RENAMED: 'mb-silo:grain-renamed',
+	GRAIN_STORED: 'mb-silo:grain-stored',
 	TYPDEF_DEFAULTS: 'mb-silo:typedef-defaults'
 };
 export const SiloEventUtils = {
@@ -31,5 +32,12 @@ export const SiloEventUtils = {
 			: (evt) => {
 				listener(...unpack(evt.detail));
 			};
+	},
+	dispatch: function dispatch(eventType, payload) {
+		document.dispatchEvent(new CustomEvent(eventType, { detail: payload }));
+	},
+	addListener: function addListener(eventType, listener, useAsync, argNames = null) {
+		document.addEventListener(eventType,
+			argNames ? SiloEventUtils.makeCallbackWithArgs(listener, useAsync, argNames) : SiloEventUtils.makeCallback(listener, useAsync));
 	}
 };

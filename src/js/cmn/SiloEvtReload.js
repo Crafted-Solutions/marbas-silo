@@ -1,14 +1,15 @@
 import { SiloEvents, SiloEventUtils } from "./SiloEvents";
 
+const EVENT_TYPE = SiloEvents.RELOAD;
 export const SiloEvtReload = {
 	trigger: function trigger(grainId, navigate = false) {
 		const detail = { navigate: navigate };
 		if (grainId) {
 			detail.id = grainId;
 		}
-		document.dispatchEvent(new CustomEvent(SiloEvents.RELOAD, { detail: detail }));
+		SiloEventUtils.dispatch(EVENT_TYPE, detail);
 	},
 	on: function on(listener, useAsync = true) {
-		document.addEventListener(SiloEvents.RELOAD, SiloEventUtils.makeCallbackWithArgs(listener, useAsync, ['id', 'navigate']));
+		SiloEventUtils.addListener(EVENT_TYPE, listener, useAsync, ['id', 'navigate']);
 	}
 };

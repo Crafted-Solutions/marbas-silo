@@ -1,14 +1,13 @@
 import { SiloEvents, SiloEventUtils } from "./SiloEvents";
 
+const EVENT_TYPE = SiloEvents.GRAIN_DELETED;
 export const SiloEvtGrainDeleted = {
 	trigger: function trigger(grainId) {
 		if (grainId) {
-			document.dispatchEvent(new CustomEvent(SiloEvents.GRAIN_DELETED, {
-				detail: grainId
-			}));
+			SiloEventUtils.dispatch(EVENT_TYPE, grainId);
 		}
 	},
 	on: function on(listener, useAsync = true) {
-		document.addEventListener(SiloEvents.GRAIN_DELETED, SiloEventUtils.makeCallback(listener, useAsync));
+		SiloEventUtils.addListener(EVENT_TYPE, listener, useAsync);
 	}
 };

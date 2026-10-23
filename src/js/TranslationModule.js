@@ -22,6 +22,16 @@ function fieldPath(field) {
 	return `root.${field}`;
 }
 
+function areSameLanguages(firstLang, secondLang, includeCountry = true) {
+	if (firstLang == secondLang) {
+		return true;
+	}
+	if (!includeCountry) {
+		return firstLang.split('-')[0] == secondLang.split('-')[0];
+	}
+	return false;
+}
+
 const EDITOR_CONF = {
 	type: 'object',
 	format: 'grid-strict',
@@ -153,21 +163,23 @@ class TranslationDialog extends _Dialog {
 		if (this.#isRichText) {
 			schema.properties[FIELD_SOURCE_TEXT].format = schema.properties[FIELD_TRANSLATION].format = this.#source.schema.format;
 		}
-		this.#editor = new JSONEditor(this._getScoped('editor'), {
+		const editorElm = this._getScoped('editor');
+		MbDomUtils.clearNode(editorElm);
+		this.#editor = new JSONEditor(editorElm, {
 			schema: schema,
 			startVal: {},
 			show_opt_in: false,
-			custom_validators: [this.#validate.bind(this)]
+			custom_validators: [this.#validate.bind(this, await this.#module.backendSupportsCountryCode())]
 		});
 		this.#editor.on('ready', this.#onEditorReady.bind(this));
 
 	}
-	#validate(schema, value, path) {
+	#validate(countrySupport, schema, value, path) {
 		const result = [];
 		if (fieldPath(FILED_TARGET_LANG) == path || fieldPath(FIELD_SOURCE_LANG) == path) {
 			if (value) {
 				const otherVal = (fieldPath(FILED_TARGET_LANG) == path ? this.#sourceLanguageEditor : this.#targetLanguageEditor).getValue();
-				if (value == otherVal) {
+				if (areSameLanguages(value, otherVal, countrySupport)) {
 					result.push({
 						path: path,
 						message: t`Target language must be distinct from source`
@@ -212,7 +224,7 @@ class TranslationDialog extends _Dialog {
 			const btnHolder = this.#editor.root.theme.getHeaderButtonHolder();
 
 			const url = new URL(backend);
-			const lbl = t`Tranlate With ${url.host}`;
+			const lbl = t`Translate With ${url.host}`;
 			const btn = this.#editor.root.getButton(lbl, 'translate', lbl);
 			btn.classList.add('btn-primary');
 			btn.classList.remove('btn-secondary', 'btn-sm');

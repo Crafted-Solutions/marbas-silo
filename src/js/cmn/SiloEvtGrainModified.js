@@ -1,12 +1,13 @@
 import { SiloEvents, SiloEventUtils } from "./SiloEvents";
 
+const EVENT_TYPE = SiloEvents.GRAIN_MODIFIED;
 export const SiloEvtGrainModified = {
 	trigger: function trigger(grain) {
 		if (grain) {
-			document.dispatchEvent(new CustomEvent(SiloEvents.GRAIN_MODIFIED, { detail: grain }));
+			SiloEventUtils.dispatch(EVENT_TYPE, grain);
 		}
 	},
 	on: function on(listener, useAsync = true) {
-		document.addEventListener(SiloEvents.GRAIN_MODIFIED, SiloEventUtils.makeCallback(listener, useAsync));
+		SiloEventUtils.addListener(EVENT_TYPE, listener, useAsync);
 	}
 };

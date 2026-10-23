@@ -1,4 +1,6 @@
+import { t } from "ttag";
 import { CustomConfig } from "./cmn/CustomConfig";
+import { SiloEvtGrainStored } from "./cmn/SiloEvtGrainStored.js";
 
 const CONFKEY_MODULE = `${CustomConfig.DEFAULT_NAME}/TranslationModule`;
 
@@ -9,6 +11,15 @@ export class TranslationLayer {
 	constructor(editor) {
 		this.#editor = editor;
 		this.#config = CustomConfig.get(CustomConfig.DEFAULT_NAME);
+		SiloEvtGrainStored.on(async (grain) => {
+			const conf = await this.#config;
+			if (conf.grain.id == grain.id) {
+				delete this._module;
+				await conf.reload();
+			} else if ((await conf.getValue(CONFKEY_MODULE)) == grain.id) {
+				delete this._module;
+			}
+		});
 	}
 	attach(schemaPath) {
 		this.#attached[schemaPath] = true;
@@ -54,8 +65,7 @@ export class TranslationLayer {
 		if (!editor.parent || 'array' != editor.parent.schema.type) {
 			btn.classList.add("me-2", "mb-1");
 		}
-		btn.title = `Translate Field`;
-		// btn.textContent = "Tr";
+		btn.title = t`Translate Field`;
 		btn.onclick = this.#translateField.bind(this, editor.path);
 		container.insertBefore(btn, refChild);
 	}
