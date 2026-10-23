@@ -80,6 +80,8 @@
 		"webpack-dev-server": "^6.0.0"
 	},
 	"allowScripts": {
-		"ttag-cli@1.12.0": true
+		"ttag-cli@1.12.0": true,
+		"@parcel/watcher": false,
+		"core-js": false
 	}
 }
