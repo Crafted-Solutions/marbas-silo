@@ -42,6 +42,17 @@ export const MbUtils = {
 		return arr;
 	},
 
+	firstOrDefault: function (arr, defaultVal = null, mapTo = null) {
+		if (!arr || !arr.length) {
+			return defaultVal;
+		}
+		let result = arr[0];
+		if (mapTo) {
+			result = mapTo in result ? result[mapTo] : defaultVal;
+		}
+		return result;
+	},
+
 	execAsyncWithPromise: async function (func) {
 		const cb = {};
 		const result = new Promise((resolve, reject) => {

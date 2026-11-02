@@ -1,6 +1,6 @@
 export const MarBasDefaults = {
 	MinSchemaVersion: '0.1.16',
-	MinAPIVersion: '0.1.24',
+	MinAPIVersion: '0.1.25',
 	LANG: 'en',
 	NAME_ROOT: 'marbas',
 	TIER_FILE: 'IFile',
@@ -67,6 +67,10 @@ export const MarBasRoleEntitlement = {
 	SkipPermissionCheck: 0x2000,
 	DeleteBuiltInElements: 0x3000,
 	Full: 0xffffffff
+};
+
+export const MarBasTraitKeyFormat = {
+	PropName: 0, ScopedPropName: 1, PropId: 2, UniqPropName: 3, ScopedUniqPropName: 4
 };
 
 export const MarBasTraitValueTypes = [

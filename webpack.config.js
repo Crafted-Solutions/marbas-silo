@@ -2,8 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackSkipAssetsPlugin = require('html-webpack-skip-assets-plugin').HtmlWebpackSkipAssetsPlugin;
 const SiftChunksPlugin = require('sift-chunks-webpack-plugin');
 const { xgtHandlebarsPot, xgtMergePo, xgtGetJson, xgtUpdatePo } = require('xgettext-helpers');
@@ -134,6 +132,8 @@ module.exports = async (env) => {
 	return {
 		mode: mode,
 		entry: chunks,
+		target: "browserslist",
+		experiments: { css: true },
 		devServer: {
 			static: {
 				directory: './dist'
@@ -163,28 +163,8 @@ module.exports = async (env) => {
 					}
 				},
 				{
-					test: /\.css$/,
-					use: [MiniCssExtractPlugin.loader, 'css-loader']
-				},
-				{
-					test: /\.(scss)$/,
+					test: /\.s[ac]ss$/i,
 					use: [
-						{
-							loader: MiniCssExtractPlugin.loader
-						},
-						{
-							loader: 'css-loader'
-						},
-						{
-							loader: 'postcss-loader',
-							options: {
-								postcssOptions: {
-									plugins: () => [
-										require('autoprefixer')
-									]
-								}
-							}
-						},
 						{
 							loader: 'sass-loader',
 							options: {
@@ -194,7 +174,8 @@ module.exports = async (env) => {
 								}
 							}
 						}
-					]
+					],
+					type: "css/auto"
 				},
 				{
 					test: /\.po$/,
@@ -211,7 +192,6 @@ module.exports = async (env) => {
 				return new HtmlWebpackPlugin(opts);
 			}),
 			new HtmlWebpackSkipAssetsPlugin(),
-			new MiniCssExtractPlugin(),
 			new SiftChunksPlugin({
 				removeUnnamed: true,
 				skip: 'bs'
@@ -242,22 +222,7 @@ module.exports = async (env) => {
 						chunks: 'all'
 					}
 				}
-			},
-			minimizer: [
-				// For webpack@5 you can use the `...` syntax to extend existing minimizers (i.e. `terser-webpack-plugin`), uncomment the next line
-				`...`,
-				new CssMinimizerPlugin({
-					parallel: true,
-					minimizerOptions: {
-						preset: [
-							"default",
-							{
-								discardComments: { removeAll: true }
-							}
-						]
-					}
-				})
-			]
+			}
 		}
 	};
 };

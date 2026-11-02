@@ -1,10 +1,11 @@
 import { SiloEvents, SiloEventUtils } from "./SiloEvents";
 
+const EVENT_TYPE = SiloEvents.NAVIGATE;
 export const SiloEvtNavigate = {
 	trigger: function trigger(grainId, expand = false) {
-		document.dispatchEvent(new CustomEvent(SiloEvents.NAVIGATE, { detail: { id: grainId, expand: expand } }));
+		SiloEventUtils.dispatch(EVENT_TYPE, { id: grainId, expand: expand });
 	},
 	on: function on(listener, useAsync = true) {
-		document.addEventListener(SiloEvents.NAVIGATE, SiloEventUtils.makeCallbackWithArgs(listener, useAsync, ['id', 'expand']));
+		SiloEventUtils.addListener(EVENT_TYPE, listener, useAsync, ['id', 'expand']);
 	}
 };

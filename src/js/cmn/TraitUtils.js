@@ -14,7 +14,11 @@ export const TraitUtils = {
 		return 1 < p.length ? p[p.length - 2] : 'General';
 	},
 	getEditableValue: function (prop, trait) {
-		return this.isArray(prop) ? trait.map(val => this.convTraitValue(val.value, prop.valueType)) : this.convTraitValue(trait[0].value, prop.valueType);
+		const isArray = this.isArray(prop);
+		if (!trait || !trait.length) {
+			return isArray ? [] : null;
+		}
+		return isArray ? trait.map(val => this.convTraitValue(val.value, prop.valueType)) : this.convTraitValue(trait[0].value, prop.valueType);
 	},
 	convTraitValue: function (value, traitType) {
 		if (MarBasTraitValueType.DateTime == traitType) {
